@@ -33,6 +33,11 @@ namespace Blocks
 			_relationships.Add(relationship);
 		}
 
+		public Relationship FindRelationship(Relationship relationship)
+        {
+			return _relationships.FirstOrDefault(r => _comparer.Equals(r, relationship));
+		}
+
 		public Relationship Next(Random random)
 		{
 			if (!_relationships.Any()) { throw new Exception("No relationships to choose from"); }

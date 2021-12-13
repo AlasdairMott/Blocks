@@ -1,12 +1,11 @@
-﻿using Blocks;
-using Grasshopper.Kernel;
+﻿using Grasshopper.Kernel;
 using Rhino.DocObjects;
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks
+namespace Blocks.Components
 {
 	public class BlocksComponent : GH_Component
 	{
@@ -60,7 +59,6 @@ namespace Blocks
 			if (!DA.GetDataList(0, instanceIds)) { return; }
 			if (instanceIds.Any(id => id == null)) { AddRuntimeMessage( GH_RuntimeMessageLevel.Warning,"Null in list"); return; }
 			
-
 			var doc = Rhino.RhinoDoc.ActiveDoc;
 			var instances = instanceIds.Select(id => doc.Objects.FindId(id)).Cast<InstanceObject>();
 			if (instances.Count() == 0) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No instances found"); return; }
@@ -74,6 +72,30 @@ namespace Blocks
 			var seed = 0;
 			DA.GetData(3, ref seed);
 
+			var blocks = LearnRelationships(instances, distanceThreshold);
+			var placements = PlaceGeometry(blocks, seed, iterations);
+
+			DA.SetDataList(0, instances.Select(b => b.InstanceDefinition.Name));
+			DA.SetDataList(1, instances.Select(b => b.InstanceXform));
+			DA.SetDataList(2, placements.Select(p => p.Geometry));
+			DA.SetDataList(3, placements.Select(p => p.Transform));
+		}
+
+		/// <summary>
+		/// Provides an Icon for every component that will be visible in the User Interface.
+		/// Icons need to be 24x24 pixels.
+		/// </summary>
+		protected override System.Drawing.Bitmap Icon => Properties.Resources.Relationship;
+
+		/// <summary>
+		/// Each component must have a unique Guid to identify it. 
+		/// It is vital this Guid doesn't change otherwise old ghx files 
+		/// that use the old ID will partially fail during loading.
+		/// </summary>
+		public override Guid ComponentGuid => new Guid("8bf660e6-1e47-4a69-a750-1c66529d8fc9");
+
+		private Dictionary<InstanceDefinition, Block> LearnRelationships(IEnumerable<InstanceObject> instances, double distanceThreshold)
+        {
 			//need to make a tranform comparer
 			var comparer = new RelationshipComparer();
 			var blocks = new Dictionary<InstanceDefinition, Block>();
@@ -85,13 +107,12 @@ namespace Blocks
 				if (blocks.ContainsKey(instance.InstanceDefinition))
 				{
 					block = blocks[instance.InstanceDefinition];
-				} else
+				}
+				else
 				{
 					block = new Block(instance.InstanceDefinition);
 					blocks.Add(instance.InstanceDefinition, block);
 				}
-
-				var relations = block.Relationships;
 
 				foreach (var other in instances)
 				{
@@ -112,11 +133,12 @@ namespace Blocks
 					var transform = xformInverse * xform2;
 
 					var key = new Relationship(other.InstanceDefinition.ToDefinition(), transform);
-					if (relations.Contains(key))
+					if (block.Relationships.Contains(key))
 					{
-						//relations.FirstOrDefault(r => r.Equals(key)).Strength += 1;
-						//key.Strength += 1;
-					} else
+						var existing = block.FindRelationship(key);
+						existing.Strength += 1;
+					}
+					else
 					{
 						key.Strength = 1;
 						block.AddRelationship(key);
@@ -129,6 +151,11 @@ namespace Blocks
 				block.Value.NormalizeRelationships();
 			}
 
+			return blocks;
+		}
+
+		private IEnumerable<(Transform Transform, GeometryBase Geometry)> PlaceGeometry(Dictionary<InstanceDefinition, Block> blocks, int seed, int iterations)
+        {
 			var placements = new List<KeyValuePair<BlockDefinition, Transform>>();
 			var random = new Random(seed);
 
@@ -161,28 +188,9 @@ namespace Blocks
 				}
 			}
 
-			DA.SetDataList(0, instances.Select(b => b.InstanceDefinition.Name));
-			DA.SetDataList(1, instances.Select(b => b.InstanceXform));
-			DA.SetDataList(2, geometries);
-			DA.SetDataList(3, placements.Select(p => p.Value));
+			return placements.Select(p => p.Value).Zip(geometries, (Transform, Geometry) => (Transform, Geometry));
 		}
 
-		/// <summary>
-		/// Provides an Icon for every component that will be visible in the User Interface.
-		/// Icons need to be 24x24 pixels.
-		/// </summary>
-		protected override System.Drawing.Bitmap Icon => Properties.Resources.Relationship;
-
-		/// <summary>
-		/// Each component must have a unique Guid to identify it. 
-		/// It is vital this Guid doesn't change otherwise old ghx files 
-		/// that use the old ID will partially fail during loading.
-		/// </summary>
-		public override Guid ComponentGuid => new Guid("8bf660e6-1e47-4a69-a750-1c66529d8fc9");
+			 
 	}
-}
-
-public static class InstanceExtensions
-{
-    public static BlockDefinition ToDefinition(this InstanceDefinition instance) => new BlockDefinition(instance);
 }
