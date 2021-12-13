@@ -54,22 +54,5 @@ namespace Blocks.Tests
             Assert.Single(curves);
             Assert.Equal(2 * Math.PI * radius, curves[0].GetLength());
         }
-
-        /// <summary>
-        /// Xunit Test to ensure Centroid of GH_Box outputs a GH_Point
-        /// </summary>
-        [Fact]
-        public void GHBox_Centroid_ReturnsGHPoint()
-        {
-            // Arrange
-            var myBox = new GH_Box(new Box());
-
-            // Act 
-            var result = myBox.Boundingbox.Center;
-
-            // Assert
-            Assert.IsType<Point3d>(result);
-        }
-
     }
 }

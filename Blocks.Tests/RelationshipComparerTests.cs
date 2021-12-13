@@ -10,39 +10,9 @@ namespace Blocks.Tests
 	[Collection("RhinoTestingCollection")]
 	public class RelationshipComparerTests
 	{
-		[Fact]
-		public void Test1()
-		{
-			//Arrange
-			var point1 = new Point3d(0, 0, 0);
-			var point2 = new Point3d(0, 0, 600);
-
-			//Act
-			var distance = point1.DistanceTo(point2);
-
-			//Assert
-			Assert.InRange(distance, 0, 1000);
-		}
-
-		[Fact]
-		public void Test2()
-		{
-			//Arrange
-			var point1 = new Point3d(0, 0, 0);
-			var xform = Transform.Translation(Vector3d.ZAxis * 10);
-
-			//Act
-
-			point1.Transform(xform);
-			var distance = point1.DistanceTo(Point3d.Origin);
-
-			//Assert
-			Assert.InRange(distance, 0, 1000);
-		}
-
 		[Theory]
 		[ClassData(typeof(TestInstanceDefinitionData))]
-		public void RelationshipEquality_IsEqual(Relationship relationshipX, Relationship relationshipY)
+		public void RelationshipEquality_IsEqual(Relationship relationshipX, Relationship relationshipY, bool expected)
 		{
 			//Arrange
 			var sut = new RelationshipComparer();
@@ -51,7 +21,7 @@ namespace Blocks.Tests
 			var equality = sut.Equals(relationshipX, relationshipY);
 
 			//Assert
-			Assert.True(equality);
+			Assert.Equal(expected, equality);
 		}
 	}
 
@@ -86,20 +56,12 @@ namespace Blocks.Tests
 		}
 		public IEnumerator<object[]> GetEnumerator()
 		{
-			yield return new object[] { _relations["A"], _relations["A"] };
-			yield return new object[] { _relations["B"], _relations["B"] };
+			yield return new object[] { _relations["A"], _relations["A"], true };
+			yield return new object[] { _relations["B"], _relations["B"], true };
+			yield return new object[] { _relations["A"], _relations["B"], false };
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
-	//public class TestInstanceDefinition : IInstanceDefinition
-	//   {
-	//	public int Index { get; set; }
-
-	//       public TestInstanceDefinition(int index)
-	//       {
-	//           Index = index;
-	//       }
-	//   }	
 }

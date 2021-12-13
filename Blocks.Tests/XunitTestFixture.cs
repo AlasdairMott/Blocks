@@ -10,6 +10,7 @@ namespace Blocks.Tests
     /// <summary>
     /// Shared test context across unit tests that loads rhinocommon.dll and grasshopper.dll
     /// </summary>
+    /// <remarks>See https://github.com/tmakin/RhinoCommonUnitTesting for details</remarks>
     public class XunitTestFixture : IDisposable
     {
         private bool _initialized = false;
