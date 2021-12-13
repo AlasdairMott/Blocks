@@ -10,14 +10,18 @@ namespace Blocks
 		private RelationshipComparer _comparer = new RelationshipComparer();
 		private HashSet<Relationship> _relationships;
 
-		public InstanceDefinition Definition { get; set; }
+		public BlockDefinition Definition { get; set; }
 		public IEnumerable<Relationship> Relationships => _relationships;
 
-		public Block(InstanceDefinition definition)
+		public Block(BlockDefinition definition)
 		{
 			Definition = definition;
 			_relationships =  new HashSet<Relationship>(_comparer);
 		}
+
+		public Block(InstanceDefinition definition) : this(new BlockDefinition(definition))
+        {
+        }
 
 		public void AddRelationships(IEnumerable<Relationship> relationships)
 		{
@@ -31,7 +35,7 @@ namespace Blocks
 
 		public Relationship Next(Random random)
 		{
-			if (_relationships.Count() == 0) { throw new Exception("No relationships to choose from"); }
+			if (!_relationships.Any()) { throw new Exception("No relationships to choose from"); }
 			var value = random.NextDouble();
 			var shuffled = _relationships.OrderBy(r => random.NextDouble());
 			var result = shuffled.FirstOrDefault(r => r.Strength > value);

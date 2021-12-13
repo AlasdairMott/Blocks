@@ -1,4 +1,5 @@
-﻿using Grasshopper.Kernel;
+﻿using Blocks;
+using Grasshopper.Kernel;
 using Rhino.DocObjects;
 using Rhino.Geometry;
 using System;
@@ -77,7 +78,7 @@ namespace Blocks
 			var comparer = new RelationshipComparer();
 			var blocks = new Dictionary<InstanceDefinition, Block>();
 
-			//for each block, read it's closest neighbours, build a list of connections and transforms?
+			//for each block, read it's closest neighbours, build a list of connections and transforms
 			foreach (var instance in instances)
 			{
 				Block block;
@@ -110,10 +111,11 @@ namespace Blocks
 
 					var transform = xformInverse * xform2;
 
-					var key = new Relationship(other.InstanceDefinition, transform);
+					var key = new Relationship(other.InstanceDefinition.ToDefinition(), transform);
 					if (relations.Contains(key))
 					{
-						relations.FirstOrDefault(r => r.Equals(key)).Strength += 1;
+						//relations.FirstOrDefault(r => r.Equals(key)).Strength += 1;
+						//key.Strength += 1;
 					} else
 					{
 						key.Strength = 1;
@@ -127,34 +129,35 @@ namespace Blocks
 				block.Value.NormalizeRelationships();
 			}
 
-			var placements = new List<KeyValuePair<InstanceDefinition, Transform>>();
+			var placements = new List<KeyValuePair<BlockDefinition, Transform>>();
 			var random = new Random(seed);
 
 			var item = blocks.ElementAt(random.Next(0, blocks.Count()));
-			placements.Add(new KeyValuePair<InstanceDefinition, Transform>(item.Value.Definition, Transform.Identity));
+			placements.Add(new KeyValuePair<BlockDefinition, Transform>(item.Value.Definition, Transform.Identity));
 
 			for (var i = 0; i < iterations; i++)
 			{
 				var index = random.Next(0, placements.Count());
 				var existing = placements.ElementAt(index);
 
-				var next = blocks.First(b => b.Key.Id == existing.Key.Id).Value;
+				var next = blocks.First(b => b.Key.Index == existing.Key.Index).Value;
 				if (next.Relationships.Count() == 0) { continue; }
 
 				var nextRelationship = next.Next(random);
 				var nextTransform = existing.Value * nextRelationship.Transform;
 
-				placements.Add(new KeyValuePair<InstanceDefinition, Transform>(nextRelationship.Definition, nextTransform));
+				placements.Add(new KeyValuePair<BlockDefinition, Transform>(nextRelationship.Definition, nextTransform));
 			}
 
 			var geometries = new List<GeometryBase>();
 			foreach (var placement in placements)
 			{
-				var geometry = placement.Key.GetObjects();
+				var geometry = placement.Key.Geometry;
 				foreach (var g in geometry)
 				{
-					g.Geometry.Transform(placement.Value);
-					geometries.Add(g.Geometry);
+					var dup = g.Duplicate();
+					dup.Transform(placement.Value);
+					geometries.Add(dup);
 				}
 			}
 
@@ -177,4 +180,9 @@ namespace Blocks
 		/// </summary>
 		public override Guid ComponentGuid => new Guid("8bf660e6-1e47-4a69-a750-1c66529d8fc9");
 	}
+}
+
+public static class InstanceExtensions
+{
+    public static BlockDefinition ToDefinition(this InstanceDefinition instance) => new BlockDefinition(instance);
 }
