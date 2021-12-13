@@ -1,4 +1,5 @@
 ﻿using Rhino.DocObjects;
+using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,19 +8,23 @@ namespace Blocks
 {
 	public class Block
 	{
+		private readonly List<GeometryBase> _geometry = new List<GeometryBase>();
 		private RelationshipComparer _comparer = new RelationshipComparer();
 		private HashSet<Relationship> _relationships;
 
-		public BlockDefinition Definition { get; set; }
+		public IReadOnlyCollection<GeometryBase> Geometry => _geometry;
+		public int Index { get; private set; }
+
 		public IEnumerable<Relationship> Relationships => _relationships;
 
-		public Block(BlockDefinition definition)
+		public Block(IEnumerable<GeometryBase> geometry, int index)
 		{
-			Definition = definition;
+			_geometry.AddRange(geometry);
+			Index = index;
 			_relationships =  new HashSet<Relationship>(_comparer);
 		}
 
-		public Block(InstanceDefinition definition) : this(new BlockDefinition(definition))
+		public Block(InstanceDefinition definition) : this(definition.GetObjects().Select(o => o.Geometry), definition.Index)
         {
         }
 
@@ -56,5 +61,10 @@ namespace Blocks
 				relationship.Strength /= mass;
 			}
 		}
+	}
+
+	public static class InstanceExtensions
+	{
+		public static Block ToDefinition(this InstanceDefinition instance) => new Block(instance);
 	}
 }

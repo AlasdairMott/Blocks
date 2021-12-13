@@ -8,11 +8,11 @@ namespace Blocks
 {
 	public class Relationship
 	{
-		public BlockDefinition Definition { get; set; }
+		public Block Definition { get; set; }
 		public Transform Transform { get; set; }
 		public double Strength { get; set; }
 
-		public Relationship(BlockDefinition instanceDefinition, Transform transform)
+		public Relationship(Block instanceDefinition, Transform transform)
 		{
 			Definition = instanceDefinition;
 			Transform = transform;

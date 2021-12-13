@@ -156,11 +156,11 @@ namespace Blocks.Components
 
 		private IEnumerable<(Transform Transform, GeometryBase Geometry)> PlaceGeometry(Dictionary<InstanceDefinition, Block> blocks, int seed, int iterations)
         {
-			var placements = new List<KeyValuePair<BlockDefinition, Transform>>();
+			var placements = new List<KeyValuePair<Block, Transform>>();
 			var random = new Random(seed);
 
 			var item = blocks.ElementAt(random.Next(0, blocks.Count()));
-			placements.Add(new KeyValuePair<BlockDefinition, Transform>(item.Value.Definition, Transform.Identity));
+			placements.Add(new KeyValuePair<Block, Transform>(item.Value, Transform.Identity));
 
 			for (var i = 0; i < iterations; i++)
 			{
@@ -173,7 +173,7 @@ namespace Blocks.Components
 				var nextRelationship = next.Next(random);
 				var nextTransform = existing.Value * nextRelationship.Transform;
 
-				placements.Add(new KeyValuePair<BlockDefinition, Transform>(nextRelationship.Definition, nextTransform));
+				placements.Add(new KeyValuePair<Block, Transform>(nextRelationship.Definition, nextTransform));
 			}
 
 			var geometries = new List<GeometryBase>();

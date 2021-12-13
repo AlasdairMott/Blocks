@@ -45,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
-    <Compile Include="BlockDefinition.cs" />
     <Compile Include="BlockInstance.cs" />
     <Compile Include="BlockAssembly.cs" />
     <Compile Include="Components\BlocksComponent.cs" />
