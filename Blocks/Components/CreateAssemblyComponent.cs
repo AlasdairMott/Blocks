@@ -18,7 +18,7 @@ namespace Blocks.Components
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Block Definitions", "B-D", "Block definitions to create the assembly from", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Block Pool", "P", "Block definitions to create the assembly from", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Iterations", "I", "Iterations for markov", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Seed", "S", "Seed for markov", GH_ParamAccess.item);
 
@@ -43,9 +43,8 @@ namespace Blocks.Components
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            var blockDefinitions = new List<BlockDefinition>();
-            if (!DA.GetDataList(0, blockDefinitions)) { return; };
-            if (blockDefinitions.Any(b => b == null) || !blockDefinitions.Any()) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid/Empty block definitions"); return; }
+            var pool = new BlockPool();
+            if (!DA.GetData(0, ref pool)) { return; };
 
             var iterations = 10;
             DA.GetData(1, ref iterations);
@@ -53,7 +52,7 @@ namespace Blocks.Components
             var seed = 0;
             DA.GetData(2, ref seed);
 
-            var assembly = PlaceGeometry(blockDefinitions, seed, iterations);
+            var assembly = PlaceGeometry(pool, seed, iterations);
 
             DA.SetDataList(0, assembly.BlockInstances);
             DA.SetDataList(1, assembly.GetGeometry());
@@ -74,13 +73,13 @@ namespace Blocks.Components
         public override Guid ComponentGuid => new Guid("6943A647-4A70-42F5-ABC9-8D3A7FCB4723");
 
 
-        private BlockAssembly PlaceGeometry(IEnumerable<BlockDefinition> blocks, int seed, int iterations)
+        private BlockAssembly PlaceGeometry(BlockPool pool, int seed, int iterations)
         {
             var assembly = new BlockAssembly();
 
             var random = new Random(seed);
 
-            var item = blocks.ElementAt(random.Next(0, blocks.Count()));
+            var item = pool.ElementAt(random.Next(0, pool.Count()));
             assembly.AddInstance(new BlockInstance(item, Transform.Identity));
 
             for (var i = 0; i < iterations; i++)
@@ -88,7 +87,7 @@ namespace Blocks.Components
                 var index = random.Next(0, assembly.Size);
                 var existing = assembly.BlockInstances.ElementAt(index);
 
-                var next = blocks.First(b => b.Index == existing.BlockDefinition.Index);
+                var next = pool.First(b => b.Index == existing.BlockDefinition.Index);
                 if (next.Relationships.Count() == 0) { continue; }
 
                 var nextRelationship = next.Next(random);

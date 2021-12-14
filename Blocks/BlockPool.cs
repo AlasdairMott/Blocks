@@ -11,6 +11,15 @@ namespace Blocks
     {
         private readonly List<BlockDefinition> _blocks = new List<BlockDefinition>();
 
+        public BlockPool()
+        {
+        }
+
+        public BlockPool(IEnumerable<BlockDefinition> blocks)
+        {
+            _blocks.AddRange(blocks);
+        }
+
         public BlockDefinition this[int index]
         {
             get { return _blocks[index]; }

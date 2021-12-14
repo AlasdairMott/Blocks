@@ -28,7 +28,7 @@ namespace Blocks.Components
 		/// </summary>
 		protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
 		{
-			pManager.AddGenericParameter("Block Definitions", "B-D", "Block definitions", GH_ParamAccess.list);
+			pManager.AddGenericParameter("Block Pool", "P", "Pool of block definitions that can be used to create a block assembly", GH_ParamAccess.item);
 		}
 
 		/// <summary>
@@ -49,9 +49,9 @@ namespace Blocks.Components
 			var distanceThreshold = 1.0;
 			if (!DA.GetData(1, ref distanceThreshold)) { return; }
 
-			var blocks = LearnRelationships(instances, distanceThreshold);
+			var pool = LearnRelationships(instances, distanceThreshold);
 
-			DA.SetDataList(0, blocks);
+			DA.SetData(0, pool);
 		}
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace Blocks.Components
 		/// </summary>
 		public override Guid ComponentGuid => new Guid("8bf660e6-1e47-4a69-a750-1c66529d8fc9");
 
-		private IEnumerable<BlockDefinition> LearnRelationships(IEnumerable<InstanceObject> instances, double distanceThreshold)
+		private BlockPool LearnRelationships(IEnumerable<InstanceObject> instances, double distanceThreshold)
         {
 			//need to make a tranform comparer
 			var comparer = new RelationshipComparer();
@@ -124,7 +124,7 @@ namespace Blocks.Components
 				block.Value.NormalizeRelationships();
 			}
 
-			return blocks.Select(b => b.Value);
+			return new BlockPool(blocks.Select(b => b.Value));
 		}
 	}
 }
