@@ -1,9 +1,6 @@
 ﻿using Rhino.Geometry;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blocks
 {
@@ -11,12 +8,15 @@ namespace Blocks
     {
         private readonly List<BlockInstance> _blockInstances = new List<BlockInstance>();
 
-        public Mesh CollisionMesh { get; set; }
+        public Mesh CollisionMesh { get; set; } = new Mesh();
         public IReadOnlyList<BlockInstance> BlockInstances => _blockInstances;
         public int Size => _blockInstances.Count();
 
-        public void AddInstance(BlockInstance instance) => _blockInstances.Add(instance);
-
+        public void AddInstance(BlockInstance instance) {
+            _blockInstances.Add(instance);
+            CollisionMesh.Append(instance.CollisionMesh);
+        }
+        
         public IEnumerable<GeometryBase> GetGeometry()
         {
             var geometries = new List<GeometryBase>();

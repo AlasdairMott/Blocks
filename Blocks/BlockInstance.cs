@@ -1,9 +1,5 @@
 ﻿using Rhino.Geometry;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blocks
 {
@@ -11,11 +7,15 @@ namespace Blocks
     {
         public BlockDefinition BlockDefinition { get; set; }
         public Transform Transform { get; set;}
+        public Mesh CollisionMesh { get; private set; } = new Mesh();
 
         public BlockInstance(BlockDefinition blockDefinition, Transform transform)
         {
             BlockDefinition = blockDefinition;
             Transform = transform;
+
+            CollisionMesh = BlockDefinition.CollisionMesh.DuplicateMesh();
+            CollisionMesh.Transform(Transform);
         }
 
         public IEnumerable<GeometryBase> GetGeometry()

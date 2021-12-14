@@ -14,6 +14,7 @@ namespace Blocks
 
 		public IReadOnlyCollection<GeometryBase> Geometry => _geometry;
 		public int Index { get; private set; }
+		public Mesh CollisionMesh { get; private set; } = new Mesh();
 
 		public IEnumerable<Relationship> Relationships => _relationships;
 
@@ -22,11 +23,28 @@ namespace Blocks
 			_geometry.AddRange(geometry);
 			Index = index;
 			_relationships =  new HashSet<Relationship>(_comparer);
+
+			CreateCollisionMesh(-1);
 		}
 
 		public BlockDefinition(InstanceDefinition definition) : this(definition.GetObjects().Select(o => o.Geometry), definition.Index)
         {
         }
+
+		private void CreateCollisionMesh(double offset)
+		{
+			var extrusions = _geometry.Where(g => g.GetType() == typeof(Extrusion)).Select(e => (e as Extrusion).ToBrep());
+			var breps = _geometry.Where(g => g.GetType() == typeof(Brep)).Cast<Brep>();
+			
+			var tolerance = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
+
+			foreach (var brep in breps.Concat(extrusions))
+			{
+				var offsets = Brep.CreateOffsetBrep(brep, offset, false, true, tolerance, out Brep[] blends, out Brep[] walls);
+				var meshes = offsets.SelectMany(o => Mesh.CreateFromBrep(o, MeshingParameters.FastRenderMesh));
+				CollisionMesh.Append(meshes);
+			}
+		}
 
 		public void AddRelationships(IEnumerable<Relationship> relationships)
 		{

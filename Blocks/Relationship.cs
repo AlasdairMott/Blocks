@@ -1,12 +1,8 @@
-﻿using Rhino.DocObjects;
-using Rhino.Geometry;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Rhino.Geometry;
 
 namespace Blocks
 {
-	public class Relationship
+    public class Relationship
 	{
 		public BlockDefinition Definition { get; set; }
 		public Transform Transform { get; set; }

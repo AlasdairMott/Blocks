@@ -1,7 +1,6 @@
 ﻿using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Blocks.Components
@@ -93,7 +92,11 @@ namespace Blocks.Components
                 var nextRelationship = next.Next(random);
                 var nextTransform = existing.Transform * nextRelationship.Transform;
 
-                assembly.AddInstance(new BlockInstance(nextRelationship.Definition, nextTransform));
+                var instance = new BlockInstance(nextRelationship.Definition, nextTransform);
+                if (!Functions.CollisionCheck.CheckCollision(assembly, instance))
+                {
+                    assembly.AddInstance(instance);
+                }
             }
 
             return assembly;
