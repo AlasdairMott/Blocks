@@ -10,6 +10,6 @@ namespace Blocks
     public class BlockInstance
     {
         public Transform Transform { get; set;}
-        public Block Block { get; set;}
+        public BlockDefinition BlockDefinition { get; set;}
     }
 }

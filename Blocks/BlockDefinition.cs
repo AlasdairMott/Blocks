@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Blocks
 {
-	public class Block
+	public class BlockDefinition
 	{
 		private readonly List<GeometryBase> _geometry = new List<GeometryBase>();
 		private RelationshipComparer _comparer = new RelationshipComparer();
@@ -17,14 +17,14 @@ namespace Blocks
 
 		public IEnumerable<Relationship> Relationships => _relationships;
 
-		public Block(IEnumerable<GeometryBase> geometry, int index)
+		public BlockDefinition(IEnumerable<GeometryBase> geometry, int index)
 		{
 			_geometry.AddRange(geometry);
 			Index = index;
 			_relationships =  new HashSet<Relationship>(_comparer);
 		}
 
-		public Block(InstanceDefinition definition) : this(definition.GetObjects().Select(o => o.Geometry), definition.Index)
+		public BlockDefinition(InstanceDefinition definition) : this(definition.GetObjects().Select(o => o.Geometry), definition.Index)
         {
         }
 
@@ -65,6 +65,6 @@ namespace Blocks
 
 	public static class InstanceExtensions
 	{
-		public static Block ToDefinition(this InstanceDefinition instance) => new Block(instance);
+		public static BlockDefinition ToDefinition(this InstanceDefinition instance) => new BlockDefinition(instance);
 	}
 }

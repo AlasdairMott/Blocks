@@ -44,11 +44,12 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Block.cs" />
+    <Compile Include="BlockDefinition.cs" />
     <Compile Include="BlockInstance.cs" />
     <Compile Include="BlockAssembly.cs" />
-    <Compile Include="Components\BlocksComponent.cs" />
+    <Compile Include="Components\ReadBlocksComponent.cs" />
     <Compile Include="BlocksInfo.cs" />
+    <Compile Include="Components\CreateAssemblyComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

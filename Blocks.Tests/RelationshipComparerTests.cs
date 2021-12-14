@@ -28,7 +28,7 @@ namespace Blocks.Tests
 	public class TestInstanceDefinitionData : IEnumerable<object[]>
 	{
 		private readonly Dictionary<string, List<GeometryBase>> _geometries;
-		private readonly Dictionary<string, Block> _definitions;
+		private readonly Dictionary<string, BlockDefinition> _definitions;
 		private readonly Dictionary<string, Transform> _transforms;
 		private readonly Dictionary<string, Relationship> _relations;
 
@@ -38,9 +38,9 @@ namespace Blocks.Tests
 			{
 				{ "A", new List<GeometryBase>() }
 			};
-			_definitions = new Dictionary<string, Block>
+			_definitions = new Dictionary<string, BlockDefinition>
 			{
-				{ "A", new Block(_geometries["A"], 0) }
+				{ "A", new BlockDefinition(_geometries["A"], 0) }
 			};
 			_transforms = new Dictionary<string, Transform>
 			{

@@ -7,19 +7,10 @@ using System.Linq;
 
 namespace Blocks.Components
 {
-	public class BlocksComponent : GH_Component
+    public class ReadBlocksComponent : GH_Component
 	{
-		/// <summary>
-		/// Each implementation of GH_Component must provide a public 
-		/// constructor without any arguments.
-		/// Category represents the Tab in which the component will appear, 
-		/// Subcategory the panel. If you use non-existing tab or panel names, 
-		/// new tabs/panels will automatically be created.
-		/// </summary>
-		public BlocksComponent()
-		  : base("Blocks", "Nickname",
-			  "Description",
-			  "Blocks", "Subcategory")
+		public ReadBlocksComponent()
+		  : base("Read Blocks", "Nickname","Description", "Blocks", "Subcategory")
 		{
 		}
 
@@ -30,11 +21,6 @@ namespace Blocks.Components
 		{
 			pManager.AddGenericParameter("Blocks", "B", "Blocks", GH_ParamAccess.list);
 			pManager.AddNumberParameter("Distance threshold", "D", "Distance threshold", GH_ParamAccess.item);
-			pManager.AddIntegerParameter("Iterations", "I", "Iterations for markov", GH_ParamAccess.item);
-			pManager.AddIntegerParameter("Seed", "S", "Seed for markov", GH_ParamAccess.item);
-
-			pManager[2].Optional = true;
-			pManager[3].Optional = true;
 		}
 
 		/// <summary>
@@ -42,10 +28,7 @@ namespace Blocks.Components
 		/// </summary>
 		protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
 		{
-			pManager.AddTextParameter("Block name", "N", "Block name", GH_ParamAccess.list);
-			pManager.AddTransformParameter("Block xform", "P", "Block xform", GH_ParamAccess.list);
-			pManager.AddGeometryParameter("Geometry", "G", "Geometry", GH_ParamAccess.list);
-			pManager.AddTransformParameter("Placement xforms", "T", "Placement xforms", GH_ParamAccess.list);
+			pManager.AddGenericParameter("Block Definitions", "B-D", "Block definitions", GH_ParamAccess.list);
 		}
 
 		/// <summary>
@@ -66,19 +49,9 @@ namespace Blocks.Components
 			var distanceThreshold = 1.0;
 			if (!DA.GetData(1, ref distanceThreshold)) { return; }
 
-			var iterations = 10;
-			DA.GetData(2, ref iterations);
-
-			var seed = 0;
-			DA.GetData(3, ref seed);
-
 			var blocks = LearnRelationships(instances, distanceThreshold);
-			var placements = PlaceGeometry(blocks, seed, iterations);
 
-			DA.SetDataList(0, instances.Select(b => b.InstanceDefinition.Name));
-			DA.SetDataList(1, instances.Select(b => b.InstanceXform));
-			DA.SetDataList(2, placements.Select(p => p.Geometry));
-			DA.SetDataList(3, placements.Select(p => p.Transform));
+			DA.SetDataList(0, blocks);
 		}
 
 		/// <summary>
@@ -94,23 +67,23 @@ namespace Blocks.Components
 		/// </summary>
 		public override Guid ComponentGuid => new Guid("8bf660e6-1e47-4a69-a750-1c66529d8fc9");
 
-		private Dictionary<InstanceDefinition, Block> LearnRelationships(IEnumerable<InstanceObject> instances, double distanceThreshold)
+		private IEnumerable<BlockDefinition> LearnRelationships(IEnumerable<InstanceObject> instances, double distanceThreshold)
         {
 			//need to make a tranform comparer
 			var comparer = new RelationshipComparer();
-			var blocks = new Dictionary<InstanceDefinition, Block>();
+			var blocks = new Dictionary<InstanceDefinition, BlockDefinition>();
 
 			//for each block, read it's closest neighbours, build a list of connections and transforms
 			foreach (var instance in instances)
 			{
-				Block block;
+				BlockDefinition block;
 				if (blocks.ContainsKey(instance.InstanceDefinition))
 				{
 					block = blocks[instance.InstanceDefinition];
 				}
 				else
 				{
-					block = new Block(instance.InstanceDefinition);
+					block = new BlockDefinition(instance.InstanceDefinition);
 					blocks.Add(instance.InstanceDefinition, block);
 				}
 
@@ -151,46 +124,7 @@ namespace Blocks.Components
 				block.Value.NormalizeRelationships();
 			}
 
-			return blocks;
+			return blocks.Select(b => b.Value);
 		}
-
-		private IEnumerable<(Transform Transform, GeometryBase Geometry)> PlaceGeometry(Dictionary<InstanceDefinition, Block> blocks, int seed, int iterations)
-        {
-			var placements = new List<KeyValuePair<Block, Transform>>();
-			var random = new Random(seed);
-
-			var item = blocks.ElementAt(random.Next(0, blocks.Count()));
-			placements.Add(new KeyValuePair<Block, Transform>(item.Value, Transform.Identity));
-
-			for (var i = 0; i < iterations; i++)
-			{
-				var index = random.Next(0, placements.Count());
-				var existing = placements.ElementAt(index);
-
-				var next = blocks.First(b => b.Key.Index == existing.Key.Index).Value;
-				if (next.Relationships.Count() == 0) { continue; }
-
-				var nextRelationship = next.Next(random);
-				var nextTransform = existing.Value * nextRelationship.Transform;
-
-				placements.Add(new KeyValuePair<Block, Transform>(nextRelationship.Definition, nextTransform));
-			}
-
-			var geometries = new List<GeometryBase>();
-			foreach (var placement in placements)
-			{
-				var geometry = placement.Key.Geometry;
-				foreach (var g in geometry)
-				{
-					var dup = g.Duplicate();
-					dup.Transform(placement.Value);
-					geometries.Add(dup);
-				}
-			}
-
-			return placements.Select(p => p.Value).Zip(geometries, (Transform, Geometry) => (Transform, Geometry));
-		}
-
-			 
 	}
 }
