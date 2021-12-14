@@ -47,6 +47,7 @@
     <Compile Include="BlockDefinition.cs" />
     <Compile Include="BlockInstance.cs" />
     <Compile Include="BlockAssembly.cs" />
+    <Compile Include="BlockPool.cs" />
     <Compile Include="Components\ReadBlocksComponent.cs" />
     <Compile Include="BlocksInfo.cs" />
     <Compile Include="Components\CreateAssemblyComponent.cs" />

@@ -31,6 +31,7 @@ namespace Blocks.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
+            pManager.AddGenericParameter("Block Instance", "B-I", "Block instance", GH_ParamAccess.list);
             pManager.AddGeometryParameter("Geometry", "G", "Geometry", GH_ParamAccess.list);
             pManager.AddTransformParameter("Placement xforms", "T", "Placement xforms", GH_ParamAccess.list);
         }
@@ -43,7 +44,8 @@ namespace Blocks.Components
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             var blockDefinitions = new List<BlockDefinition>();
-            DA.GetDataList(0, blockDefinitions);
+            if (!DA.GetDataList(0, blockDefinitions)) { return; };
+            if (blockDefinitions.Any(b => b == null) || !blockDefinitions.Any()) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Invalid/Empty block definitions"); return; }
 
             var iterations = 10;
             DA.GetData(1, ref iterations);
@@ -51,10 +53,11 @@ namespace Blocks.Components
             var seed = 0;
             DA.GetData(2, ref seed);
 
-            var placements = PlaceGeometry(blockDefinitions, seed, iterations);
+            var assembly = PlaceGeometry(blockDefinitions, seed, iterations);
 
-            DA.SetDataList(0, placements.Select(p => p.Geometry));
-            DA.SetDataList(1, placements.Select(p => p.Transform));
+            DA.SetDataList(0, assembly.BlockInstances);
+            DA.SetDataList(1, assembly.GetGeometry());
+            DA.SetDataList(2, assembly.BlockInstances.Select(b => b.Transform));
         }
 
         /// <summary>
@@ -71,41 +74,30 @@ namespace Blocks.Components
         public override Guid ComponentGuid => new Guid("6943A647-4A70-42F5-ABC9-8D3A7FCB4723");
 
 
-        private IEnumerable<(Transform Transform, GeometryBase Geometry)> PlaceGeometry(IEnumerable<BlockDefinition> blocks, int seed, int iterations)
+        private BlockAssembly PlaceGeometry(IEnumerable<BlockDefinition> blocks, int seed, int iterations)
         {
-            var placements = new List<KeyValuePair<BlockDefinition, Transform>>();
+            var assembly = new BlockAssembly();
+
             var random = new Random(seed);
 
             var item = blocks.ElementAt(random.Next(0, blocks.Count()));
-            placements.Add(new KeyValuePair<BlockDefinition, Transform>(item, Transform.Identity));
+            assembly.AddInstance(new BlockInstance(item, Transform.Identity));
 
             for (var i = 0; i < iterations; i++)
             {
-                var index = random.Next(0, placements.Count());
-                var existing = placements.ElementAt(index);
+                var index = random.Next(0, assembly.Size);
+                var existing = assembly.BlockInstances.ElementAt(index);
 
-                var next = blocks.First(b => b.Index == existing.Key.Index);
+                var next = blocks.First(b => b.Index == existing.BlockDefinition.Index);
                 if (next.Relationships.Count() == 0) { continue; }
 
                 var nextRelationship = next.Next(random);
-                var nextTransform = existing.Value * nextRelationship.Transform;
+                var nextTransform = existing.Transform * nextRelationship.Transform;
 
-                placements.Add(new KeyValuePair<BlockDefinition, Transform>(nextRelationship.Definition, nextTransform));
+                assembly.AddInstance(new BlockInstance(nextRelationship.Definition, nextTransform));
             }
 
-            var geometries = new List<GeometryBase>();
-            foreach (var placement in placements)
-            {
-                var geometry = placement.Key.Geometry;
-                foreach (var g in geometry)
-                {
-                    var dup = g.Duplicate();
-                    dup.Transform(placement.Value);
-                    geometries.Add(dup);
-                }
-            }
-
-            return placements.Select(p => p.Value).Zip(geometries, (Transform, Geometry) => (Transform, Geometry));
+            return assembly;
         }
     }
 }

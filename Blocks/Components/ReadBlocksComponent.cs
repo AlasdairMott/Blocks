@@ -44,7 +44,7 @@ namespace Blocks.Components
 			
 			var doc = Rhino.RhinoDoc.ActiveDoc;
 			var instances = instanceIds.Select(id => doc.Objects.FindId(id)).Cast<InstanceObject>();
-			if (instances.Count() == 0) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No instances found"); return; }
+			if (instances.Any(i => i == null)) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No instances found"); return; }
 
 			var distanceThreshold = 1.0;
 			if (!DA.GetData(1, ref distanceThreshold)) { return; }
