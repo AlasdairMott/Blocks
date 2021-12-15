@@ -33,8 +33,8 @@ namespace Blocks
 
 		private void CreateCollisionMesh(double offset)
 		{
-			var extrusions = _geometry.Where(g => g.GetType() == typeof(Extrusion)).Select(e => (e as Extrusion).ToBrep());
-			var breps = _geometry.Where(g => g.GetType() == typeof(Brep)).Cast<Brep>();
+			var extrusions = _geometry.Where(g => g is Extrusion).Select(e => (e as Extrusion).ToBrep());
+			var breps = _geometry.Where(g => g is Brep).Cast<Brep>();
 			
 			var tolerance = Rhino.RhinoDoc.ActiveDoc.ModelAbsoluteTolerance;
 
