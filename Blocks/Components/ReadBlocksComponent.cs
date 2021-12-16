@@ -89,8 +89,9 @@ namespace Blocks.Components
 
 				foreach (var other in instances)
 				{
-					if (other.InsertionPoint.DistanceTo(instance.InsertionPoint) > distanceThreshold) { continue; }
 					if (other.Id == instance.Id) { continue; }
+					if (other.InsertionPoint.DistanceTo(instance.InsertionPoint) > distanceThreshold) { continue; }
+					if (!Functions.CollisionCheck.CheckCollision(instance, other)) { continue; }
 
 					var xform1 = instance.InstanceXform;
 					var xform2 = other.InstanceXform;
