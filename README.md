@@ -24,7 +24,19 @@ To start, the algorithm will choose a block at random from the pool of available
 
 ## Running Blocks on PC
 
-A copy of [Rhino 3d](https://www.rhino3d.com/) is required. A free trial version is available. An [example](https://github.com/AlasdairMott/Blocks/tree/develop/examples) file is provided.
+A copy of [Rhino 3d](https://www.rhino3d.com/) is required. A free trial version is available. An [example](https://github.com/AlasdairMott/Blocks/tree/develop/examples) file is provided. The main functions are called from the GH_Components `ReadBlocksComponent.cs` and `GenerateAssemblyComponent.cs`:
+
+**Reading existing objects:**
+```
+var reader = new ReadBlockAssembly();
+var pool = reader.Read(instances, distanceThreshold);
+```
+
+**Generating a new assembly:**
+```
+var generator = new GenerateBlockAssembly(seed);
+var assembly = generator.Generate(pool, obstacles, steps);
+```
 
 ## License
 
