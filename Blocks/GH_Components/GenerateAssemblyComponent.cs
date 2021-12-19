@@ -63,7 +63,7 @@ namespace Blocks.Components
             DA.GetData(3, ref seed);
 
             var generator = new GenerateBlockAssembly(seed);
-            var assembly = generator.PlaceGeometry(pool, obstacles, steps);
+            var assembly = generator.Generate(pool, obstacles, steps);
 
             DA.SetDataList(0, assembly.BlockInstances);
             DA.SetDataList(1, assembly.GetGeometry());

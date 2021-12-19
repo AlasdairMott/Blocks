@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace Blocks.Objects
 {
+    /// <summary>
+    /// The parent definition for an instance; defines the children BlockInstances. Its geometry is in local coordinates.
+    /// </summary>
 	public class BlockDefinition
 	{
 		private readonly List<GeometryBase> _geometry = new List<GeometryBase>();
@@ -61,9 +64,15 @@ namespace Blocks.Objects
 			return _relationships.FirstOrDefault(r => _comparer.Equals(r, relationship));
 		}
 
-		public Relationship Next(Random random)
+        /// <summary>
+        /// Choose a Relationship at random from the collection of relationships.
+        /// </summary>
+        /// <param name="random">Random number generator to use.</param>
+        /// <returns>A Relationship.</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown if there are no relationships in this BlockDefinition.</exception>
+        public Relationship Next(Random random)
 		{
-			if (!_relationships.Any()) { throw new Exception("No relationships to choose from"); }
+			if (!_relationships.Any()) { throw new IndexOutOfRangeException("No relationships to choose from"); }
 			var value = random.NextDouble();
 			var shuffled = _relationships.OrderBy(r => random.NextDouble());
 			var result = shuffled.FirstOrDefault(r => r.Strength > value);
@@ -71,6 +80,10 @@ namespace Blocks.Objects
 			return shuffled.First();
 		}
 
+        /// <summary>
+        /// Normalize the strengths of the relationships in this definition so that they sum to 1.
+        /// </summary>
+        /// <remarks>Call this after all relationships have been added.</remarks>
 		public void NormalizeRelationships()
 		{
 			var mass = _relationships.Sum(r => r.Strength);
