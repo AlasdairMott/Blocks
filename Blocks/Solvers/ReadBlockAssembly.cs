@@ -6,13 +6,22 @@ using System.Linq;
 
 namespace Blocks.Solvers
 {
+    /// <summary>
+    /// Read a block assembly from a Rhino file.
+    /// </summary>
     public class ReadBlockAssembly
     {
         public ReadBlockAssembly()
         {
         }
 
-		public BlockPool LearnRelationships(List<InstanceObject> instances, double distanceThreshold)
+        /// <summary>
+        /// Read a InstanceObject in a Rhino file as a BlockPool.
+        /// </summary>
+        /// <param name="instances">InstanceObjects to read.</param>
+        /// <param name="distanceThreshold">The distance threshold to consider InstanceObjects neighbours.</param>
+        /// <returns>Converts the InstanceObjects into BlockDefinitions and bundles them in a BlockPool.</returns>
+		public BlockPool Read(List<InstanceObject> instances, double distanceThreshold)
 		{
 			var comparer = new RelationshipComparer();
 			var blocks = new Dictionary<InstanceDefinition, BlockDefinition>();
@@ -81,7 +90,8 @@ namespace Blocks.Solvers
         {
 			var key = new Relationship(instance.InstanceDefinition.ToDefinition(), transform);
 
-			if (blockDefinition.Relationships.Contains(key))
+            //If the relationship already exists in the blockDefinition's relationships, increase its strength.
+            if (blockDefinition.Relationships.Contains(key))
 			{
 				var existing = blockDefinition.FindRelationship(key);
 				existing.Strength += 1;

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Blocks.Objects
 {
+    /// <summary>
+    /// A block definition placed in world coordinates. Part of a BlockAssembly.
+    /// </summary>
     public class BlockInstance
     {
         public BlockDefinition BlockDefinition { get; set; }
