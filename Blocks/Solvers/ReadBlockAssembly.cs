@@ -11,18 +11,22 @@ namespace Blocks.Solvers
         {
         }
 
-		public BlockPool LearnRelationships(IEnumerable<InstanceObject> instances, double distanceThreshold)
+		public BlockPool LearnRelationships(List<InstanceObject> instances, double distanceThreshold)
 		{
 			var comparer = new RelationshipComparer();
 			var blocks = new Dictionary<InstanceDefinition, BlockDefinition>();
 
 			//for each block, read it's closest neighbours, build a list of connections and transforms
-			foreach (var instance in instances)
+			for (var i = 0; i < instances.Count; i++)
 			{
-				var block = AddNewBlock(instance, blocks);
+				var instance = instances[i];
+				var blockA = AddNewBlock(instance, blocks);
 
-				foreach (var other in instances)
+				for (var j = i + 1; j < instances.Count; j++)
 				{
+					var other = instances[j];
+					var blockB = AddNewBlock(other, blocks);
+
 					if (other.Id == instance.Id ||
 						other.InsertionPoint.DistanceTo(instance.InsertionPoint) > distanceThreshold ||
 						!Functions.CollisionCheck.CheckCollision(instance, other))
@@ -32,7 +36,8 @@ namespace Blocks.Solvers
 
 					var transform = CalculateRelativeTransform(instance, other);
 
-					AddNewRelationship(other, transform.Transform, block);
+					AddNewRelationship(other, transform.Transform, blockA);
+					AddNewRelationship(instance, transform.Inverse, blockB);
 				}
 			}
 
@@ -71,7 +76,10 @@ namespace Blocks.Solvers
 
 			xform1.TryGetInverse(out var xformInverse);
 
-			return (xformInverse * xform2, xform1 * xform2);
+			var transform = xformInverse * xform2;
+			transform.TryGetInverse(out var inverse);
+
+			return (transform, inverse);
 		}
 
 		private void AddNewRelationship(InstanceObject instance, Transform transform, BlockDefinition blockDefinition)

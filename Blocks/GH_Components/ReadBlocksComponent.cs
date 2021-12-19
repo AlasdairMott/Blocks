@@ -51,7 +51,7 @@ namespace Blocks.Components
 			if (!DA.GetData(1, ref distanceThreshold)) { return; }
 
 			var reader = new ReadBlockAssembly();
-			var pool = reader.LearnRelationships(instances, distanceThreshold);
+			var pool = reader.LearnRelationships(instances.ToList(), distanceThreshold);
 
 			DA.SetData(0, pool);
 		}
