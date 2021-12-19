@@ -12,9 +12,15 @@ In the generative stage the algorithm will create a *block assembly* that differ
 
 To start, the algorithm will choose a block at random from the pool of available blocks. Based on the learned relationships it will choose a canditate block. If the canditate does not collide with the existing geometry it will be added to the generated assembly. Repeat this step as required.
 
-![Example Assembly and Generative Stage](documentation/example-1.gif)
+<div align="center">
 
-![](documentation/example-2.gif)
+<img src="documentation/example-1.gif" width=50%/>
+<figcaption>Example assembly and generative stage.</figcaption>
+
+<img src="documentation/example-2.gif" width=50%/>
+<figcaption>Iterating generative block assemblies.</figcaption>
+
+</div>
 
 ## Running Blocks on PC
 
