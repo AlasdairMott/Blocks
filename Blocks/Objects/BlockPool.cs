@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Blocks
+namespace Blocks.Objects
 {
     public class BlockPool : IEnumerable<BlockDefinition>
     {

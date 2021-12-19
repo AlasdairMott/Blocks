@@ -4,6 +4,7 @@ using Rhino.Geometry;
 using Rhino.DocObjects;
 using System.Collections.Generic;
 using System.Collections;
+using Blocks.Objects;
 
 namespace Blocks.Tests
 {

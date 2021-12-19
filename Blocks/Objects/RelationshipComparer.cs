@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Blocks
+namespace Blocks.Objects
 {
     public class RelationshipComparer : IEqualityComparer<Relationship>
 	{

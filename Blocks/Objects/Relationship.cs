@@ -1,6 +1,6 @@
 ﻿using Rhino.Geometry;
 
-namespace Blocks
+namespace Blocks.Objects
 {
     public class Relationship
 	{

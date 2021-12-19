@@ -1,7 +1,7 @@
 ﻿using Rhino.Geometry;
 using System.Collections.Generic;
 
-namespace Blocks
+namespace Blocks.Objects
 {
     public class BlockInstance
     {
