@@ -10,7 +10,7 @@ Provided with an example model that uses [3d instances](https://en.wikipedia.org
 
 ### Generating
 
-In the generative stage the algorithm will create a *block assembly* that differs from, but retains features, from the example assembly.
+In the generative stage the algorithm will generate a new *block assembly* that retains features from the example assembly.
 
 To start, the algorithm will choose a block at random from the pool of available blocks. Based on the learned relationships it will choose a canditate block. If the canditate does not collide with the existing geometry it will be added to the generated assembly. Repeat this step as required.
 
