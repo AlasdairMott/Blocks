@@ -68,12 +68,6 @@ namespace Blocks.Solvers
 			var xform1 = instance.InstanceXform;
 			var xform2 = other.InstanceXform;
 
-			var plane1 = Plane.WorldXY;
-			plane1.Transform(xform1);
-
-			var plane2 = Plane.WorldXY;
-			plane2.Transform(xform2);
-
 			xform1.TryGetInverse(out var xformInverse);
 
 			var transform = xformInverse * xform2;
