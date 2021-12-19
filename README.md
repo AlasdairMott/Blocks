@@ -1,5 +1,7 @@
 # Blocks
- 
+
+[![Build Action](https://github.com/AlasdairMott/Blocks/actions/workflows/grasshopper-build.yml/badge.svg)](https://github.com/AlasdairMott/Blocks/actions/workflows/grasshopper-build.yml) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 Markovian generative 3d modelling for Grasshopper.
 
 ### Reading
