@@ -14,11 +14,9 @@ To start, the algorithm will choose a block at random from the pool of available
 
 <div align="center">
 
-<img src="documentation/example-1.gif" width=50%/>
-<figcaption>Example assembly and generative stage.</figcaption>
+<img src="documentation/example-1.gif" width=40%/>
 
-<img src="documentation/example-2.gif" width=50%/>
-<figcaption>Iterating generative block assemblies.</figcaption>
+<img src="documentation/example-2.gif" width=40%/>
 
 </div>
 
