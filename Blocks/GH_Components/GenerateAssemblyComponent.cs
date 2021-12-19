@@ -1,4 +1,5 @@
-﻿using Grasshopper.Kernel;
+﻿using Blocks.Solvers;
+using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
@@ -6,9 +7,9 @@ using System.Linq;
 
 namespace Blocks.Components
 {
-    public class CreateAssemblyComponent : GH_Component
+    public class GenerateAssemblyComponent : GH_Component
     {
-        public CreateAssemblyComponent()
+        public GenerateAssemblyComponent()
           : base("Create Assembly", "Nickname", "Description", "Blocks", "Subcategory")
         {
         }
@@ -60,7 +61,8 @@ namespace Blocks.Components
             var seed = 0;
             DA.GetData(3, ref seed);
 
-            var assembly = PlaceGeometry(pool, obstacles, seed, iterations);
+            var generator = new GenerateBlockAssembly();
+            var assembly = generator.PlaceGeometry(pool, obstacles, seed, iterations);
 
             DA.SetDataList(0, assembly.BlockInstances);
             DA.SetDataList(1, assembly.GetGeometry());
@@ -79,37 +81,5 @@ namespace Blocks.Components
         /// that use the old ID will partially fail during loading.
         /// </summary>
         public override Guid ComponentGuid => new Guid("6943A647-4A70-42F5-ABC9-8D3A7FCB4723");
-
-
-        private BlockAssembly PlaceGeometry(BlockPool pool, Mesh obstacles,int seed, int iterations)
-        {
-            var assembly = new BlockAssembly();
-
-            var random = new Random(seed);
-
-            var item = pool.ElementAt(random.Next(0, pool.Count()));
-            assembly.AddInstance(new BlockInstance(item, Transform.Identity));
-
-            for (var i = 0; i < iterations; i++)
-            {
-                var index = random.Next(0, assembly.Size);
-                var existing = assembly.BlockInstances.ElementAt(index);
-
-                var next = pool.First(b => b.Index == existing.BlockDefinition.Index);
-                if (next.Relationships.Count() == 0) { continue; }
-
-                var nextRelationship = next.Next(random);
-                var nextTransform = existing.Transform * nextRelationship.Transform;
-
-                var instance = new BlockInstance(nextRelationship.Definition, nextTransform);
-                if (!Functions.CollisionCheck.CheckCollision(assembly, instance) &&
-                    !Functions.CollisionCheck.CheckCollision(obstacles, instance.CollisionMesh))
-                {
-                    assembly.AddInstance(instance);
-                }
-            }
-
-            return assembly;
-        }
     }
 }
