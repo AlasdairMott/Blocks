@@ -21,7 +21,7 @@ namespace Blocks.Components
         {
             pManager.AddGenericParameter("Block Pool", "P", "Block definitions to create the assembly from", GH_ParamAccess.item);
             pManager.AddMeshParameter("Obstacles", "O", "Obstacles", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Iterations", "I", "Iterations for markov", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Steps", "S", "Steps for markov", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Seed", "S", "Seed for markov", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
@@ -55,14 +55,14 @@ namespace Blocks.Components
             var obstacles = new Mesh();
             obstacles.Append(obstacleMeshes.Where(o => o!= null));
 
-            var iterations = 10;
-            DA.GetData(2, ref iterations);
+            var steps = 10;
+            DA.GetData(2, ref steps);
 
             var seed = 0;
             DA.GetData(3, ref seed);
 
-            var generator = new GenerateBlockAssembly();
-            var assembly = generator.PlaceGeometry(pool, obstacles, seed, iterations);
+            var generator = new GenerateBlockAssembly(seed);
+            var assembly = generator.PlaceGeometry(pool, obstacles, steps);
 
             DA.SetDataList(0, assembly.BlockInstances);
             DA.SetDataList(1, assembly.GetGeometry());
