@@ -8,10 +8,10 @@ using System.Linq;
 
 namespace Blocks.Components
 {
-    public class ReadBlocksComponent : GH_Component
+    public class ReadTransitionsComponent : GH_Component
 	{
-		public ReadBlocksComponent()
-		  : base("Read Blocks", "Nickname","Description", "Blocks", "Subcategory")
+		public ReadTransitionsComponent()
+		  : base("Read Transitions", "Nickname","Description", "Blocks", "Subcategory")
 		{
 		}
 

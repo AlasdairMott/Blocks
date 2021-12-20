@@ -10,16 +10,22 @@ namespace Blocks.Objects
     /// </summary>
     public class Transitions : IEnumerable<Transition>
     {
-        private readonly List<Transition> _transitions = new List<Transition>();
+        private readonly HashSet<Transition> _transitions;
         private RelationshipComparer _comparer = new RelationshipComparer();
         public Transitions()
         {
+            _transitions = new HashSet<Transition>(_comparer);
+        }
+
+        public Transitions(IEnumerable<Transition> transitions):this()
+        {
+            _transitions.UnionWith(transitions);
         }
 
         public Transition this[int index]
         {
-            get { return _transitions[index]; }
-            set { _transitions.Insert(index, value); }
+            get { return _transitions.ElementAt(index); }
+            set { _transitions.Add(value); }
         }
 
         public IEnumerator<Transition> GetEnumerator() => _transitions.GetEnumerator();
@@ -28,22 +34,20 @@ namespace Blocks.Objects
 
         public Transition GetRandom(Random random)
         {
-            if (!_transitions.Any()) { throw new IndexOutOfRangeException("No tramsitions to choose from"); }
+            if (!_transitions.Any()) { throw new IndexOutOfRangeException("No transitions to choose from"); }
             var value = random.NextDouble();
             var shuffled = _transitions.OrderBy(t => random.NextDouble());
             var result = shuffled.FirstOrDefault(t => t.Probability > value);
-            if (result != null) { return result; }
+            //if (result != null) { return result; }
             return shuffled.First();
         }
 
         public Transitions FindFromBlockDefinition(BlockDefinition definition)
         {
-            var matching = _transitions.Where(t =>
-                t.From.BlockDefinition == definition ||
-                t.To.BlockDefinition == definition);
+            var transitions_A_to_B = _transitions.Where(t => t.From.BlockDefinition.Index == definition.Index);
+            var transitions_B_to_A = _transitions.Where(t => t.To.BlockDefinition.Index == definition.Index);
 
-            return matching.Select(m => 
-                m.From.BlockDefinition == definition ? m : m.Invert()) as Transitions;
+            return transitions_A_to_B.Concat(transitions_B_to_A.Select(t => t.Invert())).ToTransitions();
         }
 
         public Transition Find(Transition transition)
@@ -51,7 +55,17 @@ namespace Blocks.Objects
             return _transitions.FirstOrDefault(r => _comparer.Equals(r, transition));
         }
 
-        public void Add(Transition transition) => _transitions.Add(transition);
+        public void Add(Transition transition) {
+            if (_transitions.Contains(transition))
+            {
+                var existing = Find(transition);
+                existing.Probability += 1;
+            }
+            else
+            {
+                _transitions.Add(transition);
+            }
+        }
 
         public void NormalizeRelationships()
         {
@@ -61,6 +75,11 @@ namespace Blocks.Objects
                 transition.Probability /= mass;
             }
         }
+    }
+
+    public static class TransitionExtensions
+    {
+        public static Transitions ToTransitions(this IEnumerable<Transition> transitions) => new Transitions(transitions);
     }
 
     public class Transition : Relationship

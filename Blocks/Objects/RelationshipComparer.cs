@@ -11,12 +11,17 @@ namespace Blocks.Objects
 	{
 		public bool Equals(Relationship x, Relationship y)
 		{
-			if (GetHashCode(x) != GetHashCode(y) ||
-                x.From.BlockDefinition.Index != y.From.BlockDefinition.Index ||
-                x.To.BlockDefinition.Index != y.To.BlockDefinition.Index) 
-			{ return false; }
+			if (GetHashCode(x) != GetHashCode(y)) { return false; }
 
-			return CompareTransform(x.Transform, y.Transform, 0.1);
+            var blocksEqual = (x.From.BlockDefinition.Index == y.From.BlockDefinition.Index &&
+                               x.To.BlockDefinition.Index == y.To.BlockDefinition.Index) ||
+                              (x.From.BlockDefinition.Index == y.To.BlockDefinition.Index &&
+                               x.To.BlockDefinition.Index == y.From.BlockDefinition.Index);
+
+            if (!blocksEqual) { return false; }
+			
+			return CompareTransform(x.Transform, y.Transform, 0.1) ||
+                   CompareTransform(x.Transform, y.Inverse, 0.1);
 		}
 
 		public int GetHashCode(Relationship relationship)
@@ -24,10 +29,8 @@ namespace Blocks.Objects
 			unchecked
 			{
 				var hash = 1;
-				hash *= (int)Math.Round(TransformMass(relationship.Transform) * 13);
-				hash *= 
-                    3 * relationship.From.BlockDefinition.Index + 
-                    3 * relationship.To.BlockDefinition.Index;
+				hash += 13 * (int)Math.Round(TransformMass(relationship.Transform) + TransformMass(relationship.Inverse));
+				hash += 17 * (relationship.From.BlockDefinition.Index + relationship.To.BlockDefinition.Index);
 				return hash;
 			}
 		}

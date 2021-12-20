@@ -42,29 +42,14 @@ namespace Blocks.Solvers
 						continue;
                     }
 
-                    AddNewTransition(instance, other, transitions);
-				}
+                    var transition = new Transition(instance.ToInstance(), other.ToInstance());
+                    transitions.Add(transition);
+                }
 			}
 
             transitions.NormalizeRelationships();
 
             return transitions;
-		}
-
-		private void AddNewTransition(InstanceObject from, InstanceObject to, Transitions transitions)
-        {
-			var key = new Transition(from.ToInstance(), to.ToInstance());
-
-            //If the relationship already exists in the transitions relationships, increase its probability.
-            if (transitions.Contains(key))
-			{
-				var existing = transitions.Find(key);
-                existing.Probability += 1;
-			}
-			else
-			{
-                transitions.Add(key);
-			}
 		}
 	}
 }
