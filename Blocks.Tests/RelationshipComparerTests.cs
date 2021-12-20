@@ -31,7 +31,8 @@ namespace Blocks.Tests
 		private readonly Dictionary<string, List<GeometryBase>> _geometries;
 		private readonly Dictionary<string, BlockDefinition> _definitions;
 		private readonly Dictionary<string, Transform> _transforms;
-		private readonly Dictionary<string, Relationship> _relations;
+		private readonly Dictionary<string, BlockInstance> _instances;
+		private readonly Dictionary<string, Relationship> _relationships;
 
 		public TestInstanceDefinitionData()
         {
@@ -49,17 +50,24 @@ namespace Blocks.Tests
 				{"ChangePlane1", Transform.PlaneToPlane(Plane.WorldXY, Plane.WorldZX) }
 
 			};
-			_relations = new Dictionary<string, Relationship>
+			_instances = new Dictionary<string, BlockInstance>
 			{
-				{ "A", new Relationship(_definitions["A"], _transforms["Identity"]) },
-				{ "B", new Relationship(_definitions["A"], _transforms["ChangePlane1"]) }
+				{"A", new BlockInstance(_definitions["A"], _transforms["Identity"])},
+				{"B", new BlockInstance(_definitions["A"], _transforms["ChangePlane1"])},
+			};
+			_relationships = new Dictionary<string, Relationship>
+			{
+				{ "A-A", new Relationship(_instances["A"], _instances["A"]) },
+				{ "A-B", new Relationship(_instances["A"], _instances["B"]) },
+				{ "B-A", new Relationship(_instances["A"], _instances["B"]) },
+				{ "B-B", new Relationship(_instances["A"], _instances["B"]) }
 			};
 		}
 		public IEnumerator<object[]> GetEnumerator()
 		{
-			yield return new object[] { _relations["A"], _relations["A"], true };
-			yield return new object[] { _relations["B"], _relations["B"], true };
-			yield return new object[] { _relations["A"], _relations["B"], false };
+			yield return new object[] { _relationships["A-A"], _relationships["A-A"], true };
+			yield return new object[] { _relationships["A-B"], _relationships["B-A"], true };
+			yield return new object[] { _relationships["B-A"], _relationships["A-A"], false };
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

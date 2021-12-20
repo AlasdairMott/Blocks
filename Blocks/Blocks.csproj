@@ -48,7 +48,7 @@
     <Compile Include="Objects\BlockDefinition.cs" />
     <Compile Include="Objects\BlockInstance.cs" />
     <Compile Include="Objects\BlockAssembly.cs" />
-    <Compile Include="Objects\BlockPool.cs" />
+    <Compile Include="Objects\Transitions.cs" />
     <Compile Include="GH_Components\ReadBlocksComponent.cs" />
     <Compile Include="BlocksInfo.cs" />
     <Compile Include="GH_Components\GenerateAssemblyComponent.cs" />
@@ -63,6 +63,7 @@
     <Compile Include="Objects\RelationshipComparer.cs" />
     <Compile Include="Solvers\GenerateBlockAssembly.cs" />
     <Compile Include="Solvers\ReadBlockAssembly.cs" />
+    <Compile Include="Solvers\ReadTransitions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

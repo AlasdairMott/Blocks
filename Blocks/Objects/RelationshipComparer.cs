@@ -11,8 +11,10 @@ namespace Blocks.Objects
 	{
 		public bool Equals(Relationship x, Relationship y)
 		{
-			if (GetHashCode(x) != GetHashCode(y)) { return false; }
-			if (x.Definition.Index != y.Definition.Index) { return false; }
+			if (GetHashCode(x) != GetHashCode(y) ||
+                x.From.BlockDefinition.Index != y.From.BlockDefinition.Index ||
+                x.To.BlockDefinition.Index != y.To.BlockDefinition.Index) 
+			{ return false; }
 
 			return CompareTransform(x.Transform, y.Transform, 0.1);
 		}
@@ -23,7 +25,9 @@ namespace Blocks.Objects
 			{
 				var hash = 1;
 				hash *= (int)Math.Round(TransformMass(relationship.Transform) * 13);
-				hash *= relationship.Definition.Index;
+				hash *= 
+                    3 * relationship.From.BlockDefinition.Index + 
+                    3 * relationship.To.BlockDefinition.Index;
 				return hash;
 			}
 		}
