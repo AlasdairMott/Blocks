@@ -17,19 +17,28 @@ namespace Blocks.Objects
 			From = from;
             To = to;
 
-            var transform = CalculateRelativeTransform(from, to);
-            Transform = transform.Transform;
-            Inverse = transform.Inverse;
+            var T = CalculateRelativeTransform(from.Transform, to.Transform);
+            Transform = T.Transform;
+            Inverse = T.Inverse;
         }
 
-        public static (Transform Transform, Transform Inverse) CalculateRelativeTransform(BlockInstance from, BlockInstance to)
+        public static (Transform Transform, Transform Inverse) CalculateRelativeTransform(Transform from, Transform to)
         {
-            from.Transform.TryGetInverse(out var xformInverse);
+            var plane1 = Plane.WorldXY;
+            plane1.Transform(from);
 
-            var transform = xformInverse * to.Transform;
-            transform.TryGetInverse(out var inverse);
+            var plane2 = Plane.WorldXY;
+            plane2.Transform(to);
 
-            return (transform, inverse);
+            return (Transform.PlaneToPlane(plane1, plane2), Transform.PlaneToPlane(plane2, plane1));
+
+
+            //from.TryGetInverse(out var xformInverse);
+
+            //var transform = xformInverse * to;
+            //transform.TryGetInverse(out var inverse);
+
+            //return (transform, inverse);
         }
 
         public Relationship Invert() => new Relationship(To, From);
