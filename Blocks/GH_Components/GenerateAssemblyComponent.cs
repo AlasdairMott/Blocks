@@ -1,5 +1,5 @@
-﻿using Blocks.Objects;
-using Blocks.Solvers;
+﻿using Blocks.Generators;
+using Blocks.Objects;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System;
@@ -62,7 +62,7 @@ namespace Blocks.Components
             var seed = 0;
             DA.GetData(3, ref seed);
 
-            var generator = new GenerateBlockAssembly(seed);
+            var generator = new GenerateFromTransitions(seed);
             var assembly = generator.Generate(transitions, obstacles, steps);
 
             DA.SetDataList(0, assembly.BlockInstances);

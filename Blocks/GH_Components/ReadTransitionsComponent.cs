@@ -1,7 +1,6 @@
-﻿using Blocks.Solvers;
+﻿using Blocks.Readers;
 using Grasshopper.Kernel;
 using Rhino.DocObjects;
-using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;

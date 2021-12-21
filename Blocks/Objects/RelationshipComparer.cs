@@ -13,10 +13,10 @@ namespace Blocks.Objects
 		{
 			if (GetHashCode(x) != GetHashCode(y)) { return false; }
 
-            var blocksEqual = (x.From.BlockDefinition.Index == y.From.BlockDefinition.Index &&
-                               x.To.BlockDefinition.Index == y.To.BlockDefinition.Index) ||
-                              (x.From.BlockDefinition.Index == y.To.BlockDefinition.Index &&
-                               x.To.BlockDefinition.Index == y.From.BlockDefinition.Index);
+            var blocksEqual = (x.From.Index == y.From.Index &&
+                               x.To.Index == y.To.Index) ||
+                              (x.From.Index == y.To.Index &&
+                               x.To.Index == y.From.Index);
 
             if (!blocksEqual) { return false; }
 			
@@ -30,7 +30,7 @@ namespace Blocks.Objects
 			{
 				var hash = 1;
 				hash += 13 * (int)Math.Round(TransformMass(relationship.Transform) + TransformMass(relationship.Inverse));
-				hash += 17 * (relationship.From.BlockDefinition.Index + relationship.To.BlockDefinition.Index);
+				hash += 17 * (relationship.From.Index + relationship.To.Index);
 				return hash;
 			}
 		}

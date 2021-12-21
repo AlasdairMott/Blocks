@@ -4,7 +4,7 @@ using Rhino.Geometry;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks.Solvers
+namespace Blocks.Readers
 {
     /// <summary>
     /// Read transitions from a Rhino file.
@@ -35,8 +35,7 @@ namespace Blocks.Solvers
 				{
 					var other = instances[j];
 
-					if (other.Id == instance.Id ||
-						other.InsertionPoint.DistanceTo(instance.InsertionPoint) > distanceThreshold ||
+					if (other.InsertionPoint.DistanceTo(instance.InsertionPoint) > distanceThreshold ||
 						!Functions.CollisionCheck.CheckCollision(instance, other))
                     {
 						continue;

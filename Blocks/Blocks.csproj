@@ -61,9 +61,10 @@
     </Compile>
     <Compile Include="Objects\Relationship.cs" />
     <Compile Include="Objects\RelationshipComparer.cs" />
-    <Compile Include="Solvers\GenerateBlockAssembly.cs" />
-    <Compile Include="Solvers\ReadBlockAssembly.cs" />
-    <Compile Include="Solvers\ReadTransitions.cs" />
+    <Compile Include="Generators\GenerateFromAssembly.cs" />
+    <Compile Include="Generators\GenerateFromTransitions.cs" />
+    <Compile Include="Readers\ReadBlockAssembly.cs" />
+    <Compile Include="Readers\ReadTransitions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

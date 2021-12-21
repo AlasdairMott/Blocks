@@ -3,7 +3,7 @@ using Rhino.DocObjects;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks.Solvers
+namespace Blocks.Readers
 {
     /// <summary>
     /// Read a BlockAssembly from a Rhino file.

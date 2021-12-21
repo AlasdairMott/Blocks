@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rhino.Geometry;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,14 +39,14 @@ namespace Blocks.Objects
             var value = random.NextDouble();
             var shuffled = _transitions.OrderBy(t => random.NextDouble());
             var result = shuffled.FirstOrDefault(t => t.Probability > value);
-            //if (result != null) { return result; }
+            if (result != null) { return result; }
             return shuffled.First();
         }
 
         public Transitions FindFromBlockDefinition(BlockDefinition definition)
         {
-            var transitions_A_to_B = _transitions.Where(t => t.From.BlockDefinition.Index == definition.Index);
-            var transitions_B_to_A = _transitions.Where(t => t.To.BlockDefinition.Index == definition.Index);
+            var transitions_A_to_B = _transitions.Where(t => t.From.Index == definition.Index);
+            var transitions_B_to_A = _transitions.Where(t => t.To.Index == definition.Index);
 
             return transitions_A_to_B.Concat(transitions_B_to_A.Select(t => t.Invert())).ToTransitions();
         }
@@ -86,9 +87,13 @@ namespace Blocks.Objects
     {
         public Transition(BlockInstance from, BlockInstance to) : base(from, to)
         {
+            
         }
+        public Transition(BlockDefinition from, BlockDefinition to, Transform transform, Transform inverse) : base(from, to, transform, inverse) { }
+        public Transition(Relationship relationship) : this(relationship.From, relationship.To, relationship.Transform, relationship.Inverse) { }
 
         public double Probability { get; set; } = 1.0;
-        public new Transition Invert() => new Transition(To, From);
+        public new Transition Invert() => new Transition(To, From, Inverse, Transform);
+
     }
 }

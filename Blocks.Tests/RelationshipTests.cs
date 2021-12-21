@@ -1,10 +1,6 @@
-﻿using System;
-using Xunit;
+﻿using Blocks.Objects;
 using Rhino.Geometry;
-using Rhino.DocObjects;
-using System.Collections.Generic;
-using System.Collections;
-using Blocks.Objects;
+using Xunit;
 using Xunit.Abstractions;
 
 namespace Blocks.Tests
@@ -43,10 +39,25 @@ namespace Blocks.Tests
             Assert.InRange(point2.DistanceTo(plane1.Origin), 0, tolerance);
         }
 
-        [Fact(Skip = "Not Implemented")]
+        [Fact]
         public void InvertRelationship_ItInverts()
         {
+            //Arrange
+            var transition = Stubs.Relationships["A1-B1"];
+            var point1 = Point3d.Origin;
+            var point2 = Point3d.Origin;
+            var point3 = Point3d.Origin;
 
+            //Act
+            var inverse = transition.Invert();
+            point1.Transform(transition.Transform * inverse.Transform);
+            point2.Transform(transition.Inverse);
+            point3.Transform(inverse.Transform);
+
+            //Assert
+            var tolerance = 0.01;
+            Assert.InRange(point1.DistanceTo(Point3d.Origin), 0, tolerance);
+            Assert.InRange(point2.DistanceTo(point3), 0, tolerance);
         }
     }
 }
