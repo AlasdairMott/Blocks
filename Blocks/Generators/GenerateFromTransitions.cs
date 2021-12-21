@@ -29,10 +29,7 @@ namespace Blocks.Generators
 
             for (var i = 0; i < steps; i++)
             {
-                var next = ChooseBlock(assembly, transitions);
-
-                var nextTransform =  next.Existing.Transform * next.Relationship.Transform;
-                var nextInstance = new BlockInstance(next.Relationship.To, nextTransform);
+                var nextInstance = ChooseBlock(assembly, transitions);
 
                 if (CanPlace(nextInstance, assembly, obstacles))
                 {
@@ -48,18 +45,27 @@ namespace Blocks.Generators
         /// </summary>
         /// <param name="assembly">The BlockAssembly to add to.</param>
         /// <param name="transitions">Transitions to choose from.</param>
-        /// <param name="obstacles">Obstacles to avoid.</param>
         /// <returns>The chosen block instance.</returns>
-        private (BlockInstance Existing, Relationship Relationship) ChooseBlock(BlockAssembly assembly, Transitions transitions)
+        private BlockInstance ChooseBlock(BlockAssembly assembly, Transitions transitions)
         {
             var index = _random.Next(0, assembly.Size);
             var existing = assembly.BlockInstances[index];
 
             var options = transitions.FindFromBlockDefinition(existing.BlockDefinition);
 
-            return (existing, options.GetRandom(_random));
+            var nextTransition = options.GetRandom(_random);
+
+            var nextTransform = existing.Transform * nextTransition.Transform;
+            return new BlockInstance(nextTransition.To, nextTransform);
         }
 
+        /// <summary>
+        /// Check whether an instance can be places in an existing assembly.
+        /// </summary>
+        /// <param name="instance">The BlockInstanceS to add.</param>
+        /// <param name="assembly">The BlockAssembly to add to.</param>
+        /// <param name="obstacles">Obstacles to avoid.</param>
+        /// <returns></returns>
         private bool CanPlace(BlockInstance instance, BlockAssembly assembly,Mesh obstacles)
         {
             return (!Functions.CollisionCheck.CheckCollision(assembly, instance) &&

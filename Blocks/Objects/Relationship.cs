@@ -31,14 +31,6 @@ namespace Blocks.Objects
 
         public static (Transform Transform, Transform Inverse) CalculateRelativeTransform(Transform from, Transform to)
         {
-            //var plane1 = Plane.WorldXY;
-            //plane1.Transform(from);
-
-            //var plane2 = Plane.WorldXY;
-            //plane2.Transform(to);
-
-            //return (Transform.PlaneToPlane(plane1, plane2), Transform.PlaneToPlane(plane2, plane1));
-
             from.TryGetInverse(out var xformInverse);
 
             var transform = xformInverse * to;
