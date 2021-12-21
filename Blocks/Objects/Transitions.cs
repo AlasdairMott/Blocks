@@ -43,12 +43,12 @@ namespace Blocks.Objects
             return shuffled.First();
         }
 
-        public Transitions FindFromBlockDefinition(BlockDefinition definition)
+        public IEnumerable<Transition> FindFromBlockDefinition(BlockDefinition definition)
         {
             var transitions_A_to_B = _transitions.Where(t => t.From.Index == definition.Index);
             var transitions_B_to_A = _transitions.Where(t => t.To.Index == definition.Index);
 
-            return transitions_A_to_B.Concat(transitions_B_to_A.Select(t => t.Invert())).ToTransitions();
+            return transitions_A_to_B.Concat(transitions_B_to_A.Select(t => t.Invert()));
         }
 
         public Transition Find(Transition transition)

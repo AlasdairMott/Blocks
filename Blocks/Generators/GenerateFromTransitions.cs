@@ -1,6 +1,7 @@
 ﻿using Blocks.Objects;
 using Rhino.Geometry;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Blocks.Generators
@@ -53,10 +54,21 @@ namespace Blocks.Generators
 
             var options = transitions.FindFromBlockDefinition(existing.BlockDefinition);
 
-            var nextTransition = options.GetRandom(_random);
+            //Unable to use options.GetRandom() here since that will remove the inverted copies
+            var nextTransition = GetRandom(options, _random);
 
             var nextTransform = existing.Transform * nextTransition.Transform;
             return new BlockInstance(nextTransition.To, nextTransform);
+        }
+
+        public Transition GetRandom(IEnumerable<Transition> transitions, Random random)
+        {
+            if (!transitions.Any()) { throw new IndexOutOfRangeException("No transitions to choose from"); }
+            var value = random.NextDouble();
+            var shuffled = transitions.OrderBy(t => random.NextDouble());
+            var result = shuffled.FirstOrDefault(t => t.Probability > value);
+            if (result != null) { return result; }
+            return shuffled.First();
         }
 
         /// <summary>
