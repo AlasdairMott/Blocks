@@ -20,7 +20,8 @@ namespace Blocks.Objects
 
         public Transitions(IEnumerable<Transition> transitions):this()
         {
-            _transitions.UnionWith(transitions);
+            foreach (var transition in transitions) { Add(transition); }
+            NormalizeRelationships();
         }
 
         public Transition this[int index]
@@ -43,12 +44,14 @@ namespace Blocks.Objects
             return shuffled.First();
         }
 
-        public IEnumerable<Transition> FindFromBlockDefinition(BlockDefinition definition)
+        public Transitions FindFromBlockDefinition(BlockDefinition definition)
         {
             var transitions_A_to_B = _transitions.Where(t => t.From.Index == definition.Index);
             var transitions_B_to_A = _transitions.Where(t => t.To.Index == definition.Index);
 
-            return transitions_A_to_B.Concat(transitions_B_to_A.Select(t => t.Invert()));
+            var transitions = transitions_A_to_B.Concat(transitions_B_to_A.Select(t => t.Invert()));
+
+            return transitions.Select(t => t.Clone()).ToTransitions();
         }
 
         public Transition Find(Transition transition)
@@ -83,17 +86,21 @@ namespace Blocks.Objects
         public static Transitions ToTransitions(this IEnumerable<Transition> transitions) => new Transitions(transitions);
     }
 
-    public class Transition : Relationship
+    public class Transition : Relationship, ICloneable
     {
-        public Transition(BlockInstance from, BlockInstance to) : base(from, to)
-        {
-            
-        }
+        public Transition(BlockInstance from, BlockInstance to) : base(from, to) { }
         public Transition(BlockDefinition from, BlockDefinition to, Transform transform, Transform inverse) : base(from, to, transform, inverse) { }
         public Transition(Relationship relationship) : this(relationship.From, relationship.To, relationship.Transform, relationship.Inverse) { }
+        public Transition(Transition transition) : this(transition as Relationship)
+        {
+            Probability = transition.Probability;
+        }
 
         public double Probability { get; set; } = 1.0;
         public new Transition Invert() => new Transition(To, From, Inverse, Transform);
 
+        public Transition Clone() => new Transition(this);
+
+        object ICloneable.Clone() => Clone();
     }
 }

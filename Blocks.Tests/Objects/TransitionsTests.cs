@@ -1,4 +1,7 @@
 ﻿using Blocks.Objects;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -7,6 +10,28 @@ namespace Blocks.Tests.Objects
     [Collection("RhinoTestingCollection")]
     public class TransitionsTests
     {
+        [Theory]
+        [InlineData(0,0.5)]
+        [InlineData(1,0.333)]
+        [InlineData(2, 0.25)]
+        public void It_Adds_Transition_With_Correct_Probabilities(int count, double expected)
+        {
+            //Arrange
+            var transitionsList = new List<Transition>()
+            {
+                new Transition(Stubs.TestingStubs.Relationships["A1-B1"]),
+                new Transition(Stubs.TestingStubs.Relationships["A2-B1"]),
+            };
+            var transitionToAdd = new Transition(Stubs.TestingStubs.Relationships["A1-A2"]);
+
+            //Act
+            for (var i = 0; i < count; i++) transitionsList.Add(transitionToAdd);
+            var sut = transitionsList.ToTransitions();
+
+            //Assert
+            Assert.Equal(expected, Math.Round(sut.Min(t => t.Probability), 3));
+        }
+
         [Fact]
         public void FindFromBlockDefinition_ReturnsMatches()
         {
@@ -23,7 +48,7 @@ namespace Blocks.Tests.Objects
             var results = transitions.FindFromBlockDefinition(definition);
 
             //Assert
-            Assert.Equal(4, results.Count());
+            Assert.Equal(3, results.Count());
         }
 
         [Fact]
@@ -68,5 +93,4 @@ namespace Blocks.Tests.Objects
 
         }
     }
-
 }
