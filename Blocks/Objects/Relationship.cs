@@ -2,6 +2,9 @@
 
 namespace Blocks.Objects
 {
+    /// <summary>
+    /// The transform between two BlockDefinitions.
+    /// </summary>
     public class Relationship
 	{
 		public BlockDefinition Definition { get; set; }

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Blocks.Objects
 {
+    /// <summary>
+    /// A collection of BlockDefinitions that can be chosen from when generating a BlockAssembly.
+    /// </summary>
     public class BlockPool : IEnumerable<BlockDefinition>
     {
         private readonly List<BlockDefinition> _blocks = new List<BlockDefinition>();

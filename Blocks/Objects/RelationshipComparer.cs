@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Blocks.Objects
 {
+    /// <summary>
+    /// Compare whether two relationships are the same.
+    /// </summary>
     public class RelationshipComparer : IEqualityComparer<Relationship>
 	{
 		public bool Equals(Relationship x, Relationship y)
