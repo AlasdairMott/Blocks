@@ -1,4 +1,5 @@
-﻿using Rhino.Geometry;
+﻿using Rhino.DocObjects;
+using Rhino.Geometry;
 using System.Collections.Generic;
 
 namespace Blocks.Objects
@@ -20,7 +21,6 @@ namespace Blocks.Objects
             CollisionMesh = BlockDefinition.CollisionMesh.DuplicateMesh();
             CollisionMesh.Transform(Transform);
         }
-
         public IEnumerable<GeometryBase> GetGeometry()
         {
             var geometries = new List<GeometryBase>();
@@ -31,6 +31,15 @@ namespace Blocks.Objects
                 geometries.Add(dup);
             }
             return geometries;
+        }
+    }
+
+    public static class InstanceExtensions
+    {
+        public static BlockInstance ToInstance(this InstanceObject instance)
+        {
+            var blockDefinition = new BlockDefinition(instance.InstanceDefinition);
+            return new BlockInstance(blockDefinition, instance.InstanceXform);
         }
     }
 }

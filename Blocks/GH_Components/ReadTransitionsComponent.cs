@@ -1,17 +1,16 @@
-﻿using Blocks.Solvers;
+﻿using Blocks.Readers;
 using Grasshopper.Kernel;
 using Rhino.DocObjects;
-using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Blocks.Components
 {
-    public class ReadBlocksComponent : GH_Component
+    public class ReadTransitionsComponent : GH_Component
 	{
-		public ReadBlocksComponent()
-		  : base("Read Blocks", "Nickname","Description", "Blocks", "Subcategory")
+		public ReadTransitionsComponent()
+		  : base("Read Transitions", "Nickname","Description", "Blocks", "Subcategory")
 		{
 		}
 
@@ -29,7 +28,7 @@ namespace Blocks.Components
 		/// </summary>
 		protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
 		{
-			pManager.AddGenericParameter("Block Pool", "P", "Pool of block definitions that can be used to create a block assembly", GH_ParamAccess.item);
+			pManager.AddGenericParameter("Transitions", "T", "Transitions that can be used to create a block assembly", GH_ParamAccess.item);
 		}
 
 		/// <summary>
@@ -50,10 +49,10 @@ namespace Blocks.Components
 			var distanceThreshold = 1.0;
 			if (!DA.GetData(1, ref distanceThreshold)) { return; }
 
-			var reader = new ReadBlockAssembly();
-			var pool = reader.Read(instances.ToList(), distanceThreshold);
+			var reader = new ReadTransitions();
+			var transitions = reader.Read(instances.ToList(), distanceThreshold);
 
-			DA.SetData(0, pool);
+			DA.SetData(0, transitions);
 		}
 
 		/// <summary>

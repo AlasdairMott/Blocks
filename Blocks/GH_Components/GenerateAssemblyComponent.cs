@@ -1,5 +1,5 @@
-﻿using Blocks.Objects;
-using Blocks.Solvers;
+﻿using Blocks.Generators;
+using Blocks.Objects;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System;
@@ -20,7 +20,7 @@ namespace Blocks.Components
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Block Pool", "P", "Block definitions to create the assembly from", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Transitions", "T", "Transitions to create the assembly from", GH_ParamAccess.item);
             pManager.AddMeshParameter("Obstacles", "O", "Obstacles", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Steps", "S", "Steps for markov", GH_ParamAccess.item);
             pManager.AddIntegerParameter("Seed", "S", "Seed for markov", GH_ParamAccess.item);
@@ -47,8 +47,8 @@ namespace Blocks.Components
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            var pool = new BlockPool();
-            if (!DA.GetData(0, ref pool)) { return; };
+            var transitions = new Transitions();
+            if (!DA.GetData(0, ref transitions)) { return; };
 
             var obstacleMeshes = new List<Mesh>();
             DA.GetDataList(1, obstacleMeshes);
@@ -62,8 +62,8 @@ namespace Blocks.Components
             var seed = 0;
             DA.GetData(3, ref seed);
 
-            var generator = new GenerateBlockAssembly(seed);
-            var assembly = generator.Generate(pool, obstacles, steps);
+            var generator = new GenerateFromTransitions(seed);
+            var assembly = generator.Generate(transitions, obstacles, steps);
 
             DA.SetDataList(0, assembly.BlockInstances);
             DA.SetDataList(1, assembly.GetGeometry());

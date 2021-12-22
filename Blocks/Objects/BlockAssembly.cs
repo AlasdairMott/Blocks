@@ -1,4 +1,5 @@
 ﻿using Rhino.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,9 +11,11 @@ namespace Blocks.Objects
     public class BlockAssembly
     {
         private readonly List<BlockInstance> _blockInstances = new List<BlockInstance>();
+        private readonly List<Relationship> _relationships = new List<Relationship>();
 
         public Mesh CollisionMesh { get; set; } = new Mesh();
         public IReadOnlyList<BlockInstance> BlockInstances => _blockInstances;
+        public IReadOnlyCollection<Relationship> Relationships => _relationships;
         public int Size => _blockInstances.Count();
 
         /// <summary>
@@ -22,6 +25,20 @@ namespace Blocks.Objects
         public void AddInstance(BlockInstance instance) {
             _blockInstances.Add(instance);
             CollisionMesh.Append(instance.CollisionMesh);
+        }
+        public void AddRelationship(Relationship relationship)
+        {
+            _relationships.Add(relationship);
+        }
+
+        public IEnumerable<Relationship> FindFromBlockDefinition(BlockDefinition definition)
+        {
+            var matching = _relationships.Where(t =>
+                t.From.Index == definition.Index ||
+                t.To.Index == definition.Index);
+
+            return matching.Select(m =>
+                m.From.Index == definition.Index ? m : m.Invert());
         }
 
         /// <summary>
@@ -37,5 +54,6 @@ namespace Blocks.Objects
             }
             return geometries;
         }
+
     }
 }
