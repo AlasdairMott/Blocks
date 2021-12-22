@@ -3,9 +3,9 @@ using Rhino.Geometry;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks.Tests
+namespace Blocks.Tests.Stubs
 {
-    public static class Stubs
+    public static class TestingStubs
     {
 		private static readonly Dictionary<string, List<GeometryBase>> _geometries = new Dictionary<string, List<GeometryBase>>();
 		private static readonly Dictionary<string, BlockDefinition> _definitions = new Dictionary<string, BlockDefinition>();

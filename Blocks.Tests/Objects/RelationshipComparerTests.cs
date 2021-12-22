@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Blocks.Tests
+namespace Blocks.Tests.Objects
 {
     [Collection("RhinoTestingCollection")]
 	public class RelationshipComparerTests
@@ -28,11 +28,11 @@ namespace Blocks.Tests
 		
 		public IEnumerator<object[]> GetEnumerator()
 		{
-			yield return new object[] { Stubs.Relationships["A1-A1"], Stubs.Relationships["A1-A1"], true };
-			yield return new object[] { Stubs.Relationships["A1-A2"], Stubs.Relationships["A2-A1"], true };
-			yield return new object[] { Stubs.Relationships["A2-B1"], Stubs.Relationships["A2-B1"], true };
-			yield return new object[] { Stubs.Relationships["A2-A1"], Stubs.Relationships["A1-A1"], false };
-			yield return new object[] { Stubs.Relationships["A2-A2"], Stubs.Relationships["A2-B1"], false };
+			yield return new object[] { Stubs.TestingStubs.Relationships["A1-A1"], Stubs.TestingStubs.Relationships["A1-A1"], true };
+			yield return new object[] { Stubs.TestingStubs.Relationships["A1-A2"], Stubs.TestingStubs.Relationships["A2-A1"], true };
+			yield return new object[] { Stubs.TestingStubs.Relationships["A2-B1"], Stubs.TestingStubs.Relationships["A2-B1"], true };
+			yield return new object[] { Stubs.TestingStubs.Relationships["A2-A1"], Stubs.TestingStubs.Relationships["A1-A1"], false };
+			yield return new object[] { Stubs.TestingStubs.Relationships["A2-A2"], Stubs.TestingStubs.Relationships["A2-B1"], false };
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

@@ -2,7 +2,7 @@
 using System.Linq;
 using Xunit;
 
-namespace Blocks.Tests
+namespace Blocks.Tests.Objects
 {
     [Collection("RhinoTestingCollection")]
     public class TransitionsTests
@@ -11,29 +11,29 @@ namespace Blocks.Tests
         public void FindFromBlockDefinition_ReturnsMatches()
         {
             //Arrange
-            var definition = Stubs.Definitions["A"];
+            var definition = Stubs.TestingStubs.Definitions["A"];
             var transitions = new Transitions
             {
-                new Transition(Stubs.Relationships["A1-A2"]),
-                new Transition(Stubs.Relationships["A1-B1"]),
-                new Transition(Stubs.Relationships["A2-B1"]),
+                new Transition(Stubs.TestingStubs.Relationships["A1-A2"]),
+                new Transition(Stubs.TestingStubs.Relationships["A1-B1"]),
+                new Transition(Stubs.TestingStubs.Relationships["A2-B1"]),
             };
 
             //Act
             var results = transitions.FindFromBlockDefinition(definition);
 
             //Assert
-            Assert.Equal(3, results.Count());
+            Assert.Equal(4, results.Count());
         }
 
         [Fact]
         public void FindFromBlockDefinition_ReturnsEmpty()
         {
             //Arrange
-            var definition = Stubs.Definitions["C"];
+            var definition = Stubs.TestingStubs.Definitions["C"];
             var transitions = new Transitions
             {
-                new Transition(Stubs.Relationships["A1-A2"]),
+                new Transition(Stubs.TestingStubs.Relationships["A1-A2"]),
             };
 
             //Act
@@ -47,8 +47,8 @@ namespace Blocks.Tests
         public void FindFromBlockDefinition_ReturnsInverse()
         {
             //Arrange
-            var definition = Stubs.Definitions["A"];
-            var existingTransition = new Transition(Stubs.Relationships["B1-A2"]);
+            var definition = Stubs.TestingStubs.Definitions["A"];
+            var existingTransition = new Transition(Stubs.TestingStubs.Relationships["B1-A2"]);
             var transitions = new Transitions { existingTransition };
 
             //Act
