@@ -44,8 +44,8 @@ namespace Blocks.Functions
         {
 			var view = Rhino.RhinoDoc.ActiveDoc.Views.ActiveView.ActiveViewport;
 
-			var meshA = Helpers.GetInstanceObjectMesh(instance);
-			var meshB = Helpers.GetInstanceObjectMesh(other);
+			var meshA = GeometryHelpers.GetInstanceObjectMesh(instance);
+			var meshB = GeometryHelpers.GetInstanceObjectMesh(other);
 
 			return CheckCollision(meshA, meshB);
 		}
