@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Blocks.Functions
 {
-    public static class Helpers
+    public static class GeometryHelpers
     {
         /// <summary>
         /// Get the geometry from an InstanceObject as a mesh.

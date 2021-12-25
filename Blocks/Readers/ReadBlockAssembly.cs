@@ -28,7 +28,7 @@ namespace Blocks.Readers
 
                 //Add the block instances to the assembly
                 foreach (var instanceObject in instanceDefinition) {
-                    var instance = new BlockInstance(blockDefinition, instanceObject.InstanceXform);
+                    var instance = new BlockInstance(blockDefinition, instanceObject.InstanceXform); 
                     assembly.AddInstance(instance);
                     instanceObjectBlocks.Add(instanceObject, instance);
                 }
