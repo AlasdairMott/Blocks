@@ -58,5 +58,11 @@
       <Version>7.0.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Blocks\Blocks.csproj">
+      <Project>{14b7e64b-c89d-42ab-a9e6-688551496f93}</Project>
+      <Name>Blocks</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

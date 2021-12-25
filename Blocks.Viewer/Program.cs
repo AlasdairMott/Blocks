@@ -1,23 +1,23 @@
 using System;
 
-namespace EtoApp
+namespace Blocks.Viewer
 {
-  static class Program
-  {
-    [STAThread]
-    static void Main()
+    static class Program
     {
-      RhinoInside.Resolver.Initialize();
+        [STAThread]
+        static void Main()
+        {
+            RhinoInside.Resolver.Initialize();
 
-      // Used by McNeel devs to debug against internal debug builds
-      //RhinoInside.Resolver.RhinoSystemDirectory = @"C:\dev\github\mcneel\rhino\src4\bin\Debug";
+            // Used by McNeel devs to debug against internal debug builds
+            //RhinoInside.Resolver.RhinoSystemDirectory = @"C:\dev\github\mcneel\rhino\src4\bin\Debug";
 
-      RunApplication();
+            RunApplication();
+        }
+
+        static void RunApplication()
+        {
+            MainForm.Run();
+        }
     }
-
-    static void RunApplication()
-    {
-      MainForm.Run();
-    }
-  }
 }
