@@ -1,12 +1,12 @@
-﻿using Blocks.Generators;
-using Blocks.Objects;
+﻿using Blocks.Common.Generators;
+using Blocks.Common.Objects;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks.Components
+namespace Blocks.GH.Components
 {
     public class GenerateAssemblyComponent : GH_Component
     {

@@ -68,9 +68,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Blocks\Blocks.csproj">
-      <Project>{14b7e64b-c89d-42ab-a9e6-688551496f93}</Project>
-      <Name>Blocks</Name>
+    <ProjectReference Include="..\Blocks.Common\Blocks.Common.csproj">
+      <Project>{7dec63e6-3d43-4e35-a558-f52dc604bf05}</Project>
+      <Name>Blocks.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

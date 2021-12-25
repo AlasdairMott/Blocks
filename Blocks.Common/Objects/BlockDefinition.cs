@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks.Objects
+namespace Blocks.Common.Objects
 {
     /// <summary>
     /// The parent definition for an instance; defines the children BlockInstances. Its geometry is in local coordinates.

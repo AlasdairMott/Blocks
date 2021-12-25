@@ -1,10 +1,10 @@
-﻿using Blocks.Objects;
+﻿using Blocks.Common.Objects;
 using Rhino.DocObjects;
 using Rhino.Geometry;
 using Rhino.Geometry.Intersect;
 using System.Linq;
 
-namespace Blocks.Functions
+namespace Blocks.Common.Functions
 {
     public static class CollisionCheck
     {

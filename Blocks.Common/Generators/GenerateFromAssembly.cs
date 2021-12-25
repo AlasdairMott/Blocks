@@ -1,9 +1,9 @@
-﻿using Blocks.Objects;
+﻿using Blocks.Common.Objects;
 using Rhino.Geometry;
 using System;
 using System.Linq;
 
-namespace Blocks.Generators
+namespace Blocks.Common.Generators
 {
     /// <summary>
     /// Generate a block assembly.

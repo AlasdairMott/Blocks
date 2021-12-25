@@ -1,5 +1,5 @@
-﻿using Blocks.Generators;
-using Blocks.Objects;
+﻿using Blocks.Common.Generators;
+using Blocks.Common.Objects;
 using Blocks.Tests.Helpers;
 using Blocks.Tests.Stubs;
 using Rhino.Geometry;

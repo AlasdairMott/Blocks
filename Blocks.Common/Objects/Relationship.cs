@@ -1,6 +1,6 @@
 ﻿using Rhino.Geometry;
 
-namespace Blocks.Objects
+namespace Blocks.Common.Objects
 {
     /// <summary>
     /// The transform between two BlockDefinitions.

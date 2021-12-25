@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Blocks.Objects
+namespace Blocks.Common.Objects
 {
     /// <summary>
     /// Compare whether two relationships are the same.

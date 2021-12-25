@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks.Objects
+namespace Blocks.Common.Objects
 {
     /// <summary>
     /// An arrangement of BlockInstances.

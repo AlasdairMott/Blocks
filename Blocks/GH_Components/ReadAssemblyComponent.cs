@@ -1,11 +1,11 @@
-﻿using Blocks.Readers;
+﻿using Blocks.Common.Readers;
 using Grasshopper.Kernel;
 using Rhino.DocObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks.Components
+namespace Blocks.GH.Components
 {
     public class ReadAssemblyComponent : GH_Component
 	{

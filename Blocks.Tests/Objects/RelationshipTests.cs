@@ -1,4 +1,4 @@
-﻿using Blocks.Objects;
+﻿using Blocks.Common.Objects;
 using Blocks.Tests.Helpers;
 using Rhino.Geometry;
 using Rhino.DocObjects;

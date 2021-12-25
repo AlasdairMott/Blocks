@@ -2,7 +2,7 @@
 using Rhino.Geometry;
 using System.Linq;
 
-namespace Blocks.Functions
+namespace Blocks.Common.Functions
 {
     public static class GeometryHelpers
     {

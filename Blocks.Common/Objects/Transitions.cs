@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks.Objects
+namespace Blocks.Common.Objects
 {
     /// <summary>
     /// A collection of BlockDefinitions that can be chosen from when generating a BlockAssembly.

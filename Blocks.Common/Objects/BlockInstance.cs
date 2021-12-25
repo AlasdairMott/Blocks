@@ -2,7 +2,7 @@
 using Rhino.Geometry;
 using System.Collections.Generic;
 
-namespace Blocks.Objects
+namespace Blocks.Common.Objects
 {
     /// <summary>
     /// A block definition placed in world coordinates. Part of a BlockAssembly.

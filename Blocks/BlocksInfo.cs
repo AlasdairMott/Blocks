@@ -2,7 +2,7 @@
 using System.Drawing;
 using Grasshopper.Kernel;
 
-namespace Blocks
+namespace Blocks.GH
 {
 	public class BlocksInfo : GH_AssemblyInfo
 	{
