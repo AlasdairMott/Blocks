@@ -11,7 +11,7 @@ namespace Blocks.Components
     public class GenerateAssemblyComponent : GH_Component
     {
         public GenerateAssemblyComponent()
-          : base("Create Assembly", "Nickname", "Description", "Blocks", "Subcategory")
+          : base("Create Assembly", "A", "Create a block assembly", "Blocks", "Main")
         {
         }
 
@@ -20,10 +20,10 @@ namespace Blocks.Components
         /// </summary>
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Transitions", "T", "Transitions to create the assembly from", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Assembly", "A", "Assembly to base the new assembly on", GH_ParamAccess.item);
             pManager.AddMeshParameter("Obstacles", "O", "Obstacles", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Steps", "S", "Steps for markov", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("Seed", "S", "Seed for markov", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Steps", "Stp", "Steps for markov", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Seed", "Sd", "Seed for markov", GH_ParamAccess.item);
 
             pManager[1].Optional = true;
             pManager[2].Optional = true;
@@ -35,7 +35,7 @@ namespace Blocks.Components
         /// </summary>
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Block Instance", "B-I", "Block instance", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Block Instance", "B", "Block instance", GH_ParamAccess.list);
             pManager.AddGeometryParameter("Geometry", "G", "Geometry", GH_ParamAccess.list);
             pManager.AddTransformParameter("Placement xforms", "T", "Placement xforms", GH_ParamAccess.list);
         }
@@ -47,8 +47,8 @@ namespace Blocks.Components
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            var transitions = new Transitions();
-            if (!DA.GetData(0, ref transitions)) { return; };
+            var inputAssembly = new BlockAssembly();
+            if (!DA.GetData(0, ref inputAssembly)) { return; };
 
             var obstacleMeshes = new List<Mesh>();
             DA.GetDataList(1, obstacleMeshes);
@@ -63,11 +63,12 @@ namespace Blocks.Components
             DA.GetData(3, ref seed);
 
             var generator = new GenerateFromTransitions(seed);
-            var assembly = generator.Generate(transitions, obstacles, steps);
+            var transitions = new Transitions(inputAssembly);
+            var outputAssembly = generator.Generate(transitions, obstacles, steps);
 
-            DA.SetDataList(0, assembly.BlockInstances);
-            DA.SetDataList(1, assembly.GetGeometry());
-            DA.SetDataList(2, assembly.BlockInstances.Select(b => b.Transform));
+            DA.SetDataList(0, outputAssembly.BlockInstances);
+            DA.SetDataList(1, outputAssembly.GetGeometry());
+            DA.SetDataList(2, outputAssembly.BlockInstances.Select(b => b.Transform));
         }
 
         /// <summary>

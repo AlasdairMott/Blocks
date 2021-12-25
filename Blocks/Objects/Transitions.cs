@@ -24,6 +24,10 @@ namespace Blocks.Objects
             NormalizeRelationships();
         }
 
+        public Transitions(BlockAssembly assembly) : 
+            this (assembly.Relationships.Select(r => new Transition(r)).ToList()){
+        }
+
         public Transition this[int index]
         {
             get { return _transitions.ElementAt(index); }

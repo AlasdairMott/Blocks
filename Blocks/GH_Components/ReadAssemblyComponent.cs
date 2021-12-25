@@ -7,10 +7,10 @@ using System.Linq;
 
 namespace Blocks.Components
 {
-    public class ReadTransitionsComponent : GH_Component
+    public class ReadAssemblyComponent : GH_Component
 	{
-		public ReadTransitionsComponent()
-		  : base("Read Transitions", "Nickname","Description", "Blocks", "Subcategory")
+		public ReadAssemblyComponent()
+		  : base("Read Assembly", "R-A","Read a block assembly", "Blocks", "Main")
 		{
 		}
 
@@ -19,7 +19,7 @@ namespace Blocks.Components
 		/// </summary>
 		protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
 		{
-			pManager.AddGenericParameter("Blocks", "B", "Blocks", GH_ParamAccess.list);
+			pManager.AddGenericParameter("Instance Objects", "I", "Instance Objects", GH_ParamAccess.list);
 			pManager.AddNumberParameter("Distance threshold", "D", "Distance threshold", GH_ParamAccess.item);
 		}
 
@@ -28,7 +28,7 @@ namespace Blocks.Components
 		/// </summary>
 		protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
 		{
-			pManager.AddGenericParameter("Transitions", "T", "Transitions that can be used to create a block assembly", GH_ParamAccess.item);
+			pManager.AddGenericParameter("Assembly", "A", "Block assembly", GH_ParamAccess.item);
 		}
 
 		/// <summary>
@@ -49,10 +49,10 @@ namespace Blocks.Components
 			var distanceThreshold = 1.0;
 			if (!DA.GetData(1, ref distanceThreshold)) { return; }
 
-			var reader = new ReadTransitions();
-			var transitions = reader.Read(instances.ToList(), distanceThreshold);
+            var reader = new ReadBlockAssembly();
+			var assembly = reader.Read(instances.ToList(), distanceThreshold);
 
-			DA.SetData(0, transitions);
+			DA.SetData(0, assembly);
 		}
 
 		/// <summary>
