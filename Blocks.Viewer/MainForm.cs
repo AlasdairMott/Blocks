@@ -1,3 +1,6 @@
+using Microsoft.Win32;
+using System;
+
 namespace Blocks.Viewer
 {
     class MainForm : Eto.Forms.Form
@@ -28,7 +31,7 @@ namespace Blocks.Viewer
             System.Windows.Forms.Application.Exit();
         }
 
-        Rhino.UI.Controls.ViewportControl _viewportControl;
+        static Rhino.UI.Controls.ViewportControl _viewportControl;
         public MainForm()
         {
             Title = "Blocks.Viewer";
