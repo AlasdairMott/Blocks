@@ -34,11 +34,11 @@ namespace Blocks.Common.Objects
         public IEnumerable<Relationship> FindFromBlockDefinition(BlockDefinition definition)
         {
             var matching = _relationships.Where(t =>
-                t.From.Index == definition.Index ||
-                t.To.Index == definition.Index);
+                t.From.Name == definition.Name ||
+                t.To.Name == definition.Name);
 
             return matching.Select(m =>
-                m.From.Index == definition.Index ? m : m.Invert());
+                m.From.Name == definition.Name ? m : m.Invert());
         }
 
         /// <summary>

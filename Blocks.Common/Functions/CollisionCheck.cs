@@ -35,19 +35,17 @@ namespace Blocks.Common.Functions
 		}
 
         /// <summary>
-        /// Check whether two InstanceObjects collide.
+        /// Check where two BlockInstances touch.
         /// </summary>
-        /// <param name="instance">The first InstanceObject to collide.</param>
-        /// <param name="other">The second InstanceObject to collide.</param>
-        /// <returns>True if the InstanceObjects collide, otherwise false.</returns>
-        public static bool CheckCollision(InstanceObject instance, InstanceObject other)
+        /// <param name="instance">The first BlockInstance to check.</param>
+        /// <param name="other">The second BlockInstance to check.</param>
+        /// <returns>True if the BlockInstances are touching, otherwise false.</returns>
+        public static bool CheckTouching(BlockInstance instance, BlockInstance other)
         {
-			var view = Rhino.RhinoDoc.ActiveDoc.Views.ActiveView.ActiveViewport;
+            var meshA = GeometryHelpers.GetBlockInstanceMesh(instance);
+            var meshB = GeometryHelpers.GetBlockInstanceMesh(other);
 
-			var meshA = GeometryHelpers.GetInstanceObjectMesh(instance);
-			var meshB = GeometryHelpers.GetInstanceObjectMesh(other);
-
-			return CheckCollision(meshA, meshB);
-		}
+            return CheckCollision(meshB, meshA);
+        }
 	}
 }

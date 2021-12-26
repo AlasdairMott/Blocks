@@ -1,4 +1,5 @@
-﻿using Rhino.DocObjects;
+﻿using Blocks.Common.Objects;
+using Rhino.DocObjects;
 using Rhino.Geometry;
 using System.Linq;
 
@@ -7,20 +8,19 @@ namespace Blocks.Common.Functions
     public static class GeometryHelpers
     {
         /// <summary>
-        /// Get the geometry from an InstanceObject as a mesh.
+        /// Get the geometry from an BlockInstance as a mesh.
         /// </summary>
-        /// <param name="instance">InstanceObject to extract the mesh from.</param>
-        /// <returns>All the InstanceObjects geomery as a single joined mesh.</returns>
-        public static Mesh GetInstanceObjectMesh(InstanceObject instance)
+        /// <param name="instance">BlockInstance to extract the mesh from.</param>
+        /// <returns>All the BlockInstance's geomery as a single joined mesh.</returns>
+        public static Mesh GetBlockInstanceMesh(BlockInstance instance)
         {
-            var geometry = instance.InstanceDefinition.GetObjects().Select(o => o.Geometry);
+            var geometry = instance.GetGeometry();
             var mesh = new Mesh();
             foreach (var geo in geometry)
             {
                 var geometryMesh = GetGeometryMesh(geo);
                 if (geometryMesh != null) mesh.Append(geometryMesh);
             }
-            mesh.Transform(instance.InstanceXform);
             return mesh;
         }
 

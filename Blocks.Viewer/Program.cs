@@ -9,9 +9,6 @@ namespace Blocks.Viewer
         {
             RhinoInside.Resolver.Initialize();
 
-            // Used by McNeel devs to debug against internal debug builds
-            //RhinoInside.Resolver.RhinoSystemDirectory = @"C:\dev\github\mcneel\rhino\src4\bin\Debug";
-
             RunApplication();
         }
 

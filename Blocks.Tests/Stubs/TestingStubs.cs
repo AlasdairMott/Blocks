@@ -32,9 +32,9 @@ namespace Blocks.Tests.Stubs
 			{
 				if (!_definitions.Any())
 				{
-					_definitions.Add("A", new BlockDefinition(Geometries["geometry-A"], 0));
-					_definitions.Add("B", new BlockDefinition(Geometries["geometry-B"], 1));
-					_definitions.Add("C", new BlockDefinition(Geometries["geometry-C"], 2));
+					_definitions.Add("A", new BlockDefinition(Geometries["geometry-A"], "0"));
+					_definitions.Add("B", new BlockDefinition(Geometries["geometry-B"], "1"));
+					_definitions.Add("C", new BlockDefinition(Geometries["geometry-C"], "2"));
 				}
 				return _definitions;
 			}

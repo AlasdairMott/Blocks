@@ -13,10 +13,10 @@ namespace Blocks.Common.Objects
 		{
 			if (GetHashCode(x) != GetHashCode(y)) { return false; }
 
-            var blocksEqual = (x.From.Index == y.From.Index &&
-                               x.To.Index == y.To.Index) ||
-                              (x.From.Index == y.To.Index &&
-                               x.To.Index == y.From.Index);
+            var blocksEqual = (x.From.Name == y.From.Name &&
+                               x.To.Name == y.To.Name) ||
+                              (x.From.Name == y.To.Name &&
+                               x.To.Name == y.From.Name);
 
             if (!blocksEqual) { return false; }
 			
@@ -30,7 +30,7 @@ namespace Blocks.Common.Objects
 			{
 				var hash = 1;
 				hash += 13 * (int)Math.Round(TransformMass(relationship.Transform) + TransformMass(relationship.Inverse));
-				hash += 17 * (relationship.From.Index + relationship.To.Index);
+				hash += 17 * (relationship.From.Name.GetHashCode() + relationship.To.Name.GetHashCode());
 				return hash;
 			}
 		}

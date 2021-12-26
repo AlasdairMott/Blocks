@@ -14,18 +14,18 @@ namespace Blocks.Common.Objects
 		private readonly List<GeometryBase> _geometry = new List<GeometryBase>();
 
 		public IReadOnlyCollection<GeometryBase> Geometry => _geometry;
-		public int Index { get; private set; }
+		public string Name { get; private set; }
 		public Mesh CollisionMesh { get; private set; } = new Mesh();
 
-		public BlockDefinition(IEnumerable<GeometryBase> geometry, int index)
+		public BlockDefinition(IEnumerable<GeometryBase> geometry, string name)
 		{
 			_geometry.AddRange(geometry);
-			Index = index;
+			Name = name;
 
 			CreateCollisionMesh(-1);
 		}
 
-		public BlockDefinition(InstanceDefinition definition) : this(definition.GetObjects().Select(o => o.Geometry), definition.Index)
+		public BlockDefinition(InstanceDefinition definition) : this(definition.GetObjects().Select(o => o.Geometry), definition.Name)
         {
         }
 

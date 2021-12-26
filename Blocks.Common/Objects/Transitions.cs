@@ -50,8 +50,8 @@ namespace Blocks.Common.Objects
 
         public Transitions FindFromBlockDefinition(BlockDefinition definition)
         {
-            var transitions_A_to_B = _transitions.Where(t => t.From.Index == definition.Index);
-            var transitions_B_to_A = _transitions.Where(t => t.To.Index == definition.Index);
+            var transitions_A_to_B = _transitions.Where(t => t.From.Name == definition.Name);
+            var transitions_B_to_A = _transitions.Where(t => t.To.Name == definition.Name);
 
             var transitions = transitions_A_to_B.Concat(transitions_B_to_A.Select(t => t.Invert()));
 
