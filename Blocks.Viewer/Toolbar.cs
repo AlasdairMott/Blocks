@@ -7,59 +7,36 @@ using forms = Eto.Forms;
 
 namespace Blocks.Viewer
 {
-    public class Toolbar : forms.Form
+    public class Toolbar : forms.Panel
     {
         private Random _random = new Random();
         public forms.NumericStepper SeedStepper { get; private set; }
         public forms.NumericStepper StepsStepper { get; private set; }
         public Toolbar()
         {
-            Title = "Blocks.Viewer.Toolbar";
-            ClientSize = new draw.Size(290, 40);
-            Topmost = true;
-            WindowStyle = forms.WindowStyle.None;
             BackgroundColor = draw.Colors.White;
-
-            MouseDown += Toolbar_MouseDown;
-            MouseMove += Toolbar_MouseMove;
-
             BuildToolbar();
         }
 
-        private draw.PointF _start;
-        private void Toolbar_MouseMove(object sender, forms.MouseEventArgs e)
-        {
-            var delta = e.Location - _start;
-            var point = new draw.Point((int)(Location.X + delta.X), (int)(Location.Y + delta.Y));
-
-            if (e.Buttons.HasFlag(forms.MouseButtons.Primary) && 
-                !SeedStepper.Bounds.Contains(new draw.Point((int)e.Location.X, (int)e.Location.Y)) &&
-                !StepsStepper.Bounds.Contains(new draw.Point((int)e.Location.X, (int)e.Location.Y)))
-            {
-                Location = point;
-            }
-        }
-
-        private void Toolbar_MouseDown(object sender, forms.MouseEventArgs e) => _start = e.Location;
-
         private void BuildToolbar()
         {
-            var layout = new forms.DynamicLayout
+            var layout = new forms.StackLayout()
             {
-                Padding = new draw.Padding(8),
-                Spacing = new draw.Size(5, 5),
+                Padding = new draw.Padding(2),
+                Orientation = forms.Orientation.Horizontal,
+                Height = 24,
             };
 
             var playButton = new forms.Button { 
                 Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Play), 
-                Width = 24, 
+                Size = new draw.Size(20,20),
                 BackgroundColor = draw.Colors.White };
             playButton.Click += PlayButton_Click;
 
             var randomizeButton = new forms.Button
             {
                 Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Randomize),
-                Width = 24,
+                Size = new draw.Size(20, 20),
                 BackgroundColor = draw.Colors.White
             };
             randomizeButton.Click += RandomizeButton_Click;
@@ -67,7 +44,7 @@ namespace Blocks.Viewer
             var zoomExtentsButton = new forms.Button
             {
                 Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.ZoomExtents),
-                Width = 24,
+                Size = new draw.Size(20, 20),
                 BackgroundColor = draw.Colors.White
             };
             zoomExtentsButton.Click += ZoomExtentsButton_Click;
@@ -75,7 +52,14 @@ namespace Blocks.Viewer
             SeedStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 10, Width = 48 };
             StepsStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 50, Width = 48 };
 
-            layout.AddRow(playButton, randomizeButton, zoomExtentsButton, null, "Seed:", SeedStepper, "Steps:", StepsStepper, null);
+            layout.Items.Add(playButton);
+            layout.Items.Add(randomizeButton);
+            layout.Items.Add(zoomExtentsButton);
+            layout.Items.Add(new forms.StackLayoutItem{Expand = true});
+            layout.Items.Add("Seed:");
+            layout.Items.Add(SeedStepper);
+            layout.Items.Add("  Steps:");
+            layout.Items.Add(StepsStepper);
 
             Content = layout;
         }
@@ -85,8 +69,8 @@ namespace Blocks.Viewer
             SeedStepper.Value = _random.Next(0, 100);
             StepsStepper.Value = _random.Next(0, 100);
             Run();
-            MainForm.DisplayConduitR.ZoomExtents();
-            MainForm.RefreshViewport();
+            MainForm.ViewportR.DisplayConduit.ZoomExtents();
+            MainForm.RefreshViewports();
         }
 
         private void ZoomExtentsButton_Click(object sender, EventArgs e) => MainForm.ZoomExtents(true);
@@ -94,7 +78,7 @@ namespace Blocks.Viewer
         private void PlayButton_Click(object sender, EventArgs e)
         {
             Run();
-            MainForm.RefreshViewport();
+            MainForm.RefreshViewports();
         }
 
         private void Run()
@@ -106,8 +90,7 @@ namespace Blocks.Viewer
             var outputAssembly = generator.Generate(transitions, groundPlane, (int)StepsStepper.Value);
             var outputAssemblyInstance = new BlockAssemblyInstance(outputAssembly);
 
-            MainForm.BlockAssemblyInstance = outputAssemblyInstance;
-            MainForm.DisplayConduitR.SetInstance(outputAssemblyInstance);
+            MainForm.SetBlockAssemblyInstance(outputAssemblyInstance);
         }
     }
 }
