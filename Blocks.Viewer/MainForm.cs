@@ -1,5 +1,8 @@
+using Blocks.Common.Generators;
+using Blocks.Common.Objects;
 using Rhino.DocObjects;
 using Rhino.Geometry;
+using Rhino.Display;
 using System;
 using System.IO;
 using System.Linq;
@@ -37,7 +40,11 @@ namespace Blocks.Viewer
         }
 
         static Rhino.UI.Controls.ViewportControl _viewportControl;
-        static Blocks.Common.Objects.BlockAssembly BlockAssembly;
+        static forms.NumericStepper _seedStepper;
+        static forms.NumericStepper _stepsStepper;
+
+        public static BlockAssemblyInstance BlockAssemblyInstance;
+        public static DisplayConduit DisplayConduit;
         public MainForm()
         {
             Title = "Blocks.Viewer";
@@ -67,12 +74,15 @@ namespace Blocks.Viewer
             var playButton = new forms.Button { Image = icon, Width = 28 };
             playButton.Click += PlayButton_Click;
 
-            var seedStepper = new forms.NumericStepper();
-            var stepsStepper = new forms.NumericStepper();
+            _seedStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 10};
+            _stepsStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 50};
 
-            layout.AddSeparateRow(playButton, "Seed:", seedStepper, "Steps:", stepsStepper, null);
+            layout.AddSeparateRow(playButton, "Seed:", _seedStepper, "Steps:", _stepsStepper, null);
 
             _viewportControl = new Rhino.UI.Controls.ViewportControl();
+            SetDisplayMode();
+            DisplayConduit = new DisplayConduit();
+            DisplayConduit.Enabled = true;
             layout.AddSeparateRow(_viewportControl);
 
             Content = layout;
@@ -101,13 +111,40 @@ namespace Blocks.Viewer
             return Path.Combine(repository.FullName, "examples");
         }
 
+        private void SetDisplayMode()
+        {
+            //Rhino.RhinoApp.RunScript("Oneview Enabled=No Enter", false);
+
+            _viewportControl.Viewport.ConstructionGridVisible = false;
+            _viewportControl.Viewport.ConstructionAxesVisible = false;
+            _viewportControl.Viewport.WorldAxesVisible = false;
+
+            DisplayModeDescription displayMode = DisplayModeDescription.GetDisplayModes().FirstOrDefault(d => d.EnglishName == "Blocks.Viewer");
+            if (displayMode == null)
+            {
+                var displayId = DisplayModeDescription.CopyDisplayMode(DisplayModeDescription.ShadedId, "Blocks.Viewer");
+                displayMode = DisplayModeDescription.GetDisplayMode(displayId);
+
+                displayMode.DisplayAttributes.FillMode = DisplayPipelineAttributes.FrameBufferFillMode.SolidColor;
+                displayMode.DisplayAttributes.SetFill(System.Drawing.Color.White);
+
+                DisplayModeDescription.UpdateDisplayMode(displayMode);
+            }
+            
+            _viewportControl.Viewport.DisplayMode = displayMode;
+        }
+
         private void PlayButton_Click(object sender, EventArgs e)
         {
-            //Get all instances in the file and remove
+            var generator = new GenerateFromTransitions((int) _seedStepper.Value);
+            var transitions = new Transitions(BlockAssemblyInstance.BlockAssembly);
+            //var groundPlane = Mesh.CreateFromPlane(Plane.WorldXY, new Interval(-20, 20), new Interval(-20, 20), 4, 4);
+            var groundPlane = new Mesh();
+            var outputAssembly = generator.Generate(transitions, groundPlane, (int)_stepsStepper.Value);
 
-            //Read assembly
+            BlockAssemblyInstance = new BlockAssemblyInstance(outputAssembly);
 
-            //Generate a variation
+            _viewportControl.Refresh();
         }
 
         void OpenFileDialog()
@@ -133,17 +170,18 @@ namespace Blocks.Viewer
             var blockDefinitions = rhinoFile.AllInstanceDefinitions.Select(d =>
             {
                 var geometry = d.GetObjectIds().Select(id => rhinoFile.Objects.FindId(id).Geometry);
-                return new Common.Objects.BlockDefinition(geometry, d.Name);
+                return new BlockDefinition(geometry, d.Name);
             }).ToList();
 
             var instances = referenceGeometry.Select(r => {
                 var referenceDefinition = rhinoFile.AllInstanceDefinitions.First(d => d.Id == r.ParentIdefId);
                 var blockDefinition = blockDefinitions.First(b => b.Name == referenceDefinition.Name);
                 var xform = r.Xform;
-                return new Common.Objects.BlockInstance(blockDefinition, xform);
+                return new BlockInstance(blockDefinition, xform);
             });
 
-            BlockAssembly = reader.Read(instances.ToList(), 10);
+            var assembly = reader.Read(instances.ToList(), 50);
+            BlockAssemblyInstance = new BlockAssemblyInstance(assembly);
 
             _viewportControl.Viewport.ZoomExtents();
             _viewportControl.Refresh();

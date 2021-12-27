@@ -45,7 +45,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DisplayPipeline.cs" />
+    <Compile Include="BlockAssemblyInstance.cs" />
+    <Compile Include="DisplayConduit.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
