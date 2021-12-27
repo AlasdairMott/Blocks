@@ -32,7 +32,7 @@ namespace Blocks.Viewer
 
             if (MainForm.BlockAssemblyInstance != null)
             {
-                e.Display.DrawLines(MainForm.BlockAssemblyInstance.MeshWires, Color.Black, 4);
+                e.Display.DrawMeshWires(MainForm.BlockAssemblyInstance.Mesh, Color.Black, 3);
             }
         }
     }

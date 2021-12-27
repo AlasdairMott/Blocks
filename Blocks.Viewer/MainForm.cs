@@ -43,6 +43,7 @@ namespace Blocks.Viewer
         static forms.NumericStepper _seedStepper;
         static forms.NumericStepper _stepsStepper;
 
+        public static BlockAssemblyInstance BlockAssemblyReference;
         public static BlockAssemblyInstance BlockAssemblyInstance;
         public static DisplayConduit DisplayConduit;
         public MainForm()
@@ -64,28 +65,38 @@ namespace Blocks.Viewer
                             new forms.ButtonMenuItem(new forms.Command((s,e)=>OpenFileDialog())) { Text = "Open..." },
                         }
                     },
-                    demoMenu
+                    demoMenu,
                 }
             };
 
-            var layout = new forms.DynamicLayout();
+            var mainLayout = new forms.DynamicLayout();
 
             var icon = Rhino.UI.EtoExtensions.ToEto(Blocks.Viewer.Properties.Resources.Play);
             var playButton = new forms.Button { Image = icon, Width = 28 };
             playButton.Click += PlayButton_Click;
 
-            _seedStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 10};
-            _stepsStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 50};
+            _seedStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 10, Width = 48};
+            _stepsStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 50, Width = 48};
 
-            layout.AddSeparateRow(playButton, "Seed:", _seedStepper, "Steps:", _stepsStepper, null);
+            var buttonLayout = new forms.DynamicLayout
+            {
+                Padding = new draw.Padding(8),
+                Spacing = new draw.Size(5, 5),
+                Rows = 
+                { 
+                    new forms.DynamicRow(){playButton, "Seed:", _seedStepper, "Steps:", _stepsStepper}
+                },
+            };
+
+            mainLayout.AddRow(buttonLayout);
 
             _viewportControl = new Rhino.UI.Controls.ViewportControl();
             SetDisplayMode();
             DisplayConduit = new DisplayConduit();
             DisplayConduit.Enabled = true;
-            layout.AddSeparateRow(_viewportControl);
+            mainLayout.AddSeparateRow(_viewportControl);
 
-            Content = layout;
+            Content = mainLayout;
         }
 
         private void BuildDemosMenu(forms.MenuItemCollection collection)
@@ -113,8 +124,6 @@ namespace Blocks.Viewer
 
         private void SetDisplayMode()
         {
-            //Rhino.RhinoApp.RunScript("Oneview Enabled=No Enter", false);
-
             _viewportControl.Viewport.ConstructionGridVisible = false;
             _viewportControl.Viewport.ConstructionAxesVisible = false;
             _viewportControl.Viewport.WorldAxesVisible = false;
@@ -137,7 +146,7 @@ namespace Blocks.Viewer
         private void PlayButton_Click(object sender, EventArgs e)
         {
             var generator = new GenerateFromTransitions((int) _seedStepper.Value);
-            var transitions = new Transitions(BlockAssemblyInstance.BlockAssembly);
+            var transitions = new Transitions(BlockAssemblyReference.BlockAssembly);
             //var groundPlane = Mesh.CreateFromPlane(Plane.WorldXY, new Interval(-20, 20), new Interval(-20, 20), 4, 4);
             var groundPlane = new Mesh();
             var outputAssembly = generator.Generate(transitions, groundPlane, (int)_stepsStepper.Value);
@@ -181,7 +190,7 @@ namespace Blocks.Viewer
             });
 
             var assembly = reader.Read(instances.ToList(), 50);
-            BlockAssemblyInstance = new BlockAssemblyInstance(assembly);
+            BlockAssemblyReference = new BlockAssemblyInstance(assembly);
 
             _viewportControl.Viewport.ZoomExtents();
             _viewportControl.Refresh();
