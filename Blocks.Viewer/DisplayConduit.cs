@@ -5,34 +5,45 @@ namespace Blocks.Viewer
 {
     public class DisplayConduit : Rhino.Display.DisplayConduit
     {
+        private RhinoViewport _viewport;
+        public BlockAssemblyInstance Instance { get; set; }
+        public DisplayConduit(RhinoViewport viewport)
+        {
+            _viewport = viewport;
+        }
         protected override void CalculateBoundingBox(CalculateBoundingBoxEventArgs e)
         {
-            base.CalculateBoundingBox(e);
+            if (e.Viewport.Name != _viewport.Name) return;
 
-            if (MainForm.BlockAssemblyInstance != null)
+            base.CalculateBoundingBox(e);
+            if (Instance != null)
             {
-                e.IncludeBoundingBox(MainForm.BlockAssemblyInstance.BoundingBox);
+                e.IncludeBoundingBox(Instance.BoundingBox);
             }
         }
 
         protected override void PostDrawObjects(DrawEventArgs e)
         {
+            if (e.Viewport.Name != _viewport.Name) return;
+
             base.PostDrawObjects(e);
 
-            if (MainForm.BlockAssemblyInstance != null)
+            if (Instance != null)
             {
-                e.Display.DrawMeshShaded(MainForm.BlockAssemblyInstance.Mesh, MainForm.BlockAssemblyInstance.Material);
-                e.Display.DrawLines(MainForm.BlockAssemblyInstance.MeshWires, Color.Black);
+                e.Display.DrawMeshShaded(Instance.Mesh, Instance.Material);
+                e.Display.DrawLines(Instance.MeshWires, Color.Black);
             }
         }
 
         protected override void PreDrawObjects(DrawEventArgs e)
         {
+            if (e.Viewport.Name != _viewport.Name) return;
+
             base.PreDrawObjects(e);
 
-            if (MainForm.BlockAssemblyInstance != null)
+            if (Instance != null)
             {
-                e.Display.DrawMeshWires(MainForm.BlockAssemblyInstance.Mesh, Color.Black, 3);
+                e.Display.DrawMeshWires(Instance.Mesh, Color.Black, 3);
             }
         }
     }

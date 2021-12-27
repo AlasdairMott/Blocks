@@ -39,13 +39,16 @@ namespace Blocks.Viewer
             System.Windows.Forms.Application.Exit();
         }
 
-        static Rhino.UI.Controls.ViewportControl _viewportControl;
-        static forms.NumericStepper _seedStepper;
-        static forms.NumericStepper _stepsStepper;
+        static Rhino.UI.Controls.ViewportControl _viewportControlL;
+        static Rhino.UI.Controls.ViewportControl _viewportControlR;
+        static Toolbar _toolbar;
 
         public static BlockAssemblyInstance BlockAssemblyReference;
         public static BlockAssemblyInstance BlockAssemblyInstance;
-        public static DisplayConduit DisplayConduit;
+        
+        public static DisplayConduit DisplayConduitL;
+        public static DisplayConduit DisplayConduitR;
+
         public MainForm()
         {
             Title = "Blocks.Viewer";
@@ -69,34 +72,30 @@ namespace Blocks.Viewer
                 }
             };
 
-            var mainLayout = new forms.DynamicLayout();
+            _toolbar = new Toolbar();
+            _toolbar.Show();
 
-            var icon = Rhino.UI.EtoExtensions.ToEto(Blocks.Viewer.Properties.Resources.Play);
-            var playButton = new forms.Button { Image = icon, Width = 28 };
-            playButton.Click += PlayButton_Click;
+            _viewportControlL = new Rhino.UI.Controls.ViewportControl();
+            _viewportControlL.Viewport.Name = "Left";
+            SetDisplayMode(_viewportControlL.Viewport);
 
-            _seedStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 10, Width = 48};
-            _stepsStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 50, Width = 48};
+            _viewportControlR = new Rhino.UI.Controls.ViewportControl();
+            _viewportControlR.Viewport.Name = "Right";
+            SetDisplayMode(_viewportControlR.Viewport);
 
-            var buttonLayout = new forms.DynamicLayout
-            {
-                Padding = new draw.Padding(8),
-                Spacing = new draw.Size(5, 5),
-                Rows = 
-                { 
-                    new forms.DynamicRow(){playButton, "Seed:", _seedStepper, "Steps:", _stepsStepper}
-                },
-            };
+            DisplayConduitL = new DisplayConduit(_viewportControlL.Viewport);
+            DisplayConduitL.Enabled = true;
 
-            mainLayout.AddRow(buttonLayout);
+            DisplayConduitR = new DisplayConduit(_viewportControlR.Viewport);
+            DisplayConduitR.Enabled = true;
 
-            _viewportControl = new Rhino.UI.Controls.ViewportControl();
-            SetDisplayMode();
-            DisplayConduit = new DisplayConduit();
-            DisplayConduit.Enabled = true;
-            mainLayout.AddSeparateRow(_viewportControl);
+            var splitter = new forms.Splitter();
+            splitter.SplitterWidth = 2;
+            splitter.Position = 200;
+            splitter.Panel1 = _viewportControlL;
+            splitter.Panel2 = _viewportControlR;
 
-            Content = mainLayout;
+            Content = splitter;
         }
 
         private void BuildDemosMenu(forms.MenuItemCollection collection)
@@ -122,11 +121,11 @@ namespace Blocks.Viewer
             return Path.Combine(repository.FullName, "examples");
         }
 
-        private void SetDisplayMode()
+        private void SetDisplayMode(RhinoViewport viewport)
         {
-            _viewportControl.Viewport.ConstructionGridVisible = false;
-            _viewportControl.Viewport.ConstructionAxesVisible = false;
-            _viewportControl.Viewport.WorldAxesVisible = false;
+            viewport.ConstructionGridVisible = false;
+            viewport.ConstructionAxesVisible = false;
+            viewport.WorldAxesVisible = false;
 
             DisplayModeDescription displayMode = DisplayModeDescription.GetDisplayModes().FirstOrDefault(d => d.EnglishName == "Blocks.Viewer");
             if (displayMode == null)
@@ -139,23 +138,9 @@ namespace Blocks.Viewer
 
                 DisplayModeDescription.UpdateDisplayMode(displayMode);
             }
-            
-            _viewportControl.Viewport.DisplayMode = displayMode;
+
+            viewport.DisplayMode = displayMode;
         }
-
-        private void PlayButton_Click(object sender, EventArgs e)
-        {
-            var generator = new GenerateFromTransitions((int) _seedStepper.Value);
-            var transitions = new Transitions(BlockAssemblyReference.BlockAssembly);
-            //var groundPlane = Mesh.CreateFromPlane(Plane.WorldXY, new Interval(-20, 20), new Interval(-20, 20), 4, 4);
-            var groundPlane = new Mesh();
-            var outputAssembly = generator.Generate(transitions, groundPlane, (int)_stepsStepper.Value);
-
-            BlockAssemblyInstance = new BlockAssemblyInstance(outputAssembly);
-
-            _viewportControl.Refresh();
-        }
-
         void OpenFileDialog()
         {
             var ofd = new forms.OpenFileDialog();
@@ -192,8 +177,16 @@ namespace Blocks.Viewer
             var assembly = reader.Read(instances.ToList(), 50);
             BlockAssemblyReference = new BlockAssemblyInstance(assembly);
 
-            _viewportControl.Viewport.ZoomExtents();
-            _viewportControl.Refresh();
+            _viewportControlL.Viewport.ZoomExtents();
+            DisplayConduitL.Instance = BlockAssemblyReference;
+
+            RefreshViewport();
+        }
+
+        public static void RefreshViewport()
+        {
+            _viewportControlL.Refresh();
+            _viewportControlR.Refresh();
         }
     }
 }
