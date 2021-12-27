@@ -15,18 +15,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Grasshopper" Version="7.12.21313.6341" />
+		<PackageReference Include="Grasshopper" Version="7.13.21348.13001" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
 		<PackageReference Include="Rhino.Inside" Version="7.0.0" />
-		<PackageReference Include="RhinoCommon" Version="7.12.21313.6341" />
-		<PackageReference Include="RhinoWindows" Version="7.12.21313.6341" />
+		<PackageReference Include="RhinoCommon" Version="7.13.21348.13001" />
+		<PackageReference Include="RhinoWindows" Version="7.13.21348.13001" />
 		<PackageReference Include="xunit" Version="2.4.0" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
 		<PackageReference Include="coverlet.collector" Version="1.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Blocks\Blocks.csproj" />
+	  <ProjectReference Include="..\Blocks.Common\Blocks.Common.csproj" />
 	</ItemGroup>
 
 </Project>

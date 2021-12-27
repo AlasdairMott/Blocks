@@ -31,8 +31,8 @@ jobs:
         ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
     - name: Restore the project's packages
-      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release
+      run: msbuild /t:Restore /p:Configuration=Release
 
     # Build the application
     - name: Build the project
-      run: msbuild $env:Solution_Name /p:Configuration=Release
+      run: msbuild /p:Configuration=Release
