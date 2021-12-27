@@ -36,3 +36,7 @@ jobs:
     # Build the application
     - name: Build the project
       run: msbuild /p:Configuration=Release
+
+    # Run unit tests
+    - name: Run unit tests
+      run: dotnet test
