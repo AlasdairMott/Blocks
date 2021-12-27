@@ -52,7 +52,7 @@ namespace Blocks.Viewer
         public MainForm()
         {
             Title = "Blocks.Viewer";
-            ClientSize = new draw.Size(400, 400);
+            ClientSize = new draw.Size(800, 400);
 
             var demoMenu = new forms.ButtonMenuItem { Text = "&Demos" };
             BuildDemosMenu(demoMenu.Items);
@@ -91,12 +91,16 @@ namespace Blocks.Viewer
 
             var splitter = new forms.Splitter();
             splitter.SplitterWidth = 2;
-            splitter.Position = 200;
+            splitter.Position = Bounds.Width / 2;
             splitter.Panel1 = _viewportControlL;
             splitter.Panel2 = _viewportControlR;
 
             Content = splitter;
+
+            SizeChanged += MainForm_SizeChanged;
         }
+
+        private void MainForm_SizeChanged(object sender, EventArgs e) => (Content as forms.Splitter).Position = Bounds.Width / 2;
 
         private void BuildDemosMenu(forms.MenuItemCollection collection)
         {
@@ -175,10 +179,11 @@ namespace Blocks.Viewer
             });
 
             var assembly = reader.Read(instances.ToList(), 50);
-            BlockAssemblyReference = new BlockAssemblyInstance(assembly);
+            var blockAssemblyReferenceInstance = new BlockAssemblyInstance(assembly);
 
-            _viewportControlL.Viewport.ZoomExtents();
-            DisplayConduitL.Instance = BlockAssemblyReference;
+            BlockAssemblyReference = blockAssemblyReferenceInstance;
+
+            DisplayConduitL.SetInstance(BlockAssemblyReference);
 
             RefreshViewport();
         }
@@ -187,6 +192,13 @@ namespace Blocks.Viewer
         {
             _viewportControlL.Refresh();
             _viewportControlR.Refresh();
+        }
+
+        public static void ZoomExtents(bool refresh)
+        {
+            DisplayConduitL.ZoomExtents();
+            DisplayConduitR.ZoomExtents();
+            if (refresh) { RefreshViewport(); }
         }
     }
 }

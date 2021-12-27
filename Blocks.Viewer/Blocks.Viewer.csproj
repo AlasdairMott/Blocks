@@ -92,5 +92,11 @@
   <ItemGroup>
     <None Include="Resources\Play.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ZoomExtents.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Randomize.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

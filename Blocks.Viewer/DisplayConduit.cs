@@ -6,7 +6,7 @@ namespace Blocks.Viewer
     public class DisplayConduit : Rhino.Display.DisplayConduit
     {
         private RhinoViewport _viewport;
-        public BlockAssemblyInstance Instance { get; set; }
+        public BlockAssemblyInstance Instance { get; private set; }
         public DisplayConduit(RhinoViewport viewport)
         {
             _viewport = viewport;
@@ -44,6 +44,15 @@ namespace Blocks.Viewer
             if (Instance != null)
             {
                 e.Display.DrawMeshWires(Instance.Mesh, Color.Black, 3);
+            }
+        }
+
+        public void SetInstance(BlockAssemblyInstance instance) => Instance = instance;
+
+        public void ZoomExtents() { 
+            if (Instance != null)
+            {
+                _viewport.ZoomBoundingBox(Instance.BoundingBox);
             }
         }
     }
