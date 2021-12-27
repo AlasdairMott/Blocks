@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlockAssemblyInstance.cs" />
+    <Compile Include="BlocksViewport.cs" />
     <Compile Include="DisplayConduit.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="Program.cs" />

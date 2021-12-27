@@ -33,21 +33,21 @@ namespace Blocks.Viewer
             System.Windows.Forms.Application.Run();
         }
 
-        static void Shutdown()
+        private static void Shutdown()
         {
             _rhinoCore.Dispose();
             System.Windows.Forms.Application.Exit();
         }
 
-        static Rhino.UI.Controls.ViewportControl _viewportControlL;
-        static Rhino.UI.Controls.ViewportControl _viewportControlR;
-        static Toolbar _toolbar;
+        private static Toolbar _toolbar;
+        private static forms.Splitter _splitter;
 
-        public static BlockAssemblyInstance BlockAssemblyReference;
-        public static BlockAssemblyInstance BlockAssemblyInstance;
-        
-        public static DisplayConduit DisplayConduitL;
-        public static DisplayConduit DisplayConduitR;
+        public static BlockAssemblyInstance BlockAssemblyReference { get; private set; }
+        public static BlockAssemblyInstance BlockAssemblyInstance { get; private set; }
+        public static event EventHandler BlockAssemblyReferenceChanged;
+        public static event EventHandler BlockAssemblyInstanceChanged;
+        public static BlocksViewport ViewportL { get; private set; }
+        public static BlocksViewport ViewportR { get; private set; }
 
         public MainForm()
         {
@@ -73,34 +73,24 @@ namespace Blocks.Viewer
             };
 
             _toolbar = new Toolbar();
-            _toolbar.Show();
 
-            _viewportControlL = new Rhino.UI.Controls.ViewportControl();
-            _viewportControlL.Viewport.Name = "Left";
-            SetDisplayMode(_viewportControlL.Viewport);
+            ViewportL = new BlocksViewport("Left");
+            ViewportR = new BlocksViewport("Right");
 
-            _viewportControlR = new Rhino.UI.Controls.ViewportControl();
-            _viewportControlR.Viewport.Name = "Right";
-            SetDisplayMode(_viewportControlR.Viewport);
+            _splitter = new forms.Splitter();
+            _splitter.SplitterWidth = 2;
+            _splitter.Position = Bounds.Width / 2;
+            _splitter.Panel1 = ViewportL;
+            _splitter.Panel2 = ViewportR;
 
-            DisplayConduitL = new DisplayConduit(_viewportControlL.Viewport);
-            DisplayConduitL.Enabled = true;
+            var layout = new forms.TableLayout() { Rows = { _toolbar, _splitter } };
 
-            DisplayConduitR = new DisplayConduit(_viewportControlR.Viewport);
-            DisplayConduitR.Enabled = true;
-
-            var splitter = new forms.Splitter();
-            splitter.SplitterWidth = 2;
-            splitter.Position = Bounds.Width / 2;
-            splitter.Panel1 = _viewportControlL;
-            splitter.Panel2 = _viewportControlR;
-
-            Content = splitter;
+            Content = layout;
 
             SizeChanged += MainForm_SizeChanged;
         }
 
-        private void MainForm_SizeChanged(object sender, EventArgs e) => (Content as forms.Splitter).Position = Bounds.Width / 2;
+        private void MainForm_SizeChanged(object sender, EventArgs e) => _splitter.Position = Bounds.Width / 2;
 
         private void BuildDemosMenu(forms.MenuItemCollection collection)
         {
@@ -125,27 +115,8 @@ namespace Blocks.Viewer
             return Path.Combine(repository.FullName, "examples");
         }
 
-        private void SetDisplayMode(RhinoViewport viewport)
-        {
-            viewport.ConstructionGridVisible = false;
-            viewport.ConstructionAxesVisible = false;
-            viewport.WorldAxesVisible = false;
 
-            DisplayModeDescription displayMode = DisplayModeDescription.GetDisplayModes().FirstOrDefault(d => d.EnglishName == "Blocks.Viewer");
-            if (displayMode == null)
-            {
-                var displayId = DisplayModeDescription.CopyDisplayMode(DisplayModeDescription.ShadedId, "Blocks.Viewer");
-                displayMode = DisplayModeDescription.GetDisplayMode(displayId);
-
-                displayMode.DisplayAttributes.FillMode = DisplayPipelineAttributes.FrameBufferFillMode.SolidColor;
-                displayMode.DisplayAttributes.SetFill(System.Drawing.Color.White);
-
-                DisplayModeDescription.UpdateDisplayMode(displayMode);
-            }
-
-            viewport.DisplayMode = displayMode;
-        }
-        void OpenFileDialog()
+        private void OpenFileDialog()
         {
             var ofd = new forms.OpenFileDialog();
             ofd.Filters.Add(new forms.FileFilter("Rhino 3dm", ".3dm"));
@@ -155,7 +126,7 @@ namespace Blocks.Viewer
             }
         }
 
-        void OpenFile(string filename)
+        private void OpenFile(string filename)
         {
             Title = $"Blocks.Viewer ({filename})";
 
@@ -181,24 +152,34 @@ namespace Blocks.Viewer
             var assembly = reader.Read(instances.ToList(), 50);
             var blockAssemblyReferenceInstance = new BlockAssemblyInstance(assembly);
 
-            BlockAssemblyReference = blockAssemblyReferenceInstance;
+            SetBlockAssemblyReference(blockAssemblyReferenceInstance);
 
-            DisplayConduitL.SetInstance(BlockAssemblyReference);
-
-            RefreshViewport();
+            RefreshViewports();
         }
 
-        public static void RefreshViewport()
+        public static void RefreshViewports()
         {
-            _viewportControlL.Refresh();
-            _viewportControlR.Refresh();
+            ViewportL.ViewportControl.Refresh();
+            ViewportR.ViewportControl.Refresh();
         }
 
         public static void ZoomExtents(bool refresh)
         {
-            DisplayConduitL.ZoomExtents();
-            DisplayConduitR.ZoomExtents();
-            if (refresh) { RefreshViewport(); }
+            ViewportL.DisplayConduit.ZoomExtents();
+            ViewportR.DisplayConduit.ZoomExtents();
+            if (refresh) { RefreshViewports(); }
+        }
+
+        public static void SetBlockAssemblyInstance(BlockAssemblyInstance assembly)
+        {
+            BlockAssemblyInstance = assembly;
+            BlockAssemblyInstanceChanged(null, EventArgs.Empty);
+        }
+
+        public static void SetBlockAssemblyReference(BlockAssemblyInstance assembly)
+        {
+            BlockAssemblyReference = assembly;
+            BlockAssemblyReferenceChanged(null, EventArgs.Empty);
         }
     }
 }

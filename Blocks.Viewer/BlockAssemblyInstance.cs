@@ -13,7 +13,7 @@ namespace Blocks.Viewer
         public BlockAssembly BlockAssembly { get; private set; }
         public Mesh Mesh { get; private set; } = new Mesh();
         public Line[] MeshWires;
-        public DisplayMaterial Material { get; private set; } = new DisplayMaterial { Emission = Color.White };
+        public DisplayMaterial Material { get; private set; } = new DisplayMaterial { Diffuse = Color.White };
         public BoundingBox BoundingBox { get; private set; }
         public BlockAssemblyInstance(BlockAssembly assembly)
         {

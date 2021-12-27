@@ -1,58 +1,94 @@
-﻿using Rhino.Display;
+﻿using Eto.Forms;
+using Rhino.Display;
+using System;
 using System.Drawing;
 
 namespace Blocks.Viewer
 {
     public class DisplayConduit : Rhino.Display.DisplayConduit
     {
-        private RhinoViewport _viewport;
-        public BlockAssemblyInstance Instance { get; private set; }
-        public DisplayConduit(RhinoViewport viewport)
+        private BlocksViewport _parent;
+        private BlockAssemblyInstance _instance = MainForm.BlockAssemblyReference;
+        private DropDown _blockVisibiltyDropdown;
+        public DisplayConduit(BlocksViewport parent)
         {
-            _viewport = viewport;
+            _parent = parent;
+
+            _blockVisibiltyDropdown = _parent.BlockVisibiltyDropdown;
+
+            _blockVisibiltyDropdown.SelectedIndexChanged += BlockVisibiltyDropdown_SelectedIndexChanged;
+
+            MainForm.BlockAssemblyInstanceChanged += MainForm_BlockAssemblyInstanceChanged;
+            MainForm.BlockAssemblyReferenceChanged += MainForm_BlockAssemblyReferenceChanged;
         }
+
+        private void BlockVisibiltyDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch ((sender as DropDown).SelectedIndex)
+            {
+                case 0:
+                    _instance = MainForm.BlockAssemblyReference; break;
+                case 1:
+                    _instance =  MainForm.BlockAssemblyInstance; break;
+            }
+            _parent.ViewportControl.Refresh();
+        }
+
+        private void MainForm_BlockAssemblyInstanceChanged(object sender, EventArgs e)
+        {
+            if (_blockVisibiltyDropdown.SelectedIndex == 1)
+            {
+                _instance = MainForm.BlockAssemblyInstance;
+            }
+        }
+        private void MainForm_BlockAssemblyReferenceChanged(object sender, EventArgs e)
+        {
+            if (_blockVisibiltyDropdown.SelectedIndex == 0)
+            {
+                _instance = MainForm.BlockAssemblyReference;
+            }
+        }
+
         protected override void CalculateBoundingBox(CalculateBoundingBoxEventArgs e)
         {
-            if (e.Viewport.Name != _viewport.Name) return;
+            if (e.Viewport.Name != _parent.ViewportControl.Viewport.Name) return;
 
             base.CalculateBoundingBox(e);
-            if (Instance != null)
+            if (_instance != null)
             {
-                e.IncludeBoundingBox(Instance.BoundingBox);
+                e.IncludeBoundingBox(_instance.BoundingBox);
             }
         }
 
         protected override void PostDrawObjects(DrawEventArgs e)
         {
-            if (e.Viewport.Name != _viewport.Name) return;
+            if (e.Viewport.Name != _parent.ViewportControl.Viewport.Name) return;
 
             base.PostDrawObjects(e);
 
-            if (Instance != null)
+            if (_instance != null)
             {
-                e.Display.DrawMeshShaded(Instance.Mesh, Instance.Material);
-                e.Display.DrawLines(Instance.MeshWires, Color.Black);
+                e.Display.DrawMeshShaded(_instance.Mesh, _instance.Material);
+                e.Display.DrawLines(_instance.MeshWires, Color.Black);
             }
         }
 
         protected override void PreDrawObjects(DrawEventArgs e)
         {
-            if (e.Viewport.Name != _viewport.Name) return;
+            if (e.Viewport.Name != _parent.ViewportControl.Viewport.Name) return;
 
             base.PreDrawObjects(e);
 
-            if (Instance != null)
+            if (_instance != null)
             {
-                e.Display.DrawMeshWires(Instance.Mesh, Color.Black, 3);
+                e.Display.DrawMeshWires(_instance.Mesh, Color.Black, 3);
             }
         }
 
-        public void SetInstance(BlockAssemblyInstance instance) => Instance = instance;
-
         public void ZoomExtents() { 
-            if (Instance != null)
+            if (_instance != null)
             {
-                _viewport.ZoomBoundingBox(Instance.BoundingBox);
+                _parent.ViewportControl.Viewport.ZoomBoundingBox(_instance.BoundingBox);
             }
         }
     }
