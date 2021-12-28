@@ -1,4 +1,5 @@
 using Blocks.Common.Objects;
+using Blocks.Viewer.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
 using System;

@@ -3,13 +3,14 @@ using Rhino.Display;
 using Rhino.UI.Controls;
 using System;
 using System.Linq;
+using Blocks.Viewer.Display;
 
 namespace Blocks.Viewer
 {
     public class BlocksViewport : Panel
     {
         public ViewportControl ViewportControl { get; private set; }
-        public DisplayConduit DisplayConduit { get; private set; }
+        public BlocksDisplayConduit DisplayConduit { get; private set; }
         public DropDown BlockVisibiltyDropdown { get; private set; }
         public DropDown DisplayStyleDropdown { get; private set; }
 
@@ -21,7 +22,7 @@ namespace Blocks.Viewer
 
             BuildViewport();
 
-            DisplayConduit = new DisplayConduit(this);
+            DisplayConduit = new BlocksDisplayConduit(this);
             DisplayConduit.Enabled = true;
         }
 

@@ -1,16 +1,15 @@
 ﻿using Eto.Forms;
 using Rhino.Display;
-using System;
 using Rhino.Geometry;
-using System.Drawing;
+using System;
 
-namespace Blocks.Viewer
+namespace Blocks.Viewer.Display
 {
-    public class DisplayConduit : Rhino.Display.DisplayConduit
+    public class BlocksDisplayConduit : Rhino.Display.DisplayConduit
     {
         private BlocksViewport _parent;
-        private BlockAssemblyInstance _instance = MainForm.BlockAssemblyReference;
-        public DisplayConduit(BlocksViewport parent)
+        private IDrawable _instance = MainForm.BlockAssemblyReference;
+        public BlocksDisplayConduit(BlocksViewport parent)
         {
             _parent = parent;
             _parent.BlockVisibiltyDropdown.SelectedIndexChanged += BlockVisibiltyDropdown_SelectedIndexChanged;
@@ -83,8 +82,7 @@ namespace Blocks.Viewer
 
             if (_instance != null)
             {
-                var mode = (BlockAssemblyDisplayMode) _parent.DisplayStyleDropdown.SelectedIndex;
-                _instance.PostDraw(e, mode);
+                _instance.PostDraw(e);
             }
         }
 
@@ -96,8 +94,7 @@ namespace Blocks.Viewer
 
             if (_instance != null)
             {
-                var mode = (BlockAssemblyDisplayMode)_parent.DisplayStyleDropdown.SelectedIndex;
-                _instance.PreDraw(e, mode);
+                _instance.PreDraw(e);
             }
         }
 

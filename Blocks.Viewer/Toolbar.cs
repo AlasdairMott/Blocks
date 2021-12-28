@@ -1,5 +1,6 @@
 ﻿using Blocks.Common.Generators;
 using Blocks.Common.Objects;
+using Blocks.Viewer.Display;
 using Rhino.Geometry;
 using System;
 using draw = Eto.Drawing;

@@ -6,20 +6,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
-namespace Blocks.Viewer
+namespace Blocks.Viewer.Display
 {
-    public class BlockAssemblyInstance
+    public class BlockAssemblyInstance : IDrawable
     {
-        private Graph _graph;
         public BlockAssembly BlockAssembly { get; private set; }
         public Mesh Mesh { get; private set; } = new Mesh();
         public Line[] MeshWires;
         public DisplayMaterial Material { get; private set; } = new DisplayMaterial { Diffuse = Color.White };
         public BoundingBox BoundingBox { get; private set; }
-        public Graph Graph
-        {
-            get { if (_graph == null) { _graph = new Graph(); _graph.Build(BlockAssembly); } return _graph; }
-        }
         public BlockAssemblyInstance(BlockAssembly assembly)
         {
             BlockAssembly = assembly;
@@ -35,7 +30,7 @@ namespace Blocks.Viewer
             BoundingBox.Inflate(BoundingBox.Diagonal.Length / 2);
         }
 
-        public static Line[] GetMeshWires(Mesh mesh)
+        private Line[] GetMeshWires(Mesh mesh)
         {
             var lines = new List<Line>();
             foreach (var island in mesh.ExplodeAtUnweldedEdges())
@@ -45,33 +40,15 @@ namespace Blocks.Viewer
             return lines.ToArray();
         }
 
-        public void PreDraw(DrawEventArgs e, BlockAssemblyDisplayMode mode)
+        public void PreDraw(DrawEventArgs e)
         {
-            switch (mode)
-            {
-                case BlockAssemblyDisplayMode.Solid: 
-                    e.Display.DrawMeshWires(Mesh, Color.Black, 3); 
-                    break;
-            }
+            e.Display.DrawMeshWires(Mesh, Color.Black, 3);
         }
 
-        public void PostDraw(DrawEventArgs e, BlockAssemblyDisplayMode mode)
+        public void PostDraw(DrawEventArgs e)
         {
-            switch (mode)
-            {
-                case BlockAssemblyDisplayMode.Solid:
-                    e.Display.DrawMeshShaded(Mesh, Material);
-                    e.Display.DrawLines(MeshWires, Color.Black);
-                    break;
-                case BlockAssemblyDisplayMode.Graph:
-                    e.Display.DrawLines(Graph.Edges, Color.Black, 2);
-                    for (int i = 0; i < Graph.Vertices.Length; i++)
-                    {
-                        e.Display.Draw2dText(Graph.Labels[i], Color.Black, Graph.Vertices[i], true);
-                        //e.Display.Draw2dRectangle()
-                    }
-                    break;
-            }
+            e.Display.DrawMeshShaded(Mesh, Material);
+            e.Display.DrawLines(MeshWires, Color.Black);
         }
     }
 }

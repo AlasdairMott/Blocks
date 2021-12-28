@@ -1,4 +1,4 @@
-﻿namespace Blocks.Viewer
+﻿namespace Blocks.Viewer.Display
 {
     public enum BlockAssemblyDisplayMode
     {
