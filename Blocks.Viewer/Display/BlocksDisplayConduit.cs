@@ -1,107 +1,77 @@
-﻿using Eto.Forms;
-using Rhino.Display;
+﻿using Rhino.Display;
 using Rhino.Geometry;
 using System;
 
 namespace Blocks.Viewer.Display
 {
-    public class BlocksDisplayConduit : Rhino.Display.DisplayConduit
+    public class BlocksDisplayConduit : DisplayConduit
     {
         private BlocksViewport _parent;
-        private IDrawable _instance = MainForm.BlockAssemblyReference;
+        public IDrawable Instance { get; set; } = MainForm.BlockAssemblyReference;
+
         public BlocksDisplayConduit(BlocksViewport parent)
         {
             _parent = parent;
-            _parent.BlockVisibiltyDropdown.SelectedIndexChanged += BlockVisibiltyDropdown_SelectedIndexChanged;
-            _parent.DisplayStyleDropdown.SelectedIndexChanged += DisplayStyleDropdown_SelectedIndexChanged;
 
             MainForm.BlockAssemblyInstanceChanged += MainForm_BlockAssemblyInstanceChanged;
             MainForm.BlockAssemblyReferenceChanged += MainForm_BlockAssemblyReferenceChanged;
         }
-
-        private void DisplayStyleDropdown_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var viewport = _parent.ViewportControl.Viewport;
-            if ((sender as DropDown).SelectedIndex == 2)
-            {
-                viewport.SetProjection(DefinedViewportProjection.Top, "Top", true);
-            } 
-            else
-            {
-                viewport.SetProjection(DefinedViewportProjection.Perspective, null, true);
-                viewport.Camera35mmLensLength = 50;
-            }
-            _parent.ViewportControl.Refresh();
-        }
-
-        private void BlockVisibiltyDropdown_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch ((sender as DropDown).SelectedIndex)
-            {
-                case 0:
-                    _instance = MainForm.BlockAssemblyReference; break;
-                case 1:
-                    _instance =  MainForm.BlockAssemblyInstance; break;
-            }
-            _parent.ViewportControl.Refresh();
-        }
-
         private void MainForm_BlockAssemblyInstanceChanged(object sender, EventArgs e)
         {
             if (_parent.BlockVisibiltyDropdown.SelectedIndex == 1)
             {
-                _instance = MainForm.BlockAssemblyInstance;
+                Instance = MainForm.BlockAssemblyInstance;
             }
         }
         private void MainForm_BlockAssemblyReferenceChanged(object sender, EventArgs e)
         {
             if (_parent.BlockVisibiltyDropdown.SelectedIndex == 0)
             {
-                _instance = MainForm.BlockAssemblyReference;
+                Instance = MainForm.BlockAssemblyReference;
             }
         }
 
         protected override void CalculateBoundingBox(CalculateBoundingBoxEventArgs e)
         {
-            if (e.Viewport.Name != _parent.ViewportControl.Viewport.Name) return;
+            if (e.Viewport.Id != _parent.ViewportControl.Viewport.Id) return;
 
             base.CalculateBoundingBox(e);
-            if (_instance != null)
+            if (Instance != null)
             {
                 var unitBox = new BoundingBox(new Polyline { Point3d.Origin, new Point3d(1, 1, 1) });
                 e.IncludeBoundingBox(unitBox);
-                e.IncludeBoundingBox(_instance.BoundingBox);
+                e.IncludeBoundingBox(Instance.BoundingBox);
             }
         }
 
         protected override void PostDrawObjects(DrawEventArgs e)
         {
-            if (e.Viewport.Name != _parent.ViewportControl.Viewport.Name) return;
+            if (e.Viewport.Id != _parent.ViewportControl.Viewport.Id) return;
 
             base.PostDrawObjects(e);
 
-            if (_instance != null)
+            if (Instance != null)
             {
-                _instance.PostDraw(e);
+                Instance.PostDraw(e);
             }
         }
 
         protected override void PreDrawObjects(DrawEventArgs e)
         {
-            if (e.Viewport.Name != _parent.ViewportControl.Viewport.Name) return;
+            if (e.Viewport.Id != _parent.ViewportControl.Viewport.Id) return;
 
             base.PreDrawObjects(e);
 
-            if (_instance != null)
+            if (Instance != null)
             {
-                _instance.PreDraw(e);
+                Instance.PreDraw(e);
             }
         }
 
         public void ZoomExtents() { 
-            if (_instance != null)
+            if (Instance != null)
             {
-                _parent.ViewportControl.Viewport.ZoomBoundingBox(_instance.BoundingBox);
+                _parent.ViewportControl.Viewport.ZoomBoundingBox(Instance.BoundingBox);
                 _parent.ViewportControl.Viewport.Camera35mmLensLength = 50;
             }
         }

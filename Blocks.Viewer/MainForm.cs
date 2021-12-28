@@ -166,8 +166,8 @@ namespace Blocks.Viewer
 
         public static void ZoomExtents(bool refresh)
         {
-            ViewportL.DisplayConduit.ZoomExtents();
-            ViewportR.DisplayConduit.ZoomExtents();
+            ViewportL.BlockDisplayConduit.ZoomExtents();
+            ViewportR.BlockDisplayConduit.ZoomExtents();
             if (refresh) { RefreshViewports(); }
         }
 

@@ -10,7 +10,7 @@ namespace Blocks.Viewer
     public class BlocksViewport : Panel
     {
         public ViewportControl ViewportControl { get; private set; }
-        public BlocksDisplayConduit DisplayConduit { get; private set; }
+        public BlocksDisplayConduit BlockDisplayConduit { get; private set; }
         public DropDown BlockVisibiltyDropdown { get; private set; }
         public DropDown DisplayStyleDropdown { get; private set; }
 
@@ -22,8 +22,8 @@ namespace Blocks.Viewer
 
             BuildViewport();
 
-            DisplayConduit = new BlocksDisplayConduit(this);
-            DisplayConduit.Enabled = true;
+            BlockDisplayConduit = new BlocksDisplayConduit(this);
+            BlockDisplayConduit.Enabled = true;
         }
 
         public void BuildViewport()
@@ -33,12 +33,14 @@ namespace Blocks.Viewer
                 Items = { "Reference", "Instance" },
                 SelectedIndex = 0,
             };
+            BlockVisibiltyDropdown.SelectedIndexChanged += BlockVisibiltyDropdown_SelectedIndexChanged;
 
             DisplayStyleDropdown = new DropDown()
             {
                 Items = { "Solid", "Skeleton", "Graph" },
                 SelectedIndex = 0,
             };
+            DisplayStyleDropdown.SelectedIndexChanged += DisplayStyleDropdown_SelectedIndexChanged;
 
             var dropdowns = new DynamicLayout();
             dropdowns.AddRow(new Control[2] { BlockVisibiltyDropdown, DisplayStyleDropdown });
@@ -50,6 +52,33 @@ namespace Blocks.Viewer
             };
 
             Content = layout;
+        }
+
+        private void DisplayStyleDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var viewport = ViewportControl.Viewport;
+            if ((sender as DropDown).SelectedIndex == 2)
+            {
+                viewport.SetProjection(DefinedViewportProjection.Top, null, true);
+            }
+            else
+            {
+                viewport.SetProjection(DefinedViewportProjection.Perspective, null, true);
+                viewport.Camera35mmLensLength = 50;
+            }
+            ViewportControl.Refresh();
+        }
+
+        private void BlockVisibiltyDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch ((sender as DropDown).SelectedIndex)
+            {
+                case 0:
+                    BlockDisplayConduit.Instance = MainForm.BlockAssemblyReference; break;
+                case 1:
+                    BlockDisplayConduit.Instance = MainForm.BlockAssemblyInstance; break;
+            }
+            ViewportControl.Refresh();
         }
 
         private void Dropdowns_SizeChanged(object sender, EventArgs e)

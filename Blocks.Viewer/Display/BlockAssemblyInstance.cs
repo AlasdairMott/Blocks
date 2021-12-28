@@ -27,7 +27,7 @@ namespace Blocks.Viewer.Display
             MeshWires = GetMeshWires(Mesh);
 
             BoundingBox = Mesh.GetBoundingBox(true);
-            BoundingBox.Inflate(BoundingBox.Diagonal.Length / 2);
+            BoundingBox.Inflate(BoundingBox.Diagonal.Length);
         }
 
         private Line[] GetMeshWires(Mesh mesh)
