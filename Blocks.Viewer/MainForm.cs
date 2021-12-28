@@ -41,14 +41,17 @@ namespace Blocks.Viewer
         private static Toolbar _toolbar;
         private static forms.Splitter _splitter;
 
-        public static BlockAssemblyInstance BlockAssemblyReference { get; private set; }
-        public static BlockAssemblyInstance BlockAssemblyInstance { get; private set; }
-        public static event EventHandler BlockAssemblyReferenceChanged;
-        public static event EventHandler BlockAssemblyInstanceChanged;
+        public static BlockRepresentations Reference { get; private set; }
+        public static BlockRepresentations Generated { get; private set; }
         public static BlocksViewport ViewportL { get; private set; }
         public static BlocksViewport ViewportR { get; private set; }
 
         public MainForm()
+        {
+            BuildForm();
+        }
+
+        private void BuildForm()
         {
             Title = "Blocks.Viewer";
             ClientSize = new draw.Size(800, 400);
@@ -116,7 +119,6 @@ namespace Blocks.Viewer
             return Path.Combine(repository.FullName, "examples");
         }
 
-
         private void OpenFileDialog()
         {
             var ofd = new forms.OpenFileDialog();
@@ -151,9 +153,8 @@ namespace Blocks.Viewer
             });
 
             var assembly = reader.Read(instances.ToList(), 50);
-            var blockAssemblyReferenceInstance = new BlockAssemblyInstance(assembly);
 
-            SetBlockAssemblyReference(blockAssemblyReferenceInstance);
+            SetReference(assembly);
 
             RefreshViewports();
         }
@@ -171,16 +172,14 @@ namespace Blocks.Viewer
             if (refresh) { RefreshViewports(); }
         }
 
-        public static void SetBlockAssemblyInstance(BlockAssemblyInstance assembly)
+        public static void SetGenerated(BlockAssembly assembly)
         {
-            BlockAssemblyInstance = assembly;
-            BlockAssemblyInstanceChanged(null, EventArgs.Empty);
+            Generated = new BlockRepresentations(assembly);
         }
 
-        public static void SetBlockAssemblyReference(BlockAssemblyInstance assembly)
+        public static void SetReference(BlockAssembly assembly)
         {
-            BlockAssemblyReference = assembly;
-            BlockAssemblyReferenceChanged(null, EventArgs.Empty);
+            Reference = new BlockRepresentations(assembly);
         }
     }
 }

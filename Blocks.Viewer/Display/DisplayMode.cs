@@ -1,6 +1,6 @@
 ﻿namespace Blocks.Viewer.Display
 {
-    public enum BlockAssemblyDisplayMode
+    public enum DisplayMode
     {
         Solid,
         Wire,

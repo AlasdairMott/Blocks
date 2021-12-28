@@ -26,7 +26,7 @@ namespace Blocks.Viewer
             BlockDisplayConduit.Enabled = true;
         }
 
-        public void BuildViewport()
+        private void BuildViewport()
         {
             BlockVisibiltyDropdown = new DropDown()
             {
@@ -54,9 +54,15 @@ namespace Blocks.Viewer
             Content = layout;
         }
 
+        private void BlockVisibiltyDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ViewportControl.Refresh();
+        }
+
         private void DisplayStyleDropdown_SelectedIndexChanged(object sender, EventArgs e)
         {
             var viewport = ViewportControl.Viewport;
+
             if ((sender as DropDown).SelectedIndex == 2)
             {
                 viewport.SetProjection(DefinedViewportProjection.Top, null, true);
@@ -65,18 +71,6 @@ namespace Blocks.Viewer
             {
                 viewport.SetProjection(DefinedViewportProjection.Perspective, null, true);
                 viewport.Camera35mmLensLength = 50;
-            }
-            ViewportControl.Refresh();
-        }
-
-        private void BlockVisibiltyDropdown_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch ((sender as DropDown).SelectedIndex)
-            {
-                case 0:
-                    BlockDisplayConduit.Instance = MainForm.BlockAssemblyReference; break;
-                case 1:
-                    BlockDisplayConduit.Instance = MainForm.BlockAssemblyInstance; break;
             }
             ViewportControl.Refresh();
         }

@@ -1,4 +1,5 @@
-﻿using Rhino.Display;
+﻿using Eto.Forms;
+using Rhino.Display;
 using Rhino.Geometry;
 using System;
 
@@ -7,28 +8,23 @@ namespace Blocks.Viewer.Display
     public class BlocksDisplayConduit : DisplayConduit
     {
         private BlocksViewport _parent;
-        public IDrawable Instance { get; set; } = MainForm.BlockAssemblyReference;
+        public IDrawable Instance 
+        { 
+            get 
+            {
+                if (_parent.BlockVisibiltyDropdown.SelectedIndex == 0)
+                {
+                    return MainForm.Reference?.Get((DisplayMode) _parent.DisplayStyleDropdown.SelectedIndex);
+                } else
+                {
+                    return MainForm.Generated?.Get((DisplayMode)_parent.DisplayStyleDropdown.SelectedIndex);
+                }
+            } 
+        }
 
         public BlocksDisplayConduit(BlocksViewport parent)
         {
             _parent = parent;
-
-            MainForm.BlockAssemblyInstanceChanged += MainForm_BlockAssemblyInstanceChanged;
-            MainForm.BlockAssemblyReferenceChanged += MainForm_BlockAssemblyReferenceChanged;
-        }
-        private void MainForm_BlockAssemblyInstanceChanged(object sender, EventArgs e)
-        {
-            if (_parent.BlockVisibiltyDropdown.SelectedIndex == 1)
-            {
-                Instance = MainForm.BlockAssemblyInstance;
-            }
-        }
-        private void MainForm_BlockAssemblyReferenceChanged(object sender, EventArgs e)
-        {
-            if (_parent.BlockVisibiltyDropdown.SelectedIndex == 0)
-            {
-                Instance = MainForm.BlockAssemblyReference;
-            }
         }
 
         protected override void CalculateBoundingBox(CalculateBoundingBoxEventArgs e)
@@ -38,8 +34,6 @@ namespace Blocks.Viewer.Display
             base.CalculateBoundingBox(e);
             if (Instance != null)
             {
-                var unitBox = new BoundingBox(new Polyline { Point3d.Origin, new Point3d(1, 1, 1) });
-                e.IncludeBoundingBox(unitBox);
                 e.IncludeBoundingBox(Instance.BoundingBox);
             }
         }
@@ -50,10 +44,7 @@ namespace Blocks.Viewer.Display
 
             base.PostDrawObjects(e);
 
-            if (Instance != null)
-            {
-                Instance.PostDraw(e);
-            }
+            Instance?.PostDraw(e);
         }
 
         protected override void PreDrawObjects(DrawEventArgs e)
@@ -62,10 +53,7 @@ namespace Blocks.Viewer.Display
 
             base.PreDrawObjects(e);
 
-            if (Instance != null)
-            {
-                Instance.PreDraw(e);
-            }
+            Instance?.PreDraw(e);
         }
 
         public void ZoomExtents() { 

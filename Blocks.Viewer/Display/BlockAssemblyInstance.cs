@@ -1,4 +1,5 @@
 ﻿using Blocks.Common.Functions;
+using Blocks.Common.Generators;
 using Blocks.Common.Objects;
 using Rhino.Display;
 using Rhino.Geometry;
@@ -10,15 +11,12 @@ namespace Blocks.Viewer.Display
 {
     public class BlockAssemblyInstance : IDrawable
     {
-        public BlockAssembly BlockAssembly { get; private set; }
         public Mesh Mesh { get; private set; } = new Mesh();
-        public Line[] MeshWires;
+        public Line[] MeshWires = new Line[0];
         public DisplayMaterial Material { get; private set; } = new DisplayMaterial { Diffuse = Color.White };
-        public BoundingBox BoundingBox { get; private set; }
+        public BoundingBox BoundingBox { get; private set; } = BoundingBox.Empty;
         public BlockAssemblyInstance(BlockAssembly assembly)
         {
-            BlockAssembly = assembly;
-
             foreach (var instance in assembly.BlockInstances)
             {
                 var mesh = GeometryHelpers.GetBlockInstanceMesh(instance);
@@ -29,6 +27,9 @@ namespace Blocks.Viewer.Display
             BoundingBox = Mesh.GetBoundingBox(true);
             BoundingBox.Inflate(BoundingBox.Diagonal.Length);
         }
+
+        private BlockAssemblyInstance() { }
+        public static BlockAssemblyInstance Empty => new BlockAssemblyInstance();
 
         private Line[] GetMeshWires(Mesh mesh)
         {
