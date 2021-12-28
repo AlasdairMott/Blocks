@@ -8,6 +8,7 @@ namespace Blocks.Viewer.Display
     {
         private Graph2dInstance _graph;
         private BlockAssemblyInstance _blockAssemblyInstance;
+        private Skeleton _skeleton;
         private DisplayMode _mode;
 
         public BlockAssembly BlockAssembly { get; private set; }
@@ -34,7 +35,17 @@ namespace Blocks.Viewer.Display
                 return _graph;
             }
         }
-
+        public Skeleton Skeleton 
+        { 
+            get 
+            {
+                if (_skeleton == null)
+                {
+                    _skeleton = new Skeleton(BlockAssembly);
+                }
+                return _skeleton;
+            } 
+        }
         public IDrawable Get(DisplayMode mode)
         {
             _mode = mode;
@@ -42,7 +53,7 @@ namespace Blocks.Viewer.Display
             switch (_mode)
             {
                 case DisplayMode.Solid: return BlockAssemblyInstance;
-                case DisplayMode.Wire: return Graph;
+                case DisplayMode.Wire: return Skeleton;
                 case DisplayMode.Graph: return Graph;
                 default: throw new NotImplementedException();
             }

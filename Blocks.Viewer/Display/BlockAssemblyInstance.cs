@@ -11,20 +11,20 @@ namespace Blocks.Viewer.Display
 {
     public class BlockAssemblyInstance : IDrawable
     {
-        public Mesh Mesh { get; private set; } = new Mesh();
-        public Line[] MeshWires = new Line[0];
-        public DisplayMaterial Material { get; private set; } = new DisplayMaterial { Diffuse = Color.White };
+        private Mesh _mesh = new Mesh();
+        protected Line[] _meshWires = new Line[0];
+        private DisplayMaterial _material = new DisplayMaterial { Diffuse = Color.White };
         public BoundingBox BoundingBox { get; private set; } = BoundingBox.Empty;
         public BlockAssemblyInstance(BlockAssembly assembly)
         {
             foreach (var instance in assembly.BlockInstances)
             {
                 var mesh = GeometryHelpers.GetBlockInstanceMesh(instance);
-                Mesh.Append(mesh);
+                _mesh.Append(mesh);
             }
-            MeshWires = GetMeshWires(Mesh);
+            _meshWires = GetMeshWires(_mesh);
 
-            BoundingBox = Mesh.GetBoundingBox(true);
+            BoundingBox = _mesh.GetBoundingBox(true);
             BoundingBox.Inflate(BoundingBox.Diagonal.Length);
         }
 
@@ -43,13 +43,13 @@ namespace Blocks.Viewer.Display
 
         public void PreDraw(DrawEventArgs e)
         {
-            e.Display.DrawMeshWires(Mesh, Color.Black, 3);
+            e.Display.DrawMeshWires(_mesh, Color.Black, 3);
         }
 
         public void PostDraw(DrawEventArgs e)
         {
-            e.Display.DrawMeshShaded(Mesh, Material);
-            e.Display.DrawLines(MeshWires, Color.Black);
+            e.Display.DrawMeshShaded(_mesh, _material);
+            e.Display.DrawLines(_meshWires, Color.Black);
         }
     }
 }

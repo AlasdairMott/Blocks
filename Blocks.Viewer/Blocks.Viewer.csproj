@@ -52,6 +52,7 @@
     <Compile Include="Display\BlocksDisplayConduit.cs" />
     <Compile Include="Display\Graph2dInstance.cs" />
     <Compile Include="Display\IDrawable.cs" />
+    <Compile Include="Display\Skeleton.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
