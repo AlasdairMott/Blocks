@@ -1,6 +1,7 @@
 ﻿using Eto.Forms;
 using Rhino.Display;
 using System;
+using Rhino.Geometry;
 using System.Drawing;
 
 namespace Blocks.Viewer
@@ -9,17 +10,29 @@ namespace Blocks.Viewer
     {
         private BlocksViewport _parent;
         private BlockAssemblyInstance _instance = MainForm.BlockAssemblyReference;
-        private DropDown _blockVisibiltyDropdown;
         public DisplayConduit(BlocksViewport parent)
         {
             _parent = parent;
-
-            _blockVisibiltyDropdown = _parent.BlockVisibiltyDropdown;
-
-            _blockVisibiltyDropdown.SelectedIndexChanged += BlockVisibiltyDropdown_SelectedIndexChanged;
+            _parent.BlockVisibiltyDropdown.SelectedIndexChanged += BlockVisibiltyDropdown_SelectedIndexChanged;
+            _parent.DisplayStyleDropdown.SelectedIndexChanged += DisplayStyleDropdown_SelectedIndexChanged;
 
             MainForm.BlockAssemblyInstanceChanged += MainForm_BlockAssemblyInstanceChanged;
             MainForm.BlockAssemblyReferenceChanged += MainForm_BlockAssemblyReferenceChanged;
+        }
+
+        private void DisplayStyleDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var viewport = _parent.ViewportControl.Viewport;
+            if ((sender as DropDown).SelectedIndex == 2)
+            {
+                viewport.SetProjection(DefinedViewportProjection.Top, "Top", true);
+            } 
+            else
+            {
+                viewport.SetProjection(DefinedViewportProjection.Perspective, null, true);
+                viewport.Camera35mmLensLength = 50;
+            }
+            _parent.ViewportControl.Refresh();
         }
 
         private void BlockVisibiltyDropdown_SelectedIndexChanged(object sender, EventArgs e)
@@ -36,14 +49,14 @@ namespace Blocks.Viewer
 
         private void MainForm_BlockAssemblyInstanceChanged(object sender, EventArgs e)
         {
-            if (_blockVisibiltyDropdown.SelectedIndex == 1)
+            if (_parent.BlockVisibiltyDropdown.SelectedIndex == 1)
             {
                 _instance = MainForm.BlockAssemblyInstance;
             }
         }
         private void MainForm_BlockAssemblyReferenceChanged(object sender, EventArgs e)
         {
-            if (_blockVisibiltyDropdown.SelectedIndex == 0)
+            if (_parent.BlockVisibiltyDropdown.SelectedIndex == 0)
             {
                 _instance = MainForm.BlockAssemblyReference;
             }
@@ -56,6 +69,8 @@ namespace Blocks.Viewer
             base.CalculateBoundingBox(e);
             if (_instance != null)
             {
+                var unitBox = new BoundingBox(new Polyline { Point3d.Origin, new Point3d(1, 1, 1) });
+                e.IncludeBoundingBox(unitBox);
                 e.IncludeBoundingBox(_instance.BoundingBox);
             }
         }
@@ -68,8 +83,8 @@ namespace Blocks.Viewer
 
             if (_instance != null)
             {
-                e.Display.DrawMeshShaded(_instance.Mesh, _instance.Material);
-                e.Display.DrawLines(_instance.MeshWires, Color.Black);
+                var mode = (BlockAssemblyDisplayMode) _parent.DisplayStyleDropdown.SelectedIndex;
+                _instance.PostDraw(e, mode);
             }
         }
 
@@ -81,7 +96,8 @@ namespace Blocks.Viewer
 
             if (_instance != null)
             {
-                e.Display.DrawMeshWires(_instance.Mesh, Color.Black, 3);
+                var mode = (BlockAssemblyDisplayMode)_parent.DisplayStyleDropdown.SelectedIndex;
+                _instance.PreDraw(e, mode);
             }
         }
 
@@ -89,6 +105,7 @@ namespace Blocks.Viewer
             if (_instance != null)
             {
                 _parent.ViewportControl.Viewport.ZoomBoundingBox(_instance.BoundingBox);
+                _parent.ViewportControl.Viewport.Camera35mmLensLength = 50;
             }
         }
     }

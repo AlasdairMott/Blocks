@@ -25,7 +25,7 @@ namespace Blocks.Common.Objects
         }
 
         public Transitions(BlockAssembly assembly) : 
-            this (assembly.Relationships.Select(r => new Transition(r)).ToList()){
+            this (assembly.Edges.Select(r => new Transition(r)).ToList()){
         }
 
         public Transition this[int index]

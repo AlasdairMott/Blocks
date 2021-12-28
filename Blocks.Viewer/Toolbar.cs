@@ -14,12 +14,13 @@ namespace Blocks.Viewer
         public forms.NumericStepper StepsStepper { get; private set; }
         public Toolbar()
         {
-            BackgroundColor = draw.Colors.White;
             BuildToolbar();
         }
 
         private void BuildToolbar()
         {
+            BackgroundColor = draw.Colors.White;
+
             var layout = new forms.StackLayout()
             {
                 Padding = new draw.Padding(2),
@@ -55,11 +56,12 @@ namespace Blocks.Viewer
             layout.Items.Add(playButton);
             layout.Items.Add(randomizeButton);
             layout.Items.Add(zoomExtentsButton);
-            layout.Items.Add(new forms.StackLayoutItem{Expand = true});
-            layout.Items.Add("Seed:");
+
+            layout.Items.Add("  Seed:");
             layout.Items.Add(SeedStepper);
             layout.Items.Add("  Steps:");
             layout.Items.Add(StepsStepper);
+            layout.Items.Add(new forms.StackLayoutItem { Expand = true });
 
             Content = layout;
         }
@@ -68,8 +70,8 @@ namespace Blocks.Viewer
         {
             SeedStepper.Value = _random.Next(0, 100);
             StepsStepper.Value = _random.Next(0, 100);
+            
             Run();
-            MainForm.ViewportR.DisplayConduit.ZoomExtents();
             MainForm.RefreshViewports();
         }
 

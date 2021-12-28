@@ -1,8 +1,6 @@
-using Blocks.Common.Generators;
 using Blocks.Common.Objects;
 using Rhino.DocObjects;
 using Rhino.Geometry;
-using Rhino.Display;
 using System;
 using System.IO;
 using System.Linq;
@@ -77,11 +75,13 @@ namespace Blocks.Viewer
             ViewportL = new BlocksViewport("Left");
             ViewportR = new BlocksViewport("Right");
 
-            _splitter = new forms.Splitter();
-            _splitter.SplitterWidth = 2;
-            _splitter.Position = Bounds.Width / 2;
-            _splitter.Panel1 = ViewportL;
-            _splitter.Panel2 = ViewportR;
+            _splitter = new forms.Splitter
+            {
+                SplitterWidth = 2,
+                Position = Bounds.Width / 2,
+                Panel1 = ViewportL,
+                Panel2 = ViewportR,
+            };
 
             var layout = new forms.TableLayout() { Rows = { _toolbar, _splitter } };
 
