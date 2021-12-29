@@ -45,6 +45,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\GraphParameters.cs" />
+    <Compile Include="Data\Preferences.cs" />
+    <Compile Include="Dialogs\GraphParameters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\GraphParameters2.cs" />
     <Compile Include="Display\DisplayMode.cs" />
     <Compile Include="Display\BlockAssemblyInstance.cs" />
     <Compile Include="BlocksViewport.cs" />
@@ -90,6 +96,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Dialogs\GraphParameters.resx">
+      <DependentUpon>GraphParameters.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -104,5 +113,6 @@
   <ItemGroup>
     <None Include="Resources\Randomize.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

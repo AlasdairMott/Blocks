@@ -1,5 +1,6 @@
 ﻿using Blocks.Common.Generators;
 using Blocks.Common.Objects;
+using Blocks.Viewer.Data;
 using System;
 
 namespace Blocks.Viewer.Display
@@ -28,9 +29,7 @@ namespace Blocks.Viewer.Display
             {
                 if (_graph == null)
                 {
-                    var graphGenerator = new GraphGenerator();
-                    var graph2d = graphGenerator.Generate(BlockAssembly, 0, 0, 0, 0);
-                    _graph = new Graph2dInstance(graph2d);
+                    ComputeGraph(Preferences.GraphGeneratorParameters);
                 }
                 return _graph;
             }
@@ -63,5 +62,11 @@ namespace Blocks.Viewer.Display
             BlockAssembly = blockAssembly;
         }
 
+        public void ComputeGraph(GraphGeneratorParameters parameters)
+        {
+            var graphGenerator = new GraphGenerator();
+            var graph2d = graphGenerator.Generate(BlockAssembly, parameters);
+            _graph = new Graph2dInstance(graph2d);
+        }
     }
 }

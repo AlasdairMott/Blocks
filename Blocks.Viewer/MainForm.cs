@@ -71,6 +71,15 @@ namespace Blocks.Viewer
                         }
                     },
                     demoMenu,
+                    new forms.ButtonMenuItem
+                    {
+                        Text = "&Commands",
+                        Items = 
+                        {
+                            new Commands.GraphParameters(),
+                        }
+                    }
+                    
                 }
             };
 
