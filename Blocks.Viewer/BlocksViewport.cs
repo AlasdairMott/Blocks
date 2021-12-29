@@ -17,7 +17,9 @@ namespace Blocks.Viewer
         public BlocksViewport(string name) : base()
         {
             ViewportControl = new ViewportControl();
-            ViewportControl.Viewport.Name = name;
+            //ViewportControl.Viewport.Name = name;
+            //ViewportControl.Enabled = false;
+
             SetDisplayMode(ViewportControl.Viewport);
 
             BuildViewport();

@@ -54,6 +54,12 @@ namespace Blocks.Viewer
             SeedStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 10, Width = 48 };
             StepsStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 50, Width = 48 };
 
+            var graphParameters = new forms.Button
+            {
+                Size = new draw.Size(20, 20),
+                BackgroundColor = draw.Colors.White
+            };
+
             layout.Items.Add(playButton);
             layout.Items.Add(randomizeButton);
             layout.Items.Add(zoomExtentsButton);
@@ -63,6 +69,7 @@ namespace Blocks.Viewer
             layout.Items.Add("  Steps:");
             layout.Items.Add(StepsStepper);
             layout.Items.Add(new forms.StackLayoutItem { Expand = true });
+            layout.Items.Add(graphParameters);
 
             Content = layout;
         }

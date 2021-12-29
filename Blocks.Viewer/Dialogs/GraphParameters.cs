@@ -1,4 +1,6 @@
-﻿using Blocks.Viewer.Data;
+﻿using Blocks.Common.Generators;
+using Blocks.Viewer.Data;
+using System;
 using System.Windows.Forms;
 
 namespace Blocks.Viewer.Dialogs
@@ -48,7 +50,11 @@ namespace Blocks.Viewer.Dialogs
             // step_SpringConstant
             // 
             this.step_SpringConstant.DecimalPlaces = 3;
-            this.step_SpringConstant.Increment = (decimal) 0.05;
+            this.step_SpringConstant.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            131072});
             this.step_SpringConstant.Location = new System.Drawing.Point(220, 36);
             this.step_SpringConstant.Name = "step_SpringConstant";
             this.step_SpringConstant.Size = new System.Drawing.Size(115, 31);
@@ -72,6 +78,7 @@ namespace Blocks.Viewer.Dialogs
             this.button_Run.TabIndex = 2;
             this.button_Run.Text = "Run";
             this.button_Run.UseVisualStyleBackColor = true;
+            this.button_Run.Click += new System.EventHandler(this.OnRunClick);
             // 
             // label_SpringConstant
             // 
@@ -145,9 +152,15 @@ namespace Blocks.Viewer.Dialogs
             // step_Iterations
             // 
             this.step_Iterations.Location = new System.Drawing.Point(220, 224);
+            this.step_Iterations.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
             this.step_Iterations.Name = "step_Iterations";
             this.step_Iterations.Size = new System.Drawing.Size(115, 31);
             this.step_Iterations.TabIndex = 10;
+            this.step_Iterations.ValueChanged += new System.EventHandler(this.step_Iterations_ValueChanged);
             // 
             // GraphParameters
             // 
@@ -164,7 +177,7 @@ namespace Blocks.Viewer.Dialogs
             this.Controls.Add(this.button_Run);
             this.Controls.Add(this.button_Apply);
             this.Controls.Add(this.step_SpringConstant);
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "GraphParameters";
@@ -187,74 +200,48 @@ namespace Blocks.Viewer.Dialogs
             var parameters = Preferences.GraphGeneratorParameters;
 
             step_SpringConstant.Value = (decimal)parameters.SpringConstant;
+            step_RestLength.Value = (decimal)parameters.RestingLength;
+            step_Repulsion.Value = (decimal)parameters.RepulsionFactor;
+            step_Threshold.Value = (decimal)parameters.Threshold;
+            step_Iterations.Value = parameters.MaxIterations;
+        }
+
+        public GraphGeneratorParameters Get()
+        {
+            return new GraphGeneratorParameters(
+                (double)step_SpringConstant.Value, 
+                (double)step_RestLength.Value,
+                (double)step_Repulsion.Value,
+                (double)step_Threshold.Value,
+                (int)step_Iterations.Value
+            );
+        }
+        private void OnRunClick(object sender, EventArgs e)
+        {
+            MainForm.Reference?.ComputeGraph(Get());
+            MainForm.Generated?.ComputeGraph(Get());
+            MainForm.RefreshViewports();
         }
 
         private void OnApply_Click(object sender, System.EventArgs e)
         {
-            
+            var parameters = Preferences.GraphGeneratorParameters;
+
+            parameters.SpringConstant = (double)step_SpringConstant.Value;
+            parameters.RestingLength = (double)step_RestLength.Value;
+            parameters.RepulsionFactor = (double)step_Repulsion.Value;
+            parameters.Threshold = (double)step_Threshold.Value;
+            parameters.MaxIterations = (int)step_Iterations.Value;
         }
 
         private void GraphParameters_Load(object sender, System.EventArgs e)
         {
 
         }
-        //    Title = "Graph Parameters";
-        //    MinimumSize = new Size(300, 0);
-        //    Resizable = false;
-        //    ShowInTaskbar = false;
-        //    Maximizable = false;
-        //    Minimizable = false;
 
-        //    var parameters = Preferences.GraphGeneratorParameters;
+        private void step_Iterations_ValueChanged(object sender, EventArgs e)
+        {
 
-        //    var stepper_springConstant = new NumericMaskedTextStepper<double>() { Value = parameters.SpringConstant};
-        //    stepper_springConstant.ValueChanged += (sender, e) => parameters.SpringConstant = stepper_springConstant.Value;
-
-        //    var stepper_restLength = new NumericMaskedTextBox<double>() { Value = parameters.RestingLength };
-        //    stepper_restLength.ValueChanged += (sender, e) => parameters.RestingLength = stepper_restLength.Value;
-
-        //    var stepper_repulsionFactor = new NumericMaskedTextBox<double>() { Value = parameters.RepulsionFactor };
-        //    stepper_repulsionFactor.ValueChanged += (sender, e) => parameters.RepulsionFactor = stepper_repulsionFactor.Value;
-
-        //    var stepper_threshold = new NumericMaskedTextBox<double>() { Value = parameters.Threshold };
-        //    stepper_threshold.ValueChanged += (sender, e) => parameters.Threshold = stepper_threshold.Value;
-
-        //    var stepper_Iterations = new NumericMaskedTextStepper<int>() { AllowSign = false, Value = parameters.MaxIterations };
-        //    stepper_Iterations.ValueChanged += (sender, e) => parameters.MaxIterations = stepper_Iterations.Value;
-        //    stepper_Iterations.Step += stepper_Iterations_Step;
-
-        //    var runButton = new Button() { Text = "Run"};
-        //    runButton.Click += (sender, e) => { 
-        //        MainForm.Reference?.ComputeGraph(Preferences.GraphGeneratorParameters); 
-        //        MainForm.Generated?.ComputeGraph(Preferences.GraphGeneratorParameters);
-        //        MainForm.RefreshViewports();
-        //    };
-
-        //    var closeButton = new Button() { Text = "Close"};
-        //    closeButton.Click += (sender, e) => Close();
-
-        //    Content = new DynamicLayout()
-        //    {
-        //        Padding = new Padding(10),
-        //        Spacing = new Size(5, 5),
-        //        Rows =
-        //        {
-        //            new DynamicRow{new TextBox()},
-        //            new DynamicRow{"Spring Constant", stepper_springConstant },
-        //            new DynamicRow{"Resting Length", stepper_restLength },
-        //            new DynamicRow{"Repulsion Factor", stepper_repulsionFactor },
-        //            new DynamicRow{"Threshold", stepper_threshold },
-        //            new DynamicRow{"Iterations", stepper_Iterations },
-        //            new DynamicRow{runButton, closeButton },
-        //        }
-        //    };
-        //}
-
-        //private void stepper_Iterations_Step(object sender, StepperEventArgs e)
-        //{
-        //    var stepper = (sender as NumericMaskedTextStepper<int>);
-        //    stepper.Value += e.Direction == StepperDirection.Up ? 1 : -1;
-        //    Preferences.GraphGeneratorParameters.MaxIterations = stepper.Value;
-        //}
+        }
     }
 }
