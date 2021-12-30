@@ -16,19 +16,25 @@ namespace Blocks.Viewer.Display
         {
             _graph = graph;
 
-            foreach (var line in graph.Edges) BoundingBox.Union(line.BoundingBox);
+            foreach (var line in graph.Edges)
+            {
+                var union = BoundingBox.Union(BoundingBox, line.BoundingBox);
+                BoundingBox = union;
+            }
 
-            BoundingBox.Union(new Point3d(0, 0, 1));
-            BoundingBox.Union(new Point3d(0, 0, -1));
+            var min = BoundingBox.Min;
+            BoundingBox.Union(min + Vector3d.ZAxis);
+            BoundingBox.Inflate(BoundingBox.Diagonal.Length * 0.2);
         }
 
         public void PreDraw(DrawEventArgs e)
         {
             e.Display.DrawLines(_graph.Edges, Color.Black, 2);
             e.Display.DrawPoints(_graph.Vertices, PointStyle.Square, 2, Color.Black);
-            foreach (var edge in _graph.Edges)
+
+            for (int i = 0; i < _graph.Labels.Length; i++)
             {
-                e.Display.Draw2dText($"{Math.Round(edge.Length,2)}", Color.Black, edge.PointAt(0.5), true, 18);
+                DrawLabel.Draw(e.Display, _graph.Vertices[i], _graph.Labels[i]);
             }
         }
 

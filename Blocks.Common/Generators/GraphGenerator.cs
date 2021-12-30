@@ -8,18 +8,20 @@ namespace Blocks.Common.Generators
 {
     public class GraphGeneratorParameters
     {
-        public double SpringConstant;
-        public double RestingLength;
-        public double RepulsionFactor;
-        public double Threshold;
-        public int MaxIterations;
+        public double SpringConstant { get; set; }
+        public double RestingLength { get; set; }
+        public double RepulsionFactor { get; set; }
+        public double RepsulionRadius { get; set; }
+        public double CoolingFactor { get; set; }
+        public int MaxIterations { get; set; }
 
-        public GraphGeneratorParameters(double springConstant, double restingLength, double repulsionFactor, double threshold, int maxIterations)
+        public GraphGeneratorParameters(double springConstant, double restingLength, double repulsionFactor, double repulsionRadius, double coolingFactor, int maxIterations)
         {
             SpringConstant = springConstant;
             RestingLength = restingLength;
             RepulsionFactor = repulsionFactor;
-            Threshold = threshold;
+            RepsulionRadius = repulsionRadius;
+            CoolingFactor = coolingFactor;
             MaxIterations = maxIterations;
         }
     }
@@ -47,24 +49,24 @@ namespace Blocks.Common.Generators
             double maxForce = double.PositiveInfinity;
 
             var forces = new Vector3d[vertices.Length];
-            var coolingFactor = 1.0;
+            var temperature = 1.0;
 
-            while (i < parameters.MaxIterations && maxForce > parameters.Threshold)
+            while (i < parameters.MaxIterations)
             {
                 for (int j = 0; j < vertices.Length; j++)
                 {
                     var F_A = ComputeAttractiveForce(vertices[j], parameters.SpringConstant, parameters.RestingLength);
-                    var F_R = ComputerRespulsiveForce(vertices[j],vertices);
+                    var F_R = ComputerRespulsiveForce(vertices[j],vertices, parameters.RepsulionRadius);
                     forces[j] = F_A + parameters.RepulsionFactor * F_R;
                     maxForce = Math.Max(maxForce, forces[j].Length);
                 }
 
                 for (int j = 0; j < vertices.Length; j++)
                 {
-                    vertices[j].Location += coolingFactor * forces[j];
+                    vertices[j].Location += temperature * forces[j];
                 }
 
-                //coolingFactor *= 0.9;
+                temperature *= parameters.CoolingFactor;
 
                 i++;
             }
@@ -117,18 +119,22 @@ namespace Blocks.Common.Generators
             return force *= -1;
         }
 
-        public Vector3d ComputerRespulsiveForce(Vertex vertex, IEnumerable<Vertex> others)
+        public Vector3d ComputerRespulsiveForce(Vertex vertex, IEnumerable<Vertex> others, double repulsionRadius)
         {
             Vector3d force = Vector3d.Zero;
             foreach (var other in others)
             {
                 var vector = new Vector3d(other.Location - vertex.Location);
-                //var length = vector.Length;
-                //vector.Unitize();
-                //force += (vector * (1/ Math.Min(length, 0.01)));
+                var length = vector.Length;
+                if (length > repulsionRadius) { continue; }
+
+                //Magnitude should be smaller if the vectors are close to the repulsionRadius Limit.
+                vector.Unitize();
+                vector *= (repulsionRadius - length);
+
                 force += vector;
             }
-            return force * -1;
+            return force * - 1;
         }
 
         public Line[] LinesFromVertices(IEnumerable<Vertex> vertices)

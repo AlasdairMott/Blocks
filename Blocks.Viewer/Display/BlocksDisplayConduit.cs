@@ -59,8 +59,14 @@ namespace Blocks.Viewer.Display
         public void ZoomExtents() { 
             if (Instance != null)
             {
-                _parent.ViewportControl.Viewport.ZoomBoundingBox(Instance.BoundingBox);
+                //var obj = Rhino.RhinoDoc.ActiveDoc.Objects.AddBrep(Instance.BoundingBox.ToBrep());
                 _parent.ViewportControl.Viewport.Camera35mmLensLength = 50;
+                _parent.ViewportControl.Viewport.ZoomBoundingBox(Instance.BoundingBox);
+                //_parent.ViewportControl.Viewport.ZoomExtents();
+
+                //Rhino.RhinoDoc.ActiveDoc.Objects.Delete(obj, true);
+
+                //
             }
         }
     }

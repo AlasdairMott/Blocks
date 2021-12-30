@@ -1,5 +1,4 @@
-﻿using Blocks.Common.Functions;
-using Blocks.Common.Objects;
+﻿using Blocks.Common.Objects;
 using Rhino.Display;
 using Rhino.Geometry;
 using System.Drawing;
@@ -31,10 +30,10 @@ namespace Blocks.Viewer.Display
             e.Display.DrawLines(_edges, Color.Black, 2);
             e.Display.DrawPoints(_vertices, PointStyle.Simple, 2, Color.Black);
             e.Display.DrawLines(_meshWires, Color.FromArgb(100, 0, 0, 0));
-            //for (int i =0; i < _labels.Length; i ++)
-            //{
-            //    e.Display.Draw2dText(_labels[i], Color.Black, _vertices[i], true, 14);
-            //}
+            for (int i = 0; i < _labels.Length; i++)
+            {
+                DrawLabel.Draw(e.Display, _vertices[i], _labels[i]);
+            }
         }
 
         public new void PostDraw(DrawEventArgs e)
