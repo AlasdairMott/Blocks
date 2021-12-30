@@ -17,8 +17,6 @@ namespace Blocks.Viewer
         public BlocksViewport(string name) : base()
         {
             ViewportControl = new ViewportControl();
-            //ViewportControl.Viewport.Name = name;
-            //ViewportControl.Enabled = false;
 
             SetDisplayMode(ViewportControl.Viewport);
 
@@ -44,8 +42,33 @@ namespace Blocks.Viewer
             };
             DisplayStyleDropdown.SelectedIndexChanged += DisplayStyleDropdown_SelectedIndexChanged;
 
+            var ShowText = new Button
+            {
+                Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Labels),
+                Style = "viewport-button",
+            };
+            ShowText.Click += ShowText_Click;
+
+            var zoomExtentsButton = new Button()
+            {
+                Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.ZoomExtents),
+                Style = "viewport-button",
+            };
+            zoomExtentsButton.Click += (sender, e) =>
+            {
+                BlockDisplayConduit.ZoomExtents();
+                ViewportControl.Refresh();
+            };
+
+            //var buttonsGroup = new StackLayout()
+            //{
+            //    Padding = new Eto.Drawing.Padding(2),
+            //    Orientation = Orientation.Horizontal,
+            //    Items = { ShowText, zoomExtentsButton },
+            //};
+
             var dropdowns = new DynamicLayout();
-            dropdowns.AddRow(new Control[2] { BlockVisibiltyDropdown, DisplayStyleDropdown });
+            dropdowns.AddRow(BlockVisibiltyDropdown, DisplayStyleDropdown, ShowText, zoomExtentsButton);
             dropdowns.SizeChanged += Dropdowns_SizeChanged;
 
             var layout = new TableLayout()
@@ -56,10 +79,16 @@ namespace Blocks.Viewer
             Content = layout;
         }
 
-        private void BlockVisibiltyDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        private void ShowText_Click(object sender, EventArgs e)
         {
-            ViewportControl.Refresh();
+            if (BlockDisplayConduit.Instance is IDrawLabel instance)
+            {
+                instance.LabelEnabled = !instance.LabelEnabled;
+                ViewportControl.Refresh();
+            }
         }
+
+        private void BlockVisibiltyDropdown_SelectedIndexChanged(object sender, EventArgs e) => ViewportControl.Refresh();
 
         private void DisplayStyleDropdown_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -80,10 +109,9 @@ namespace Blocks.Viewer
         private void Dropdowns_SizeChanged(object sender, EventArgs e)
         {
             var dynamicLayout = sender as DynamicLayout;
-            foreach (var item in dynamicLayout.Children)
-            {
-                item.Width = dynamicLayout.Width / 2;
-            }
+            var newDropDownWidth = (int) ((dynamicLayout.Width - 44) * 0.5);
+            BlockVisibiltyDropdown.Width = newDropDownWidth;
+            DisplayStyleDropdown.Width = newDropDownWidth;
         }
 
         private void SetDisplayMode(RhinoViewport viewport)

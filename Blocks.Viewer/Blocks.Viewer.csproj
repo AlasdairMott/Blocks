@@ -58,6 +58,7 @@
     <Compile Include="Display\DrawLabel.cs" />
     <Compile Include="Display\Graph2dInstance.cs" />
     <Compile Include="Display\IDrawable.cs" />
+    <Compile Include="Display\IDrawLabel.cs" />
     <Compile Include="Display\Skeleton.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="Program.cs" />
@@ -116,6 +117,8 @@
   <ItemGroup>
     <None Include="Resources\Randomize.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Labels.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

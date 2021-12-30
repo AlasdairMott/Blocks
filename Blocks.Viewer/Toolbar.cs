@@ -31,23 +31,21 @@ namespace Blocks.Viewer
 
             var playButton = new forms.Button { 
                 Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Play), 
-                Size = new draw.Size(20,20),
-                BackgroundColor = draw.Colors.White };
+                Style = "toolbar-button",
+            };
             playButton.Click += PlayButton_Click;
 
             var randomizeButton = new forms.Button
             {
                 Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Randomize),
-                Size = new draw.Size(20, 20),
-                BackgroundColor = draw.Colors.White
+                Style = "toolbar-button",
             };
             randomizeButton.Click += RandomizeButton_Click;
 
             var zoomExtentsButton = new forms.Button
             {
                 Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.ZoomExtents),
-                Size = new draw.Size(20, 20),
-                BackgroundColor = draw.Colors.White
+                Style = "toolbar-button",
             };
             zoomExtentsButton.Click += ZoomExtentsButton_Click;
 

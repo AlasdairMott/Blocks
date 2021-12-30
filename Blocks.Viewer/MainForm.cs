@@ -27,6 +27,8 @@ namespace Blocks.Viewer
 
         private void BuildForm()
         {
+            BuildStyles();
+
             Title = "Blocks.Viewer";
             ClientSize = new draw.Size(800, 400);
 
@@ -153,6 +155,19 @@ namespace Blocks.Viewer
             ViewportL.BlockDisplayConduit.ZoomExtents();
             ViewportR.BlockDisplayConduit.ZoomExtents();
             if (refresh) { RefreshViewports(); }
+        }
+
+        public static void BuildStyles()
+        {
+            Eto.Style.Add<forms.Button>("toolbar-button", button => {
+                button.Size = new draw.Size(20, 20);
+                button.BackgroundColor = draw.Colors.White;
+            });
+
+            Eto.Style.Add<forms.Button>("viewport-button", button => {
+                button.Size = new draw.Size(22, 22);
+                button.BackgroundColor = draw.Colors.White;
+            });
         }
 
         public static void SetGenerated(BlockAssembly assembly)

@@ -25,7 +25,6 @@ namespace Blocks.Viewer.Display
             _meshWires = GetMeshWires(_mesh);
 
             BoundingBox = _mesh.GetBoundingBox(true);
-            BoundingBox.Inflate(BoundingBox.Diagonal.Length);
         }
 
         private BlockAssemblyInstance() { }

@@ -6,11 +6,13 @@ using System.Linq;
 
 namespace Blocks.Viewer.Display
 {
-    public class Skeleton : BlockAssemblyInstance, IDrawable
+    public class Skeleton : BlockAssemblyInstance, IDrawable, IDrawLabel
     {
         private Point3d[] _vertices;
         private Line[] _edges;
         private string[] _labels;
+
+        public bool LabelEnabled { get; set; } = false;
 
         public Skeleton(BlockAssembly assembly) : base(assembly)
         {
@@ -30,9 +32,13 @@ namespace Blocks.Viewer.Display
             e.Display.DrawLines(_edges, Color.Black, 2);
             e.Display.DrawPoints(_vertices, PointStyle.Simple, 2, Color.Black);
             e.Display.DrawLines(_meshWires, Color.FromArgb(100, 0, 0, 0));
-            for (int i = 0; i < _labels.Length; i++)
+
+            if (LabelEnabled)
             {
-                DrawLabel.Draw(e.Display, _vertices[i], _labels[i]);
+                for (int i = 0; i < _labels.Length; i++)
+                {
+                    DrawLabel.Draw(e.Display, _vertices[i], _labels[i]);
+                }
             }
         }
 

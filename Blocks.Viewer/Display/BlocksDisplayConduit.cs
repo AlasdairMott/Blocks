@@ -1,7 +1,4 @@
-﻿using Eto.Forms;
-using Rhino.Display;
-using Rhino.Geometry;
-using System;
+﻿using Rhino.Display;
 
 namespace Blocks.Viewer.Display
 {
@@ -43,7 +40,6 @@ namespace Blocks.Viewer.Display
             if (e.Viewport.Id != _parent.ViewportControl.Viewport.Id) return;
 
             base.PostDrawObjects(e);
-
             Instance?.PostDraw(e);
         }
 
@@ -52,21 +48,19 @@ namespace Blocks.Viewer.Display
             if (e.Viewport.Id != _parent.ViewportControl.Viewport.Id) return;
 
             base.PreDrawObjects(e);
-
             Instance?.PreDraw(e);
         }
 
         public void ZoomExtents() { 
             if (Instance != null)
             {
-                //var obj = Rhino.RhinoDoc.ActiveDoc.Objects.AddBrep(Instance.BoundingBox.ToBrep());
+                var bbox = Instance.BoundingBox;
+                var amount = 5;
+
+                bbox.Inflate(amount);
+
                 _parent.ViewportControl.Viewport.Camera35mmLensLength = 50;
-                _parent.ViewportControl.Viewport.ZoomBoundingBox(Instance.BoundingBox);
-                //_parent.ViewportControl.Viewport.ZoomExtents();
-
-                //Rhino.RhinoDoc.ActiveDoc.Objects.Delete(obj, true);
-
-                //
+                _parent.ViewportControl.Viewport.ZoomBoundingBox(bbox);
             }
         }
     }
