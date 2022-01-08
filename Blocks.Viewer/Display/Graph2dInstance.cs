@@ -11,7 +11,6 @@ namespace Blocks.Viewer.Display
         private Graph2d _graph;
 
         public BoundingBox BoundingBox { get; private set; } = BoundingBox.Empty;
-        public bool LabelEnabled { get; set; } = false;
         public Graph2dInstance(Graph2d graph)
         {
             _graph = graph;
@@ -30,18 +29,18 @@ namespace Blocks.Viewer.Display
         {
             e.Display.DrawLines(_graph.Edges, Color.Black, 2);
             e.Display.DrawPoints(_graph.Vertices, PointStyle.Square, 2, Color.Black);
-
-            if (LabelEnabled)
-            {
-                for (int i = 0; i < _graph.Labels.Length; i++)
-                {
-                    DrawLabel.Draw(e.Display, _graph.Vertices[i], _graph.Labels[i]);
-                }
-            }
         }
 
         public void PostDraw(DrawEventArgs e)
         {
+        }
+
+        public void DrawText(DrawEventArgs e)
+        {
+            for (int i = 0; i < _graph.Labels.Length; i++)
+            {
+                DrawLabel.Draw(e.Display, _graph.Vertices[i], _graph.Labels[i]);
+            }
         }
     }
 }

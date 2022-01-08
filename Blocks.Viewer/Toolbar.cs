@@ -49,6 +49,13 @@ namespace Blocks.Viewer
             };
             zoomExtentsButton.Click += ZoomExtentsButton_Click;
 
+            var ShowText = new forms.Button
+            {
+                Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Labels),
+                Style = "toolbar-button",
+            };
+            ShowText.Click += ShowText_Click;
+
             SeedStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 10, Width = 48 };
             StepsStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 50, Width = 48 };
 
@@ -61,6 +68,7 @@ namespace Blocks.Viewer
             layout.Items.Add(playButton);
             layout.Items.Add(randomizeButton);
             layout.Items.Add(zoomExtentsButton);
+            layout.Items.Add(ShowText);
 
             layout.Items.Add("  Seed:");
             layout.Items.Add(SeedStepper);
@@ -82,6 +90,13 @@ namespace Blocks.Viewer
         }
 
         private void ZoomExtentsButton_Click(object sender, EventArgs e) => MainForm.ZoomExtents(true);
+
+        private void ShowText_Click(object sender, EventArgs e)
+        {
+            MainForm.ViewportL.BlockDisplayConduit.ToggleTextDisplay();
+            MainForm.ViewportR.BlockDisplayConduit.ToggleTextDisplay();
+            MainForm.RefreshViewports();
+        }
 
         private void PlayButton_Click(object sender, EventArgs e)
         {

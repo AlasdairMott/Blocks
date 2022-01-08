@@ -5,6 +5,7 @@ namespace Blocks.Viewer.Display
     public class BlocksDisplayConduit : DisplayConduit
     {
         private BlocksViewport _parent;
+        public bool TextIsVisible { get; set; }
         public IDrawable Instance 
         { 
             get 
@@ -24,6 +25,8 @@ namespace Blocks.Viewer.Display
             _parent = parent;
         }
 
+        public void ToggleTextDisplay() => TextIsVisible = !TextIsVisible;
+
         protected override void CalculateBoundingBox(CalculateBoundingBoxEventArgs e)
         {
             if (e.Viewport.Id != _parent.ViewportControl.Viewport.Id) return;
@@ -41,6 +44,11 @@ namespace Blocks.Viewer.Display
 
             base.PostDrawObjects(e);
             Instance?.PostDraw(e);
+
+            if (TextIsVisible && Instance is IDrawLabel label)
+            {
+                label.DrawText(e);
+            }
         }
 
         protected override void PreDrawObjects(DrawEventArgs e)

@@ -42,33 +42,8 @@ namespace Blocks.Viewer
             };
             DisplayStyleDropdown.SelectedIndexChanged += DisplayStyleDropdown_SelectedIndexChanged;
 
-            var ShowText = new Button
-            {
-                Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Labels),
-                Style = "viewport-button",
-            };
-            ShowText.Click += ShowText_Click;
-
-            var zoomExtentsButton = new Button()
-            {
-                Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.ZoomExtents),
-                Style = "viewport-button",
-            };
-            zoomExtentsButton.Click += (sender, e) =>
-            {
-                BlockDisplayConduit.ZoomExtents();
-                ViewportControl.Refresh();
-            };
-
-            //var buttonsGroup = new StackLayout()
-            //{
-            //    Padding = new Eto.Drawing.Padding(2),
-            //    Orientation = Orientation.Horizontal,
-            //    Items = { ShowText, zoomExtentsButton },
-            //};
-
             var dropdowns = new DynamicLayout();
-            dropdowns.AddRow(BlockVisibiltyDropdown, DisplayStyleDropdown, ShowText, zoomExtentsButton);
+            dropdowns.AddRow(BlockVisibiltyDropdown, DisplayStyleDropdown);
             dropdowns.SizeChanged += Dropdowns_SizeChanged;
 
             var layout = new TableLayout()
@@ -77,15 +52,6 @@ namespace Blocks.Viewer
             };
 
             Content = layout;
-        }
-
-        private void ShowText_Click(object sender, EventArgs e)
-        {
-            if (BlockDisplayConduit.Instance is IDrawLabel instance)
-            {
-                instance.LabelEnabled = !instance.LabelEnabled;
-                ViewportControl.Refresh();
-            }
         }
 
         private void BlockVisibiltyDropdown_SelectedIndexChanged(object sender, EventArgs e) => ViewportControl.Refresh();

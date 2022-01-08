@@ -12,8 +12,6 @@ namespace Blocks.Viewer.Display
         private Line[] _edges;
         private string[] _labels;
 
-        public bool LabelEnabled { get; set; } = false;
-
         public Skeleton(BlockAssembly assembly) : base(assembly)
         {
             var vertices = assembly.BlockInstances.Select(b => b.InsertionPoint);
@@ -32,18 +30,18 @@ namespace Blocks.Viewer.Display
             e.Display.DrawLines(_edges, Color.Black, 2);
             e.Display.DrawPoints(_vertices, PointStyle.Simple, 2, Color.Black);
             e.Display.DrawLines(_meshWires, Color.FromArgb(100, 0, 0, 0));
-
-            if (LabelEnabled)
-            {
-                for (int i = 0; i < _labels.Length; i++)
-                {
-                    DrawLabel.Draw(e.Display, _vertices[i], _labels[i]);
-                }
-            }
         }
 
         public new void PostDraw(DrawEventArgs e)
         {
+        }
+
+        public void DrawText(DrawEventArgs e)
+        {
+            for (int i = 0; i < _labels.Length; i++)
+            {
+                DrawLabel.Draw(e.Display, _vertices[i], _labels[i]);
+            }
         }
     }
 }

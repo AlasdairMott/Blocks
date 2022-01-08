@@ -1,7 +1,9 @@
-﻿namespace Blocks.Viewer.Display
+﻿using Rhino.Display;
+
+namespace Blocks.Viewer.Display
 {
     public interface IDrawLabel
     {
-        bool LabelEnabled { get; set; }
+        void DrawText(DrawEventArgs e);
     }
 }
