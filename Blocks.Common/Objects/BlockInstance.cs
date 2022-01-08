@@ -32,6 +32,16 @@ namespace Blocks.Common.Objects
             CollisionMesh = BlockDefinition.CollisionMesh.DuplicateMesh();
             CollisionMesh.Transform(Transform);
         }
+        public double DistanceTo(BlockInstance other)
+        {
+            var point1 = Point3d.Origin;
+            var point2 = Point3d.Origin;
+
+            point1.Transform(Transform);
+            point2.Transform(other.Transform);
+
+            return point1.DistanceTo(point2);
+        }
         public IEnumerable<GeometryBase> GetGeometry()
         {
             var geometries = new List<GeometryBase>();

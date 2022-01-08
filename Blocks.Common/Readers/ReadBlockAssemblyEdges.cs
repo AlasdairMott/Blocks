@@ -19,8 +19,8 @@ namespace Blocks.Common.Readers
                 for (var j = i + 1; j < instances.Count; j++)
                 {
                     //Compare instances - are they touching?
-                    if (TransformOriginDistance(instances[i].Transform, instances[j].Transform) > distanceThreshold ||
-                        !Functions.CollisionCheck.CheckTouching(instances[i], instances[j]))
+                    if (instances[i].DistanceTo(instances[j]) > distanceThreshold ||
+                        !Functions.CollisionCheck.CheckTouching(instances[i], instances[j], 5.0))
                     {
                         continue;
                     }
@@ -32,17 +32,6 @@ namespace Blocks.Common.Readers
             }
 
             return edges;
-        }
-
-        private double TransformOriginDistance(Transform a, Transform b)
-        {
-            var point1 = Point3d.Origin;
-            var point2 = Point3d.Origin;
-
-            point1.Transform(a);
-            point2.Transform(b);
-
-            return point1.DistanceTo(point2);
         }
     }
 }

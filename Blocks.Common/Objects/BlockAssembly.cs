@@ -38,6 +38,7 @@ namespace Blocks.Common.Objects
 
         internal void AddEdges(IEnumerable<Edge> edges)
         {
+            if (!edges.Any()) { return; }
             if (!edges.Any(e => _blockInstances.Contains(e.FromInstance) && _blockInstances.Contains(e.ToInstance))){
                 throw new ArgumentException("Block instance in edge was not in the BlockAssembly's instances", nameof(edges));
             }
