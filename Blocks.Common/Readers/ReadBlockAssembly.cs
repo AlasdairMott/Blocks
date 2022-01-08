@@ -19,37 +19,14 @@ namespace Blocks.Common.Readers
         {
             //Create an empty assembly
             var assembly = new BlockAssembly();
+            assembly.AddInstances(instances);
 
             //Create connectivitiy graph
-            for (var i = 0; i < instances.Count; i++)
-            {
-                assembly.AddInstance(instances[i]);
-                for (var j = i + 1; j < instances.Count; j++)
-                {
-                    //Compare instances - are they touching?
-                    if (TransformOriginDistance(instances[i].Transform, instances[j].Transform) > distanceThreshold ||
-                        !Functions.CollisionCheck.CheckTouching(instances[i], instances[j]))
-                    {
-                        continue;
-                    }
+            var edgeReader = new ReadBlockAssemblyEdges();
+            var edges = edgeReader.Read(assembly, distanceThreshold);
+            assembly.AddEdges(edges);
 
-                    //If touching, create an 'edge' (relationship).
-                    var relationship = new Relationship(instances[i], instances[j]);
-                    assembly.AddRelationship(relationship);
-                }
-            }
             return assembly;
-        }
-
-        private double TransformOriginDistance(Transform a, Transform b)
-        {
-            var point1 = Point3d.Origin;
-            var point2 = Point3d.Origin;
-
-            point1.Transform(a);
-            point2.Transform(b);
-
-            return point1.DistanceTo(point2);
         }
 
         public BlockAssembly Read(List<InstanceObject> instanceObjects, double distanceThreshold)

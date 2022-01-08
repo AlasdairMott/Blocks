@@ -45,9 +45,21 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlockAssemblyInstance.cs" />
+    <Compile Include="Commands\GraphParameters.cs" />
+    <Compile Include="Data\Preferences.cs" />
+    <Compile Include="Dialogs\GraphParameters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Display\DisplayMode.cs" />
+    <Compile Include="Display\BlockAssemblyInstance.cs" />
     <Compile Include="BlocksViewport.cs" />
-    <Compile Include="DisplayConduit.cs" />
+    <Compile Include="Display\BlockRepresentations.cs" />
+    <Compile Include="Display\BlocksDisplayConduit.cs" />
+    <Compile Include="Display\DrawLabel.cs" />
+    <Compile Include="Display\Graph2dInstance.cs" />
+    <Compile Include="Display\IDrawable.cs" />
+    <Compile Include="Display\IDrawLabel.cs" />
+    <Compile Include="Display\Skeleton.cs" />
     <Compile Include="MainForm.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -55,14 +67,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RhinoInstance.cs" />
     <Compile Include="Toolbar.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Grasshopper" ExcludeAssets="runtime">
@@ -85,6 +100,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Dialogs\GraphParameters.resx">
+      <DependentUpon>GraphParameters.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -98,6 +116,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Randomize.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Labels.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

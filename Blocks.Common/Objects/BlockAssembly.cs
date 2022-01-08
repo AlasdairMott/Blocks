@@ -11,12 +11,21 @@ namespace Blocks.Common.Objects
     public class BlockAssembly
     {
         private readonly List<BlockInstance> _blockInstances = new List<BlockInstance>();
-        private readonly List<Relationship> _relationships = new List<Relationship>();
+        private readonly List<Edge> _edges = new List<Edge>();
 
         public Mesh CollisionMesh { get; set; } = new Mesh();
         public IReadOnlyList<BlockInstance> BlockInstances => _blockInstances;
-        public IReadOnlyCollection<Relationship> Relationships => _relationships;
+        public IReadOnlyList<Edge> Edges => _edges;
         public int Size => _blockInstances.Count();
+
+        /// <summary>
+        /// Add new block instances to this BlockAssembly.
+        /// </summary>
+        /// <param name="instances">The BlockInstances to add.</param>
+        public void AddInstances(List<BlockInstance> instances)
+        {
+            foreach (var instance in instances) { AddInstance(instance); }
+        }
 
         /// <summary>
         /// Add a new block instance to this BlockAssembly.
@@ -26,14 +35,23 @@ namespace Blocks.Common.Objects
             _blockInstances.Add(instance);
             CollisionMesh.Append(instance.CollisionMesh);
         }
-        public void AddRelationship(Relationship relationship)
+
+        internal void AddEdges(IEnumerable<Edge> edges)
         {
-            _relationships.Add(relationship);
+            if (!edges.Any(e => _blockInstances.Contains(e.FromInstance) && _blockInstances.Contains(e.ToInstance))){
+                throw new ArgumentException("Block instance in edge was not in the BlockAssembly's instances", nameof(edges));
+            }
+            _edges.AddRange(edges);
+        }
+
+        public void AddEdge(Edge edge)
+        {
+            _edges.Add(edge);
         }
 
         public IEnumerable<Relationship> FindFromBlockDefinition(BlockDefinition definition)
         {
-            var matching = _relationships.Where(t =>
+            var matching = _edges.Where(t =>
                 t.From.Name == definition.Name ||
                 t.To.Name == definition.Name);
 

@@ -30,11 +30,12 @@ namespace Blocks.Common.Generators
 
             for (var i = 0; i < steps; i++)
             {
-                var nextInstance = ChooseBlock(assembly, transitions);
+                var nextEdge = ChooseBlock(assembly, transitions);
 
-                if (CanPlace(nextInstance, assembly, obstacles))
+                if (CanPlace(nextEdge.ToInstance, assembly, obstacles))
                 {
-                    assembly.AddInstance(nextInstance);
+                    assembly.AddInstance(nextEdge.ToInstance);
+                    assembly.AddEdge(nextEdge);
                 }
             }
 
@@ -46,8 +47,8 @@ namespace Blocks.Common.Generators
         /// </summary>
         /// <param name="assembly">The BlockAssembly to add to.</param>
         /// <param name="transitions">Transitions to choose from.</param>
-        /// <returns>The chosen block instance.</returns>
-        private BlockInstance ChooseBlock(BlockAssembly assembly, Transitions transitions)
+        /// <returns>The edge from an existing block to a new block instance.</returns>
+        private Edge ChooseBlock(BlockAssembly assembly, Transitions transitions)
         {
             var index = _random.Next(0, assembly.Size);
             var existing = assembly.BlockInstances[index];
@@ -58,7 +59,7 @@ namespace Blocks.Common.Generators
             var nextTransition = options.GetRandom(_random);
 
             var nextTransform = existing.Transform * nextTransition.Transform;
-            return new BlockInstance(nextTransition.To, nextTransform);
+            return new Edge(existing, new BlockInstance(nextTransition.To, nextTransform));
         }
 
         /// <summary>

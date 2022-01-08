@@ -1,8 +1,7 @@
-using Blocks.Common.Generators;
 using Blocks.Common.Objects;
+using Blocks.Viewer.Display;
 using Rhino.DocObjects;
 using Rhino.Geometry;
-using Rhino.Display;
 using System;
 using System.IO;
 using System.Linq;
@@ -13,44 +12,23 @@ namespace Blocks.Viewer
 {
     class MainForm : forms.Form
     {
-        static Rhino.Runtime.InProcess.RhinoCore _rhinoCore;
-
-        public static void Run()
-        {
-            _rhinoCore = new Rhino.Runtime.InProcess.RhinoCore(new string[] { "-appmode" }, Rhino.Runtime.InProcess.WindowStyle.Hidden);
-            MainForm mf = new MainForm();
-            mf.Show();
-
-            for (int i = 0; i < System.Windows.Application.Current.Windows.Count; i++)
-            {
-                var window = System.Windows.Application.Current.Windows[i];
-                if (window.IsVisible)
-                {
-                    window.Closed += (s, e) => Shutdown();
-                    break;
-                }
-            }
-            System.Windows.Forms.Application.Run();
-        }
-
-        private static void Shutdown()
-        {
-            _rhinoCore.Dispose();
-            System.Windows.Forms.Application.Exit();
-        }
-
         private static Toolbar _toolbar;
         private static forms.Splitter _splitter;
 
-        public static BlockAssemblyInstance BlockAssemblyReference { get; private set; }
-        public static BlockAssemblyInstance BlockAssemblyInstance { get; private set; }
-        public static event EventHandler BlockAssemblyReferenceChanged;
-        public static event EventHandler BlockAssemblyInstanceChanged;
+        public static BlockRepresentations Reference { get; private set; }
+        public static BlockRepresentations Generated { get; private set; }
         public static BlocksViewport ViewportL { get; private set; }
         public static BlocksViewport ViewportR { get; private set; }
 
         public MainForm()
         {
+            BuildForm();
+        }
+
+        private void BuildForm()
+        {
+            BuildStyles();
+
             Title = "Blocks.Viewer";
             ClientSize = new draw.Size(800, 400);
 
@@ -69,6 +47,15 @@ namespace Blocks.Viewer
                         }
                     },
                     demoMenu,
+                    new forms.ButtonMenuItem
+                    {
+                        Text = "&Commands",
+                        Items = 
+                        {
+                            new Commands.GraphParameters(),
+                        }
+                    }
+                    
                 }
             };
 
@@ -77,11 +64,13 @@ namespace Blocks.Viewer
             ViewportL = new BlocksViewport("Left");
             ViewportR = new BlocksViewport("Right");
 
-            _splitter = new forms.Splitter();
-            _splitter.SplitterWidth = 2;
-            _splitter.Position = Bounds.Width / 2;
-            _splitter.Panel1 = ViewportL;
-            _splitter.Panel2 = ViewportR;
+            _splitter = new forms.Splitter
+            {
+                SplitterWidth = 2,
+                Position = Bounds.Width / 2,
+                Panel1 = ViewportL,
+                Panel2 = ViewportR,
+            };
 
             var layout = new forms.TableLayout() { Rows = { _toolbar, _splitter } };
 
@@ -114,7 +103,6 @@ namespace Blocks.Viewer
             var repository = directory.Parent.Parent.Parent;
             return Path.Combine(repository.FullName, "examples");
         }
-
 
         private void OpenFileDialog()
         {
@@ -150,9 +138,8 @@ namespace Blocks.Viewer
             });
 
             var assembly = reader.Read(instances.ToList(), 50);
-            var blockAssemblyReferenceInstance = new BlockAssemblyInstance(assembly);
 
-            SetBlockAssemblyReference(blockAssemblyReferenceInstance);
+            SetReference(assembly);
 
             RefreshViewports();
         }
@@ -165,21 +152,32 @@ namespace Blocks.Viewer
 
         public static void ZoomExtents(bool refresh)
         {
-            ViewportL.DisplayConduit.ZoomExtents();
-            ViewportR.DisplayConduit.ZoomExtents();
+            ViewportL.BlockDisplayConduit.ZoomExtents();
+            ViewportR.BlockDisplayConduit.ZoomExtents();
             if (refresh) { RefreshViewports(); }
         }
 
-        public static void SetBlockAssemblyInstance(BlockAssemblyInstance assembly)
+        public static void BuildStyles()
         {
-            BlockAssemblyInstance = assembly;
-            BlockAssemblyInstanceChanged(null, EventArgs.Empty);
+            Eto.Style.Add<forms.Button>("toolbar-button", button => {
+                button.Size = new draw.Size(20, 20);
+                button.BackgroundColor = draw.Colors.White;
+            });
+
+            Eto.Style.Add<forms.Button>("viewport-button", button => {
+                button.Size = new draw.Size(22, 22);
+                button.BackgroundColor = draw.Colors.White;
+            });
         }
 
-        public static void SetBlockAssemblyReference(BlockAssemblyInstance assembly)
+        public static void SetGenerated(BlockAssembly assembly)
         {
-            BlockAssemblyReference = assembly;
-            BlockAssemblyReferenceChanged(null, EventArgs.Empty);
+            Generated = new BlockRepresentations(assembly);
+        }
+
+        public static void SetReference(BlockAssembly assembly)
+        {
+            Reference = new BlockRepresentations(assembly);
         }
     }
 }

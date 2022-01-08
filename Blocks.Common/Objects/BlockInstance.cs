@@ -1,6 +1,7 @@
 ﻿using Rhino.DocObjects;
 using Rhino.Geometry;
 using System.Collections.Generic;
+using System;
 
 namespace Blocks.Common.Objects
 {
@@ -12,6 +13,16 @@ namespace Blocks.Common.Objects
         public BlockDefinition BlockDefinition { get; set; }
         public Transform Transform { get; set;}
         public Mesh CollisionMesh { get; private set; } = new Mesh();
+        public string Id { get; private set; } = Guid.NewGuid().ToString();
+        public Point3d InsertionPoint 
+        { 
+            get
+            {
+                var point = Point3d.Origin;
+                point.Transform(Transform);
+                return point;
+            } 
+        }
 
         public BlockInstance(BlockDefinition blockDefinition, Transform transform)
         {

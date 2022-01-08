@@ -14,7 +14,7 @@ namespace Blocks.Viewer
 
         static void RunApplication()
         {
-            MainForm.Run();
+            RhinoInstance.Run();
         }
     }
 }
