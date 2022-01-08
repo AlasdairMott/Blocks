@@ -118,7 +118,6 @@ namespace Blocks.Viewer
         {
             Title = $"Blocks.Viewer ({filename})";
 
-            var reader = new Common.Readers.ReadBlockAssembly();
             var rhinoFile = Rhino.FileIO.File3dm.Read(filename);
 
             var referenceObjects = rhinoFile.Objects.Where(o => o.Geometry.ObjectType == ObjectType.InstanceReference);
@@ -137,6 +136,7 @@ namespace Blocks.Viewer
                 return new BlockInstance(blockDefinition, xform);
             });
 
+            var reader = new Common.Readers.ReadBlockAssembly();
             var assembly = reader.Read(instances.ToList(), 50);
 
             SetReference(assembly);
