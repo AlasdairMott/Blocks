@@ -75,7 +75,7 @@ namespace Blocks.Viewer
             layout.Items.Add("  Steps:");
             layout.Items.Add(StepsStepper);
             layout.Items.Add(new forms.StackLayoutItem { Expand = true });
-            layout.Items.Add(graphParameters);
+            //layout.Items.Add(graphParameters);
 
             Content = layout;
         }
