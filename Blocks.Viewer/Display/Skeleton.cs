@@ -36,11 +36,11 @@ namespace Blocks.Viewer.Display
         {
         }
 
-        public void DrawText(DrawEventArgs e)
+        public void DrawLabel(DrawEventArgs e)
         {
             for (int i = 0; i < _labels.Length; i++)
             {
-                DrawLabel.Draw(e.Display, _vertices[i], _labels[i]);
+                Display.DrawLabel.Draw(e.Display, _vertices[i], _labels[i]);
             }
         }
     }

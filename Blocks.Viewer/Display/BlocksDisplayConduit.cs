@@ -47,7 +47,7 @@ namespace Blocks.Viewer.Display
 
             if (TextIsVisible && Instance is IDrawLabel label)
             {
-                label.DrawText(e);
+                label.DrawLabel(e);
             }
         }
 

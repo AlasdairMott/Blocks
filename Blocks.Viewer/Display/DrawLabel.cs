@@ -18,7 +18,7 @@ namespace Blocks.Viewer.Display
             var mask = new Rectangle(rectangle.X, rectangle.Y + rectangle.Height, rectangle.Width, -rectangle.Height);
 
             mask.Inflate(_padding, _padding);
-            displayPipeline.Draw2dRectangle(mask, Color.Black, 1, Color.White);
+            displayPipeline.Draw2dRectangle(mask, Color.Transparent, 1, Color.White);
             displayPipeline.Draw2dText(text, Color.Black, location2d, true, _textHeight);
         }
     }

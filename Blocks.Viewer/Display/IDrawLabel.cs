@@ -4,6 +4,6 @@ namespace Blocks.Viewer.Display
 {
     public interface IDrawLabel
     {
-        void DrawText(DrawEventArgs e);
+        void DrawLabel(DrawEventArgs e);
     }
 }
