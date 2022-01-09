@@ -1,9 +1,4 @@
-﻿using Blocks.Common.Generators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Blocks.Common.Parameters;
 
 namespace Blocks.Viewer.Data
 {

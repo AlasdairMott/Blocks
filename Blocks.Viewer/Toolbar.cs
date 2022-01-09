@@ -106,15 +106,7 @@ namespace Blocks.Viewer
 
         private void Run()
         {
-            if (MainForm.Reference == null) return;
-
-            var generator = new GenerateFromTransitions((int)SeedStepper.Value);
-            var transitions = new Transitions(MainForm.Reference.BlockAssembly);
-            //var groundPlane = Mesh.CreateFromPlane(Plane.WorldXY, new Interval(-20, 20), new Interval(-20, 20), 4, 4);
-            var groundPlane = new Mesh();
-            var outputAssembly = generator.Generate(transitions, groundPlane, (int)StepsStepper.Value);
-
-            MainForm.SetGenerated(outputAssembly);
+            Commands.Generate.Run(((int)SeedStepper.Value));
         }
     }
 }

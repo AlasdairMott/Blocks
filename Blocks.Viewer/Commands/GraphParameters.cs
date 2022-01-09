@@ -12,7 +12,7 @@ namespace Blocks.Viewer.Commands
             MenuText = "Graph Parameters";
             ToolBarText = "Graph Parameters";
 
-            Preferences.GraphGeneratorParameters = new Common.Generators.GraphGeneratorParameters(0.200, 5, 0.5, 10.0, 0.995, 200);
+            Preferences.GraphGeneratorParameters = new Common.Parameters.GraphGeneratorParameters(0.200, 5, 0.5, 10.0, 0.995, 200);
         }
 
         protected override void OnExecuted(EventArgs e)
