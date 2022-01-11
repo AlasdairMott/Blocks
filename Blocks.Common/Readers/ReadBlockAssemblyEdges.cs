@@ -20,7 +20,7 @@ namespace Blocks.Common.Readers
                 {
                     //Compare instances - are they touching?
                     if (instances[i].DistanceTo(instances[j]) > distanceThreshold ||
-                        !Functions.CollisionCheck.CheckTouching(instances[i], instances[j], 5.0))
+                        !Functions.CollisionCheck.CheckTouching(instances[i], instances[j], 2.0))
                     {
                         continue;
                     }
