@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parameters\GenerateFromAssemblyParameters.cs" />
+    <Compile Include="Parameters\GenerateFromTransitionsParameters.cs" />
     <Compile Include="Functions\CollisionCheck.cs" />
     <Compile Include="Functions\GeometryHelpers.cs" />
     <Compile Include="Generators\GenerateFromAssembly.cs" />
@@ -57,6 +57,7 @@
     <Compile Include="Objects\RelationshipComparer.cs" />
     <Compile Include="Objects\Transitions.cs" />
     <Compile Include="Parameters\GraphGeneratorParameters.cs" />
+    <Compile Include="Parameters\ReadAssemblyParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readers\ReadBlockAssemblyEdges.cs" />
     <Compile Include="Readers\ReadBlockAssembly.cs" />

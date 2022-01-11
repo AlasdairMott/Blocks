@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Blocks.Common.Parameters
 {
-    public class GenerateFromAssemblyParameters
+    public class ReadAssemblyParameters
     {
-
+        public double CollisionArea { get; set; }
+        public double DistanceThreshold { get; set; }
     }
 }
