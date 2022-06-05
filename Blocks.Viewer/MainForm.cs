@@ -31,6 +31,7 @@ namespace Blocks.Viewer
 
             Title = "Blocks.Viewer";
             ClientSize = new draw.Size(800, 400);
+            Icon = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Blocks);
 
             var demoMenu = new forms.ButtonMenuItem { Text = "&Demos" };
             BuildDemosMenu(demoMenu.Items);
