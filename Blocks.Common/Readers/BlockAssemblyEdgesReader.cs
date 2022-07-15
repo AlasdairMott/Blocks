@@ -1,14 +1,14 @@
 ﻿using Blocks.Common.Objects;
-using Rhino.Geometry;
+using Blocks.Common.Parameters;
 using System.Collections.Generic;
 
 namespace Blocks.Common.Readers
 {
-    public class ReadBlockAssemblyEdges
+    public class BlockAssemblyEdgeReader
     {
-        public ReadBlockAssemblyEdges() { }
+        public BlockAssemblyEdgeReader() { }
 
-        public List<Edge> Read(BlockAssembly blockAssembly, double distanceThreshold)
+        public List<Edge> Read(BlockAssembly blockAssembly, BlockAssemblyEdgeReaderParameters parameters)
         {
             var instances = blockAssembly.BlockInstances;
             var edges = new List<Edge>();
@@ -19,8 +19,8 @@ namespace Blocks.Common.Readers
                 for (var j = i + 1; j < instances.Count; j++)
                 {
                     //Compare instances - are they touching?
-                    if (instances[i].DistanceTo(instances[j]) > distanceThreshold ||
-                        !Functions.CollisionCheck.CheckTouching(instances[i], instances[j], 2.0))
+                    if (instances[i].DistanceTo(instances[j]) > parameters.DistanceThreshold ||
+                        !Functions.CollisionCheck.CheckTouching(instances[i], instances[j], parameters.CollisionArea))
                     {
                         continue;
                     }

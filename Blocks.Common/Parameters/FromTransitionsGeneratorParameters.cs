@@ -3,7 +3,7 @@ using Rhino.Geometry;
 
 namespace Blocks.Common.Parameters
 {
-    public class GenerateFromTransitionsParameters
+    public class FromTransitionsGeneratorParameters
     {
         public Transitions Transitions { get; set; }
         public Mesh Obstacles { get; set; }

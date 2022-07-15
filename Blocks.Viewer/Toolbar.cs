@@ -1,8 +1,4 @@
-﻿using Blocks.Common.Generators;
-using Blocks.Common.Objects;
-using Blocks.Viewer.Display;
-using Rhino.Geometry;
-using System;
+﻿using System;
 using draw = Eto.Drawing;
 using forms = Eto.Forms;
 
@@ -106,7 +102,7 @@ namespace Blocks.Viewer
 
         private void Run()
         {
-            Commands.Generate.Run(((int)SeedStepper.Value));
+            Commands.Generate.Run((int)SeedStepper.Value, (int)StepsStepper.Value);
         }
     }
 }

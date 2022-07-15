@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace Blocks.Common.Parameters
 {
-    public class ReadAssemblyParameters
+    public class ReadAssemblyEdgesParameters
     {
         public double CollisionArea { get; set; }
         public double DistanceThreshold { get; set; }
+
+        public ReadAssemblyEdgesParameters(double collisionArea, double distanceThreshold)
+        {
+            CollisionArea = collisionArea;
+            DistanceThreshold = distanceThreshold;
+        }
     }
 }

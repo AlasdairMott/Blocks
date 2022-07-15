@@ -83,6 +83,8 @@ namespace Blocks.Common.Objects
                 transition.Probability /= mass;
             }
         }
+
+        public int Count() => _transitions.Count();
     }
 
     public static class TransitionExtensions

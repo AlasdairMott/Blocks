@@ -1,7 +1,5 @@
 ﻿using Blocks.Common.Objects;
-using Rhino.DocObjects;
 using Rhino.Geometry;
-using System.Linq;
 
 namespace Blocks.Common.Functions
 {

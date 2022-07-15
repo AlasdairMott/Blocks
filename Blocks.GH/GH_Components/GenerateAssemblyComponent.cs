@@ -62,7 +62,7 @@ namespace Blocks.GH.Components
             var seed = 0;
             DA.GetData(3, ref seed);
 
-            var generator = new GenerateFromTransitions(seed);
+            var generator = new FromTransitionsGenerator(seed);
             var transitions = new Transitions(inputAssembly);
             var outputAssembly = generator.Generate(transitions, obstacles, steps);
 

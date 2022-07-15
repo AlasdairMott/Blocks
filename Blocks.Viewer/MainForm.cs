@@ -23,6 +23,7 @@ namespace Blocks.Viewer
         public MainForm()
         {
             BuildForm();
+            Data.Preferences.CreateDefaults();
         }
 
         private void BuildForm()
@@ -136,8 +137,9 @@ namespace Blocks.Viewer
                 return new BlockInstance(blockDefinition, xform);
             });
 
-            var reader = new Common.Readers.ReadBlockAssembly();
-            var assembly = reader.Read(instances.ToList(), 50);
+            var reader = new Common.Readers.BlockAssemblyReader();
+            var parameters = Data.Preferences.BlockAssemblyReaderParameters;
+            var assembly = reader.Read(instances.ToList(), parameters);
 
             SetReference(assembly);
 

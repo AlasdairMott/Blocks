@@ -42,11 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parameters\GenerateFromTransitionsParameters.cs" />
+    <Compile Include="Parameters\FromTransitionsGeneratorParameters.cs" />
     <Compile Include="Functions\CollisionCheck.cs" />
     <Compile Include="Functions\GeometryHelpers.cs" />
-    <Compile Include="Generators\GenerateFromAssembly.cs" />
-    <Compile Include="Generators\GenerateFromTransitions.cs" />
+    <Compile Include="Generators\FromAssemblyGenerator.cs" />
+    <Compile Include="Generators\FromTransitionsGenerator.cs" />
     <Compile Include="Generators\GraphGenerator.cs" />
     <Compile Include="Objects\BlockAssembly.cs" />
     <Compile Include="Objects\BlockDefinition.cs" />
@@ -57,10 +57,11 @@
     <Compile Include="Objects\RelationshipComparer.cs" />
     <Compile Include="Objects\Transitions.cs" />
     <Compile Include="Parameters\GraphGeneratorParameters.cs" />
-    <Compile Include="Parameters\ReadAssemblyParameters.cs" />
+    <Compile Include="Parameters\BlockAssemblyEdgeReaderParameters.cs" />
+    <Compile Include="Parameters\BlockAssemblyReaderParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Readers\ReadBlockAssemblyEdges.cs" />
-    <Compile Include="Readers\ReadBlockAssembly.cs" />
+    <Compile Include="Readers\BlockAssemblyEdgesReader.cs" />
+    <Compile Include="Readers\BlockAssemblyReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RhinoCommon">

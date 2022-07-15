@@ -1,6 +1,7 @@
 ﻿using Blocks.Common.Objects;
+using Blocks.Common.Parameters;
 using Rhino.DocObjects;
-using Rhino.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,27 +10,30 @@ namespace Blocks.Common.Readers
     /// <summary>
     /// Read a BlockAssembly from a Rhino file.
     /// </summary>
-    public class ReadBlockAssembly
+    public class BlockAssemblyReader
     {
-        public ReadBlockAssembly()
+        public BlockAssemblyReader()
         {
         }
 
-        public BlockAssembly Read(List<BlockInstance> instances, double distanceThreshold)
+        public BlockAssembly Read(List<BlockInstance> instances, BlockAssemblyReaderParameters parameters)
         {
+            if (instances == null) { throw new ArgumentNullException(nameof(instances)); }
+            if (parameters == null) { throw new ArgumentNullException(nameof(parameters)); }
+
             //Create an empty assembly
             var assembly = new BlockAssembly();
             assembly.AddInstances(instances);
 
             //Create connectivitiy graph
-            var edgeReader = new ReadBlockAssemblyEdges();
-            var edges = edgeReader.Read(assembly, distanceThreshold);
+            var edgeReader = new BlockAssemblyEdgeReader();
+            var edges = edgeReader.Read(assembly, parameters.EdgeReaderParameters);
             assembly.AddEdges(edges);
 
             return assembly;
         }
 
-        public BlockAssembly Read(List<InstanceObject> instanceObjects, double distanceThreshold)
+        public BlockAssembly Read(List<InstanceObject> instanceObjects, BlockAssemblyReaderParameters parameters)
         {                        
             var instanceObjectBlocks = new Dictionary<InstanceObject, BlockInstance>();
 
@@ -45,7 +49,7 @@ namespace Blocks.Common.Readers
                 }
             }
 
-            return Read(instanceObjectBlocks.Values.ToList(), distanceThreshold);
+            return Read(instanceObjectBlocks.Values.ToList(), parameters);
         }
     }
 }

@@ -1,15 +1,13 @@
 ﻿using Blocks.Common.Objects;
 using Rhino.Geometry;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Blocks.Common.Generators
 {
-    public class GenerateFromTransitions
+    public class FromTransitionsGenerator
     {
         private readonly Random _random;
-        public GenerateFromTransitions(int seed)
+        public FromTransitionsGenerator(int seed)
         {
             _random = new Random(seed);
         }
