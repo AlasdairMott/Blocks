@@ -1,6 +1,5 @@
 ﻿using Blocks.Common.Objects;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -25,11 +24,11 @@ namespace Blocks.Tests.Objects
             var transitionToAdd = new Transition(Stubs.TestingStubs.Relationships["A1-A2"]);
 
             //Act
-            for (var i = 0; i < count; i++) transitionsList.Add(transitionToAdd);
+            for (var i = 0; i < count; i++) { transitionsList.Add(transitionToAdd); }
             var sut = transitionsList.ToTransitions();
 
             //Assert
-            Assert.Equal(expected, Math.Round(sut.Min(t => t.Probability), 3));
+            Assert.Equal(expected, Math.Round(sut.Probabilities.Values.Min(),3));
         }
 
         [Fact]
@@ -37,12 +36,11 @@ namespace Blocks.Tests.Objects
         {
             //Arrange
             var definition = Stubs.TestingStubs.Definitions["A"];
-            var transitions = new Transitions
-            {
+            var transitions = new Transitions(new List<Transition> {
                 new Transition(Stubs.TestingStubs.Relationships["A1-A2"]),
                 new Transition(Stubs.TestingStubs.Relationships["A1-B1"]),
                 new Transition(Stubs.TestingStubs.Relationships["A2-B1"]),
-            };
+            });
 
             //Act
             var results = transitions.FindFromBlockDefinition(definition);
@@ -56,10 +54,10 @@ namespace Blocks.Tests.Objects
         {
             //Arrange
             var definition = Stubs.TestingStubs.Definitions["C"];
-            var transitions = new Transitions
+            var transitions = new Transitions(new List<Transition>
             {
                 new Transition(Stubs.TestingStubs.Relationships["A1-A2"]),
-            };
+            });
 
             //Act
             var results = transitions.FindFromBlockDefinition(definition);
@@ -74,7 +72,7 @@ namespace Blocks.Tests.Objects
             //Arrange
             var definition = Stubs.TestingStubs.Definitions["A"];
             var existingTransition = new Transition(Stubs.TestingStubs.Relationships["B1-A2"]);
-            var transitions = new Transitions { existingTransition };
+            var transitions = new Transitions(new List<Transition> { existingTransition });
 
             //Act
             var results = transitions.FindFromBlockDefinition(definition);

@@ -61,9 +61,9 @@ namespace Blocks.Common.Generators
         }
 
         /// <summary>
-        /// Check whether an instance can be places in an existing assembly.
+        /// Check whether an instance can be placed in an existing assembly.
         /// </summary>
-        /// <param name="instance">The BlockInstanceS to add.</param>
+        /// <param name="instance">The BlockInstance to add.</param>
         /// <param name="assembly">The BlockAssembly to add to.</param>
         /// <param name="obstacles">Obstacles to avoid.</param>
         /// <returns></returns>

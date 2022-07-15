@@ -11,17 +11,24 @@ namespace Blocks.Common.Objects
     /// </summary>
     public class Transitions : IEnumerable<Transition>
     {
-        private readonly HashSet<Transition> _transitions;
+        private readonly Dictionary<Transition, int> _transitions;
+        private Dictionary<Transition, double> _probabilities;
+  
         private RelationshipComparer _comparer = new RelationshipComparer();
+        public IReadOnlyDictionary<Transition, int> Counts => _transitions;
+        public IReadOnlyDictionary<Transition, double> Probabilities
+        {
+            get => _probabilities ?? (_probabilities = ComputeProbabilities());
+        }
+
         public Transitions()
         {
-            _transitions = new HashSet<Transition>(_comparer);
+            _transitions = new Dictionary<Transition, int>(_comparer);
         }
 
         public Transitions(IEnumerable<Transition> transitions):this()
         {
-            foreach (var transition in transitions) { Add(transition); }
-            NormalizeRelationships();
+            foreach (var transition in transitions) { Push(transition); }
         }
 
         public Transitions(BlockAssembly assembly) : 
@@ -30,61 +37,64 @@ namespace Blocks.Common.Objects
 
         public Transition this[int index]
         {
-            get { return _transitions.ElementAt(index); }
-            set { _transitions.Add(value); }
+            get => _transitions.Keys.ElementAt(index);
         }
 
-        public IEnumerator<Transition> GetEnumerator() => _transitions.GetEnumerator();
+        public IEnumerator<Transition> GetEnumerator() => _transitions.Keys.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public Transition GetRandom(Random random)
         {
             if (!_transitions.Any()) { throw new IndexOutOfRangeException("No transitions to choose from"); }
-            var value = random.NextDouble();
-            var shuffled = _transitions.OrderBy(t => random.NextDouble());
-            var result = shuffled.FirstOrDefault(t => t.Probability > value);
-            if (result != null) { return result; }
-            return shuffled.First();
+
+            double value = random.NextDouble();
+            double total = 0.0;
+            return _transitions.Keys.FirstOrDefault(t =>
+            {
+                total += Probabilities[t];
+                return total >= value;
+            });
         }
 
         public Transitions FindFromBlockDefinition(BlockDefinition definition)
         {
-            var transitions_A_to_B = _transitions.Where(t => t.From.Name == definition.Name);
-            var transitions_B_to_A = _transitions.Where(t => t.To.Name == definition.Name);
+            var transitions_A_to_B = _transitions.Keys.Where(t => t.From.Name == definition.Name);
+            var transitions_B_to_A = _transitions.Keys.Where(t => t.To.Name == definition.Name);
 
             var transitions = transitions_A_to_B.Concat(transitions_B_to_A.Select(t => t.Invert()));
 
             return transitions.Select(t => t.Clone()).ToTransitions();
         }
 
-        public Transition Find(Transition transition)
-        {
-            return _transitions.FirstOrDefault(r => _comparer.Equals(r, transition));
-        }
-
-        public void Add(Transition transition) {
-            if (_transitions.Contains(transition))
+        public void Push(Transition transition) {
+            _probabilities = null;
+            if (!_transitions.ContainsKey(transition))
             {
-                var existing = Find(transition);
-                existing.Probability += 1;
+                _transitions.Add(transition, 1);
             }
             else
             {
-                _transitions.Add(transition);
+                _transitions[transition]++;
             }
         }
 
-        public void NormalizeRelationships()
+        public Transition Pop(Random random)
         {
-            var mass = _transitions.Sum(t => t.Probability);
-            foreach (var transition in _transitions)
-            {
-                transition.Probability /= mass;
-            }
+            var next = GetRandom(random);
+            _probabilities = null;
+            return next;
+        }
+        
+        private Dictionary<Transition, double> ComputeProbabilities()
+        {
+            double count = _transitions.Sum(t => t.Value);
+            return _transitions.ToDictionary(t => t.Key, t => t.Value / count);
         }
 
         public int Count() => _transitions.Count();
+
+        public bool Any() => _transitions.Any();
     }
 
     public static class TransitionExtensions
@@ -99,10 +109,8 @@ namespace Blocks.Common.Objects
         public Transition(Relationship relationship) : this(relationship.From, relationship.To, relationship.Transform, relationship.Inverse) { }
         public Transition(Transition transition) : this(transition as Relationship)
         {
-            Probability = transition.Probability;
         }
 
-        public double Probability { get; set; } = 1.0;
         public new Transition Invert() => new Transition(To, From, Inverse, Transform);
 
         public Transition Clone() => new Transition(this);

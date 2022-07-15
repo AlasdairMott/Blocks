@@ -16,9 +16,10 @@ namespace Blocks.Tests.Generators
         [Fact(Skip = "Not Implemented")]
         public void TryPlace_ItPlaces()
         {
+            /*
             //Arrange
             var transitions = TestingStubs.Relationships.Values.Select(r => new Transition(r)).ToTransitions();
-            transitions.NormalizeRelationships();
+            transitions.ComputeProbabilities();
             var assembly = new BlockAssembly();
             var obstacles = new Mesh();
             var generator = new FromTransitionsGenerator(0);
@@ -26,6 +27,7 @@ namespace Blocks.Tests.Generators
             //Act
 
             //Assert
+            */
         }
     }
 }
