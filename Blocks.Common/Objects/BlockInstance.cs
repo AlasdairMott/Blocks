@@ -44,14 +44,12 @@ namespace Blocks.Common.Objects
         }
         public IEnumerable<GeometryBase> GetGeometry()
         {
-            var geometries = new List<GeometryBase>();
             foreach (var g in BlockDefinition.Geometry)
             {
                 var dup = g.Duplicate();
                 dup.Transform(Transform);
-                geometries.Add(dup);
+                yield return dup;
             }
-            return geometries;
         }
     }
 
