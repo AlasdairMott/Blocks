@@ -8,10 +8,10 @@ namespace Blocks.Common.Generators
     /// <summary>
     /// Generate a block assembly.
     /// </summary>
-    public class GenerateFromAssembly
+    public class FromAssemblyGenerator
     {
         private readonly Random _random;
-        public GenerateFromAssembly(int seed)
+        public FromAssemblyGenerator(int seed)
         {
             _random = new Random(seed);
         }

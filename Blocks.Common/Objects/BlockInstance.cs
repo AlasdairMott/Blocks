@@ -1,7 +1,7 @@
 ﻿using Rhino.DocObjects;
 using Rhino.Geometry;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 namespace Blocks.Common.Objects
 {

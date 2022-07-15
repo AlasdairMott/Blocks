@@ -1,7 +1,6 @@
 ﻿using Blocks.Common.Objects;
 using Rhino.Display;
 using Rhino.Geometry;
-using System;
 using System.Drawing;
 
 namespace Blocks.Viewer.Display

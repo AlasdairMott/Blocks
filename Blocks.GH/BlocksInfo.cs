@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Grasshopper.Kernel;
+using System;
 using System.Drawing;
-using Grasshopper.Kernel;
 
 namespace Blocks.GH
 {
-	public class BlocksInfo : GH_AssemblyInfo
+    public class BlocksInfo : GH_AssemblyInfo
 	{
 		public override string Name
 		{

@@ -21,7 +21,7 @@ namespace Blocks.Tests.Generators
             transitions.NormalizeRelationships();
             var assembly = new BlockAssembly();
             var obstacles = new Mesh();
-            var generator = new GenerateFromTransitions(0);
+            var generator = new FromTransitionsGenerator(0);
 
             //Act
 

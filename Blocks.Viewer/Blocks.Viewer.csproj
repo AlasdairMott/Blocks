@@ -45,6 +45,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Generate.cs" />
     <Compile Include="Commands\GraphParameters.cs" />
     <Compile Include="Data\Preferences.cs" />
     <Compile Include="Dialogs\GraphParameters.cs">

@@ -1,9 +1,9 @@
-﻿using Eto.Forms;
+﻿using Blocks.Viewer.Display;
+using Eto.Forms;
 using Rhino.Display;
 using Rhino.UI.Controls;
 using System;
 using System.Linq;
-using Blocks.Viewer.Display;
 
 namespace Blocks.Viewer
 {

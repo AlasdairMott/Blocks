@@ -1,4 +1,5 @@
-﻿using Blocks.Common.Readers;
+﻿using Blocks.Common.Parameters;
+using Blocks.Common.Readers;
 using Grasshopper.Kernel;
 using Rhino.DocObjects;
 using System;
@@ -21,7 +22,10 @@ namespace Blocks.GH.Components
 		{
 			pManager.AddGenericParameter("Instance Objects", "I", "Instance Objects", GH_ParamAccess.list);
 			pManager.AddNumberParameter("Distance threshold", "D", "Distance threshold", GH_ParamAccess.item);
-		}
+            pManager.AddNumberParameter("Collision Area", "A", "Collision area to consider two blocks touching", GH_ParamAccess.item);
+
+            pManager[2].Optional = true;
+        }
 
 		/// <summary>
 		/// Registers all the output parameters for this component.
@@ -47,10 +51,17 @@ namespace Blocks.GH.Components
 			if (instances.Any(i => i == null)) { AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No instances found"); return; }
 
 			var distanceThreshold = 1.0;
-			if (!DA.GetData(1, ref distanceThreshold)) { return; }
+			if (DA.GetData(1, ref distanceThreshold)) { return; }
 
-            var reader = new ReadBlockAssembly();
-			var assembly = reader.Read(instances.ToList(), distanceThreshold);
+            var collisionArea = 2.0;
+            DA.GetData(2, ref collisionArea);
+
+            var reader = new BlockAssemblyReader();
+            var parameters = new BlockAssemblyReaderParameters
+            {
+                EdgeReaderParameters = new BlockAssemblyEdgeReaderParameters(distanceThreshold, collisionArea),
+            };
+			var assembly = reader.Read(instances.ToList(), parameters);
 
 			DA.SetData(0, assembly);
 		}
