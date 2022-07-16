@@ -10,15 +10,17 @@ namespace Blocks.Viewer.Commands
         {
             if (MainForm.Reference == null) return;
 
-            var generator = new FromTransitionsGenerator(seed);
-            var transitions = new Transitions(MainForm.Reference.BlockAssembly);
-
             Mesh groundPlane = useGroundPlane ? 
                 Mesh.CreateFromPlane(new Plane(new Point3d(0,0,-10), Vector3d.ZAxis), new Interval(-1000, 1000), new Interval(-1000, 1000), 4, 4) : new Mesh();
 
-            var outputAssembly = generator.Generate(transitions, groundPlane, steps);
+            var transitions = new Transitions(MainForm.Reference.BlockAssembly);
+            var generator = new RecursiveGenerator(transitions, groundPlane, seed, steps);
+            var result = generator.Generate();
 
-            MainForm.SetGenerated(outputAssembly);
+            //var generator = new FromTransitionsGenerator(seed);
+            //var result = generator.Generate(transitions, groundPlane, steps);
+
+            MainForm.SetGenerated(result);
         }
     }
 }

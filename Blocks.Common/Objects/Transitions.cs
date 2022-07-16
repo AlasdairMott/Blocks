@@ -82,6 +82,7 @@ namespace Blocks.Common.Objects
         public Transition Pop(Random random)
         {
             var next = GetRandom(random);
+            _transitions.Remove(next);
             _probabilities = null;
             return next;
         }

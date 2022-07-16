@@ -53,6 +53,16 @@ namespace Blocks.Common.Objects
         }
     }
 
+    public class BlockInstanceState : BlockInstance 
+    {   
+        public Transitions Transitions { get; }
+        
+        public BlockInstanceState(BlockDefinition blockDefinition, Transform transform, Transitions transitions) : base(blockDefinition, transform)
+        {
+            Transitions = transitions ?? throw new ArgumentNullException(nameof(transitions));
+        }
+    }
+
     public static class InstanceExtensions
     {
         public static BlockInstance ToInstance(this InstanceObject instance)
