@@ -114,7 +114,7 @@ namespace Blocks.Viewer
 
         private void Run()
         {
-            Commands.Generate.Run((int)SeedStepper.Value, (int)StepsStepper.Value);
+            Commands.Generate.Run((int)SeedStepper.Value, (int)StepsStepper.Value, Data.Preferences.UseGroundPlane);
             MainForm.RefreshViewports();
         }
     }

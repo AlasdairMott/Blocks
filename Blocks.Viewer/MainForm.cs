@@ -36,6 +36,17 @@ namespace Blocks.Viewer
 
             var demoMenu = new forms.ButtonMenuItem { Text = "&Demos" };
             BuildDemosMenu(demoMenu.Items);
+
+            var groundPlaneCheckBox = new forms.CheckMenuItem
+            {
+                Text = "&Use Ground Plane",
+                Checked = Data.Preferences.UseGroundPlane,
+            };
+            groundPlaneCheckBox.Click += (s, e) =>
+            {
+                Data.Preferences.UseGroundPlane = groundPlaneCheckBox.Checked;
+            };
+
             Menu = new forms.MenuBar()
             {
                 Items =
@@ -52,9 +63,10 @@ namespace Blocks.Viewer
                     new forms.ButtonMenuItem
                     {
                         Text = "&Commands",
-                        Items = 
+                        Items =
                         {
                             new Commands.GraphParameters(),
+                            groundPlaneCheckBox
                         }
                     }
                     

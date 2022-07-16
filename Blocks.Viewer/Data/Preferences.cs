@@ -7,7 +7,7 @@ namespace Blocks.Viewer.Data
         public static BlockAssemblyReaderParameters BlockAssemblyReaderParameters { get; set; }
         public static FromTransitionsGeneratorParameters FromTransitionsGeneratorParameters { get; set; }
         public static GraphGeneratorParameters GraphGeneratorParameters { get; set; }
-
+        public static bool UseGroundPlane;
         public static void CreateDefaults()
         {
             BlockAssemblyReaderParameters = new BlockAssemblyReaderParameters
