@@ -29,7 +29,7 @@ namespace Blocks.Viewer
                 Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Play), 
                 Style = "toolbar-button",
             };
-            playButton.Click += PlayButton_Click;
+            playButton.Click += (s,e) => Run();
 
             var randomizeButton = new forms.Button
             {
@@ -61,6 +61,20 @@ namespace Blocks.Viewer
                 BackgroundColor = draw.Colors.White
             };
 
+            var nextButton = new forms.Button
+            {
+                Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Next),
+                Style = "toolbar-button",
+            };
+            nextButton.Click += (s, e) => { StepsStepper.Value++; Run(); };
+
+            var previousButton = new forms.Button
+            {
+                Image = Rhino.UI.EtoExtensions.ToEto(Viewer.Properties.Resources.Previous),
+                Style = "toolbar-button",
+            };
+            previousButton.Click += (s, e) => { StepsStepper.Value--; Run(); };
+            
             layout.Items.Add(playButton);
             layout.Items.Add(randomizeButton);
             layout.Items.Add(zoomExtentsButton);
@@ -70,6 +84,10 @@ namespace Blocks.Viewer
             layout.Items.Add(SeedStepper);
             layout.Items.Add("  Steps:");
             layout.Items.Add(StepsStepper);
+            
+            layout.Items.Add(nextButton);
+            layout.Items.Add(previousButton);
+
             layout.Items.Add(new forms.StackLayoutItem { Expand = true });
             //layout.Items.Add(graphParameters);
 
@@ -94,15 +112,10 @@ namespace Blocks.Viewer
             MainForm.RefreshViewports();
         }
 
-        private void PlayButton_Click(object sender, EventArgs e)
-        {
-            Run();
-            MainForm.RefreshViewports();
-        }
-
         private void Run()
         {
             Commands.Generate.Run((int)SeedStepper.Value, (int)StepsStepper.Value);
+            MainForm.RefreshViewports();
         }
     }
 }
