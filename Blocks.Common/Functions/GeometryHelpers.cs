@@ -12,7 +12,7 @@ namespace Blocks.Common.Functions
         /// <returns>All the BlockInstance's geomery as a single joined mesh.</returns>
         public static Mesh GetBlockInstanceMesh(BlockInstance instance)
         {
-            var geometry = instance.GetGeometry();
+            var geometry = instance.Geometry;
             var mesh = new Mesh();
             foreach (var geo in geometry)
             {

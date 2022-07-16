@@ -2,6 +2,7 @@
 using Rhino.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Blocks.Common.Objects
 {
@@ -10,19 +11,27 @@ namespace Blocks.Common.Objects
     /// </summary>
     public class BlockInstance
     {
+        private Lazy<IEnumerable<GeometryBase>> _geometry => new Lazy<IEnumerable<GeometryBase>>(() =>
+            BlockDefinition.Geometry.Select(b =>
+            {
+                var dup = b.Duplicate();
+                dup.Transform(Transform);
+                return dup;
+            })
+        );
+        private Lazy<Point3d> _location => new Lazy<Point3d>(() =>
+        {
+            var point = Point3d.Origin;
+            point.Transform(Transform);
+            return point;
+        });
+
         public BlockDefinition BlockDefinition { get; set; }
         public Transform Transform { get; set;}
         public Mesh CollisionMesh { get; private set; } = new Mesh();
         public string Id { get; private set; } = Guid.NewGuid().ToString();
-        public Point3d InsertionPoint 
-        { 
-            get
-            {
-                var point = Point3d.Origin;
-                point.Transform(Transform);
-                return point;
-            } 
-        }
+        public Point3d Location => _location.Value;
+        public IEnumerable<GeometryBase> Geometry => _geometry.Value;
 
         public BlockInstance(BlockDefinition blockDefinition, Transform transform)
         {
@@ -39,17 +48,8 @@ namespace Blocks.Common.Objects
 
             point1.Transform(Transform);
             point2.Transform(other.Transform);
-
+            
             return point1.DistanceTo(point2);
-        }
-        public IEnumerable<GeometryBase> GetGeometry()
-        {
-            foreach (var g in BlockDefinition.Geometry)
-            {
-                var dup = g.Duplicate();
-                dup.Transform(Transform);
-                yield return dup;
-            }
         }
     }
 

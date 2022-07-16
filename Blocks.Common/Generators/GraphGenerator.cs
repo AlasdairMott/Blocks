@@ -15,7 +15,7 @@ namespace Blocks.Common.Generators
 
         public Vertex(BlockInstance blockInstance)
         {
-            Location = new Point3d(blockInstance.InsertionPoint.X, blockInstance.InsertionPoint.Y, 0);
+            Location = new Point3d(blockInstance.Location.X, blockInstance.Location.Y, 0);
             BlockInstance = blockInstance;
         }
     }

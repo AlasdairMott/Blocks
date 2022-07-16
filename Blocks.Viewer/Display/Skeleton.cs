@@ -14,9 +14,9 @@ namespace Blocks.Viewer.Display
 
         public Skeleton(BlockAssembly assembly) : base(assembly)
         {
-            var vertices = assembly.BlockInstances.Select(b => b.InsertionPoint);
+            var vertices = assembly.BlockInstances.Select(b => b.Location);
             var labels = assembly.BlockInstances.Select(b => b.BlockDefinition.Name);
-            var edges = assembly.Edges.Select(e => new Line(e.FromInstance.InsertionPoint, e.ToInstance.InsertionPoint));
+            var edges = assembly.Edges.Select(e => new Line(e.FromInstance.Location, e.ToInstance.Location));
 
             _vertices = vertices.ToArray();
             _edges = edges.ToArray();

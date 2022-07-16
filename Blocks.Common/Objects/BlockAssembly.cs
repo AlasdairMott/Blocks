@@ -69,7 +69,7 @@ namespace Blocks.Common.Objects
             var geometries = new List<GeometryBase>();
             foreach (var instance in _blockInstances)
             {
-                geometries.AddRange(instance.GetGeometry());
+                geometries.AddRange(instance.Geometry);
             }
             return geometries;
         }
