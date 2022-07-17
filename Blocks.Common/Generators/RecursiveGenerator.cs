@@ -14,8 +14,8 @@ namespace Blocks.Common.Generators
     public class RecursiveGenerator : IBlockAssemblyGenerator
     {
         private readonly Transitions _transitions;
-        private readonly Random _random;
         private readonly Mesh _obstacles;
+        private readonly Random _random;
         private readonly int _depth;
         private BlockAssembly _assembly;
 
