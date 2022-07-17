@@ -53,7 +53,7 @@ namespace Blocks.Viewer
             ShowText.Click += ShowText_Click;
 
             SeedStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 10, Width = 48 };
-            StepsStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 50, Width = 48 };
+            StepsStepper = new forms.NumericStepper() { DecimalPlaces = 0, MinValue = 0, Value = 3, Width = 48 };
 
             var graphParameters = new forms.Button
             {
