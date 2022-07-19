@@ -27,13 +27,13 @@ To start, the algorithm will choose a block at random from the pool of available
 A copy of [Rhino 3d](https://www.rhino3d.com/) is required. A free trial version is available. An [example](https://github.com/AlasdairMott/Blocks/tree/develop/examples) file is provided.
 
 **Reading existing objects:**
-```
+```cs
 var reader = new ReadTransitions();
 var transitions = reader.Read(instances, distanceThreshold);
 ```
 
 **Generating a new assembly:**
-```
+```cs
 var generator = new GenerateBlockAssembly(seed);
 var assembly = generator.Generate(transitions, obstacles, steps);
 ```
