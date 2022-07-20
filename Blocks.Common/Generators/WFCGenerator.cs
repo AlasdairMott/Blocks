@@ -34,25 +34,20 @@ namespace Blocks.Common.Generators
         public IEnumerable<State> AllChildren => Children.SelectMany(c => c.Children.Concat(c.AllChildren));
     }
 
+    /// <summary>
+    /// Used to track the assembly during its generation.
+    /// </summary>
+    /// <remarks>Each propogation step is a state. At each step there is a dictionary mapping states to their entanglements.</remarks>
     public class WFCDebugger
     {
-        // each propogation step is a state
-        // using a dictoinary of the integer keys to track each instance
-
-        // track the number of entanglements each state has
-        // color based on the number entanglements
-        // alpha = 0.1 is max
-        // alpha = 1 is 0 entanglements
-
-        private List<double[]> _entropy;
-        public IReadOnlyList<double[]> Entropy => _entropy;
+        public List<Dictionary<int, (bool collapsed, bool eliminated, List<int> entanglements)>> States;
         
         public void Bake(IEnumerable<State> states)
         {
             var docObjects = Rhino.RhinoDoc.ActiveDoc.Objects;
             foreach (var state in states)
             {
-                
+                throw new NotImplementedException();
             }
         }
 
@@ -65,7 +60,10 @@ namespace Blocks.Common.Generators
         }
     }
 
-    public class WFCGenerator : IBlockAssemblyGenerator
+    /// <summary>
+    /// Generates a block assembly by considering all possible states and elliminating the ones that result in collisions.
+    /// </summary>
+    public class EntangledCollisionsGenerator : IBlockAssemblyGenerator
     {
         private readonly Transitions _transitions;
         private readonly Mesh _obstacles;
@@ -75,14 +73,18 @@ namespace Blocks.Common.Generators
 
         private Dictionary<int, State> _states;
         private RTree _rTree;
-        private List<int> _rTreeCollisions = new List<int>();
+        private EventHandler<RTreeEventArgs> _rTreeCallback;
+        private List<int> _rTreeCollisions;
 
-        public WFCGenerator(Transitions transitions, Mesh obstacles, int seed, int depth)
+        public EntangledCollisionsGenerator(Transitions transitions, Mesh obstacles, int seed, int depth)
         {
             _transitions = transitions ?? throw new ArgumentNullException(nameof(transitions));
             _obstacles = obstacles ?? throw new ArgumentNullException(nameof(obstacles));
             _random = new Random(seed);
             _depth = depth;
+
+            _rTreeCollisions = new List<int>();
+            _rTreeCallback = (sender, args) => _rTreeCollisions.Add(args.Id);
         }
 
         /// <summary>
@@ -168,7 +170,7 @@ namespace Blocks.Common.Generators
 
             // Make sure not to add the transition that was just visited
             IEnumerable<Transition> newTransitions = _transitions.FindFromBlockDefinition(transition.To);
-            //  newTransitions = newTransitions.Except(new List<Transition> { transition });
+            newTransitions = newTransitions.Except(new List<Transition> { transition });
 
             next = new State(transition.To, nextTransform, newTransitions.ToTransitions(), _depth - depth);
 
@@ -177,23 +179,22 @@ namespace Blocks.Common.Generators
                 return false;
             }
 
+            if (Functions.CollisionCheck.CheckCollision(_obstacles, next.CollisionMesh)) {
+                return false;
+            }
+
             // use the rTree to determine quickly if the blocks intersect
             _rTreeCollisions.Clear();
             using (var treeB = new RTree())
             {
                 treeB.Insert(next.BoundingBox, next.Key);
-                RTree.SearchOverlaps(_rTree, treeB, tolerance: 0.1, callback: (sender, args) => _rTreeCollisions.Add(args.Id));
+                RTree.SearchOverlaps(_rTree, treeB, tolerance: 0.1, callback: _rTreeCallback);
             }
             
-            var collisions_compare = new List<int>();
-
-            foreach (var other in _states.Values)
-            //foreach (var other in _rTreeCollisions.Select(s => _states[s]))
+            foreach (var other in _rTreeCollisions.Select(s => _states[s]))
             {
                 var overlapping = Functions.CollisionCheck.CheckCollision(other.CollisionMesh, next.CollisionMesh);
                 if (!overlapping) { continue; }
-
-                collisions_compare.Add(other.Key);
 
                 // Can't place if it collides with a collapsed state
                 //if (other.Collapsed)
@@ -207,33 +208,6 @@ namespace Blocks.Common.Generators
                 next.Entangled.Add(other.Key);
             }
 
-            //if (next.Key == 1996170078)
-            //{
-            //    Rhino.RhinoDoc.ActiveDoc.Objects.AddBrep(next.BoundingBox.ToBrep());
-
-            //    int group = Rhino.RhinoDoc.ActiveDoc.Groups.Add();
-            //    foreach (var item in _rTreeCollisions)
-            //    {
-            //        var brep = _uncertain[item].BoundingBox.ToBrep();
-            //        var brepObject = Rhino.RhinoDoc.ActiveDoc.Objects.AddBrep(brep);
-            //        Rhino.RhinoDoc.ActiveDoc.Groups.AddToGroup(group, brepObject);
-            //    }
-
-            //    Rhino.RhinoDoc.ActiveDoc.Objects.AddMesh(next.Mesh, new Rhino.DocObjects.ObjectAttributes { 
-            //        ColorSource = Rhino.DocObjects.ObjectColorSource.ColorFromObject,
-            //        ObjectColor = System.Drawing.Color.Red
-            //    });
-
-            //    foreach (var item in next.Entangled)
-            //    {
-            //        Rhino.RhinoDoc.ActiveDoc.Objects.AddMesh(_uncertain[item].Mesh, new Rhino.DocObjects.ObjectAttributes
-            //        {
-            //            ColorSource = Rhino.DocObjects.ObjectColorSource.ColorFromObject,
-            //            ObjectColor = System.Drawing.Color.Maroon
-            //        });
-            //    }
-            //}
-
             return true;
         }
 
@@ -244,26 +218,6 @@ namespace Blocks.Common.Generators
         private State ChooseStateToCollapse()
         {
             State state = null;
-
-            #region shallow depth and low entropy
-            //double cumulativeDepth = _uncertain.Values.Sum(s => s.Depth);
-            //double cumulativeEntropy = _uncertain.Values.Sum(s => s.Entangled.Count);
-            //double maxEntropy = _uncertain.Values.Max(s => s.Entangled.Count);
-            //double randomValue = _random.NextDouble();
-
-            //double cumulative = 0;
-            //return _uncertain.Values.First(s =>
-            //{
-            //    double p = (_depth-s.Depth+1) / cumulativeDepth;
-            //    double q = (maxEntropy-s.Entangled.Count) / cumulativeEntropy;
-            //    cumulative += (p + q);
-
-            //    return cumulative > randomValue;
-            //});
-
-            #endregion
-
-            #region shallow depth first
             for (int j = 0; j <= _depth; j++)
             {
                 var uncollapsed = _states.Values.Where(s => !s.Collapsed && s.Depth == j).ToList();
@@ -274,22 +228,6 @@ namespace Blocks.Common.Generators
                     break;
                 }
             }
-            #endregion
-
-            #region completely random
-            // Choose an uncollapsed state
-            //var uncollapsed = _uncertain.Values.Where(s => !s.Collapsed).ToList();
-            //int index = _random.Next(uncollapsed.Count());
-            //state = uncollapsed[index];
-            #endregion
-
-            //var rdoc = Rhino.RhinoDoc.ActiveDoc.Objects;
-            //rdoc.AddMesh(state.CollisionMesh, new Rhino.DocObjects.ObjectAttributes
-            //{
-            //    ColorSource = Rhino.DocObjects.ObjectColorSource.ColorFromObject,
-            //    ObjectColor = System.Drawing.Color.Green
-            //});
-
             return state;
         }
 
@@ -342,6 +280,10 @@ namespace Blocks.Common.Generators
 
         private void Propogate(State state, int remove) => Propogate(state, new HashSet<int> { remove });
 
+        /// <summary>
+        /// Add edges to the assembly.
+        /// </summary>
+        /// <param name="state">State that is being added to the assembly.</param>
         private void AddEdges(State state)
         {
             foreach (var child in state.Children.Where(c => !c.Eliminated))

@@ -21,7 +21,7 @@ namespace Blocks.Viewer.Commands
             switch (name)
             {
                 case "WFC":
-                    generator = new WFCGenerator(transitions, groundPlane, seed, steps);
+                    generator = new EntangledCollisionsGenerator(transitions, groundPlane, seed, steps);
                     break;
                 case "Recursive":
                     generator = new RecursiveGenerator(transitions, groundPlane, seed, steps);
