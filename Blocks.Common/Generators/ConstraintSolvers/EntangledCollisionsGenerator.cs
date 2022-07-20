@@ -4,61 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Blocks.Common.Generators
+namespace Blocks.Common.Generators.ConstraintSolvers
 {
-    public class State : BlockInstanceState
-    {
-        public int Depth { get; }
-        public int Key => GetHashCode();
-        public bool Collapsed { get; set; } = false;
-        public bool Eliminated { get; set; } = false;
-        public HashSet<int> Entangled { get; set; } = new HashSet<int>();
-        
-        public State(BlockDefinition blockDefinition, Transform transform, Transitions transitions, int depth) : base(blockDefinition, transform, transitions)
-        {
-            Depth = depth;
-        }
-        
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = Transform.GetHashCode();
-                hash = (hash * 13) ^ BlockDefinition.Name.GetHashCode();
-                return hash;
-            }
-        }
-
-        public List<State> Children { get; } = new List<State>();
-
-        public IEnumerable<State> AllChildren => Children.SelectMany(c => c.Children.Concat(c.AllChildren));
-    }
-
-    /// <summary>
-    /// Used to track the assembly during its generation.
-    /// </summary>
-    /// <remarks>Each propogation step is a state. At each step there is a dictionary mapping states to their entanglements.</remarks>
-    public class WFCDebugger
-    {
-        public List<Dictionary<int, (bool collapsed, bool eliminated, List<int> entanglements)>> States;
-        
-        public void Bake(IEnumerable<State> states)
-        {
-            var docObjects = Rhino.RhinoDoc.ActiveDoc.Objects;
-            foreach (var state in states)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public static System.Drawing.Color ColorFromState(State state) 
-        {
-            int r = Math.Abs(state.Key * 3 % 255);
-            int g = Math.Abs(state.Key * 7 % 255);
-            int b = Math.Abs(state.Key * 13 % 255);
-            return System.Drawing.Color.FromArgb(r, g, b);
-        }
-    }
 
     /// <summary>
     /// Generates a block assembly by considering all possible states and elliminating the ones that result in collisions.
@@ -102,8 +49,8 @@ namespace Blocks.Common.Generators
             var start = new State(
                 transition.From, Transform.Identity,
                 _transitions.FindFromBlockDefinition(transition.From), 0)
-            { 
-                Collapsed = true 
+            {
+                Collapsed = true
             };
 
             _assembly.AddInstance(start);
@@ -142,14 +89,14 @@ namespace Blocks.Common.Generators
             while (state.Transitions.Any() && depth >= 0)
             {
                 var transition = state.Transitions.Pop(_random);
-                
+
                 if (CanPlace(state, transition, depth, out State next))
                 {
                     // updates
                     state.Children.Add(next);
                     _states.Add(next.Key, next);
                     _rTree.Insert(next.BoundingBox, next.Key);
-                    
+
                     ProjectFutureStates(next, depth);
                 }
             }
@@ -179,7 +126,8 @@ namespace Blocks.Common.Generators
                 return false;
             }
 
-            if (Functions.CollisionCheck.CheckCollision(_obstacles, next.CollisionMesh)) {
+            if (Functions.CollisionCheck.CheckCollision(_obstacles, next.CollisionMesh))
+            {
                 return false;
             }
 
@@ -190,7 +138,7 @@ namespace Blocks.Common.Generators
                 treeB.Insert(next.BoundingBox, next.Key);
                 RTree.SearchOverlaps(_rTree, treeB, tolerance: 0.1, callback: _rTreeCallback);
             }
-            
+
             foreach (var other in _rTreeCollisions.Select(s => _states[s]))
             {
                 var overlapping = Functions.CollisionCheck.CheckCollision(other.CollisionMesh, next.CollisionMesh);
@@ -199,7 +147,7 @@ namespace Blocks.Common.Generators
                 // Can't place if it collides with a collapsed state
                 //if (other.Collapsed)
                 //{
-                        // need to clean up references to this key in the entanglements up to this point
+                // need to clean up references to this key in the entanglements up to this point
                 //    return false;
                 //}
 

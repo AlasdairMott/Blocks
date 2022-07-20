@@ -42,8 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Generators\ConstraintSolvers\EntangledNeighbourGenerator.cs" />
+    <Compile Include="Generators\ConstraintSolvers\State.cs" />
+    <Compile Include="Generators\ConstraintSolvers\WFCDebugger.cs" />
     <Compile Include="Generators\RecursiveGenerator.cs" />
-    <Compile Include="Generators\EntangledCollisionsGenerator.cs" />
+    <Compile Include="Generators\ConstraintSolvers\EntangledCollisionsGenerator.cs" />
     <Compile Include="Parameters\FromTransitionsGeneratorParameters.cs" />
     <Compile Include="Functions\CollisionCheck.cs" />
     <Compile Include="Functions\GeometryHelpers.cs" />
