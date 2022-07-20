@@ -7,7 +7,7 @@ namespace Blocks.Viewer.Commands
 {
     public static class Generate
     {
-        public static void Run(int seed, int steps, bool useGroundPlane)
+        public static void Run(string methodName, int seed, int steps, bool useGroundPlane)
         {
             if (MainForm.Reference == null) return;
 
@@ -16,18 +16,17 @@ namespace Blocks.Viewer.Commands
 
             var transitions = new Transitions(MainForm.Reference.BlockAssembly);
 
-            string name = "WFC";
             IBlockAssemblyGenerator generator;
-            switch (name)
+            switch (methodName)
             {
-                case "WFC":
+                case "EntangledCollisionsGenerator":
                     generator = new EntangledCollisionsGenerator(transitions, groundPlane, seed, steps);
                     break;
-                case "Recursive":
+                case "RecursiveGenerator":
                     generator = new RecursiveGenerator(transitions, groundPlane, seed, steps);
                     break;
                 default:
-                    throw new ArgumentException($"Unknown generator: {name}");
+                    throw new ArgumentException($"Unknown generator: {methodName}");
             }
             
             var result = generator.Generate();
