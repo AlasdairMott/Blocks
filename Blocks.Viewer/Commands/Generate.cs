@@ -10,7 +10,7 @@ namespace Blocks.Viewer.Commands
     {
         public static void Run(string methodName, int seed, int steps, bool useGroundPlane)
         {
-            if (MainForm.Reference == null) return;
+            if (MainForm.Reference == null) { return; }
 
             Mesh groundPlane = useGroundPlane ? 
                 Mesh.CreateFromPlane(new Plane(new Point3d(0,0,-10), Vector3d.ZAxis), new Interval(-1000, 1000), new Interval(-1000, 1000), 4, 4) : new Mesh();
@@ -20,6 +20,12 @@ namespace Blocks.Viewer.Commands
             IBlockAssemblyGenerator generator;
             switch (methodName)
             {
+                case "FromAssemblyGenerator":
+                    generator = new FromAssemblyGenerator(MainForm.Reference.BlockAssembly, groundPlane, seed, steps);
+                    break;
+                case "FromTransitionsGenerator":
+                    generator = new FromTransitionsGenerator(transitions, groundPlane, seed, steps);
+                    break;
                 case "EntangledCollisionsGenerator":
                     generator = new EntangledCollisionsGenerator(transitions, groundPlane, seed, steps);
                     break;
@@ -31,9 +37,6 @@ namespace Blocks.Viewer.Commands
             }
             
             var result = generator.Generate();
-
-            //var generator = new FromTransitionsGenerator(seed);
-            //var result = generator.Generate(transitions, groundPlane, steps);
 
             MainForm.SetGenerated(result);
         }

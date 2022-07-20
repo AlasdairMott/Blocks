@@ -8,24 +8,31 @@ namespace Blocks.Common.Generators
     /// <summary>
     /// Generate a block assembly.
     /// </summary>
-    public class FromAssemblyGenerator
+    public class FromAssemblyGenerator : IBlockAssemblyGenerator
     {
         private readonly Random _random;
-        public FromAssemblyGenerator(int seed)
+        private readonly BlockAssembly _example;
+        private readonly Mesh _obstacles;
+        private readonly int _steps;
+
+        public FromAssemblyGenerator(BlockAssembly example, Mesh obstacles, int seed, int steps)
         {
+            _example = example ?? throw new ArgumentNullException(nameof(example));
+            _obstacles = obstacles ?? throw new ArgumentNullException(nameof(obstacles));
+            _steps = steps;
             _random = new Random(seed);
         }
 
-        public BlockAssembly Generate(BlockAssembly example, Mesh obstacles, int steps)
+        public BlockAssembly Generate()
         {
             var assembly = new BlockAssembly();
 
-            var item = example.BlockInstances.ElementAt(_random.Next(0, example.Size));
+            var item = _example.BlockInstances.ElementAt(_random.Next(0, _example.Size));
             assembly.AddInstance(new BlockInstance(item.BlockDefinition, Transform.Identity));
 
-            for (var i = 0; i < steps; i++)
+            for (var i = 0; i < _steps; i++)
             {
-                TryPlace(assembly, example, obstacles);
+                TryPlace(assembly, _example, _obstacles);
             }
 
             return assembly;
@@ -36,12 +43,13 @@ namespace Blocks.Common.Generators
             var index = _random.Next(0, assembly.Size);
             var existing = assembly.BlockInstances.ElementAt(index);
 
-            var sampledRelationships = assembly.FindFromBlockDefinition(existing.BlockDefinition);
+            var sampledRelationships = example.FindFromBlockDefinition(existing.BlockDefinition);
 
             var nextRelationship = sampledRelationships.OrderBy(r => _random.NextDouble()).FirstOrDefault();
             if (nextRelationship == null) { return false; }
 
-            var nextBlockDefinition = nextRelationship.To == existing.BlockDefinition ? nextRelationship.To : nextRelationship.From;
+            //var nextBlockDefinition = nextRelationship.To == existing.BlockDefinition ? nextRelationship.To : nextRelationship.From;
+            var nextBlockDefinition = nextRelationship.To;
             var nextTransform = existing.Transform * nextRelationship.Transform;
 
             var instance = new BlockInstance(nextBlockDefinition, nextTransform);
