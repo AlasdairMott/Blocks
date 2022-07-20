@@ -18,8 +18,7 @@ namespace Blocks.Viewer.Display
         {
             foreach (var instance in assembly.BlockInstances)
             {
-                var mesh = GeometryHelpers.GetBlockInstanceMesh(instance);
-                _mesh.Append(mesh);
+                _mesh.Append(instance.Mesh);
             }
             _meshWires = GetMeshWires(_mesh);
 

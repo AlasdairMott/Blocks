@@ -6,7 +6,7 @@
 
         public static void Run()
         {
-            _rhinoCore = new Rhino.Runtime.InProcess.RhinoCore(new string[] { "-appmode" }, Rhino.Runtime.InProcess.WindowStyle.Normal);
+            _rhinoCore = new Rhino.Runtime.InProcess.RhinoCore(new string[] { "-appmode" }, Rhino.Runtime.InProcess.WindowStyle.Minimized);
             
             MainForm mf = new MainForm();
             mf.Show();

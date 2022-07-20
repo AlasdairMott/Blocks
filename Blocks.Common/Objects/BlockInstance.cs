@@ -25,13 +25,17 @@ namespace Blocks.Common.Objects
             point.Transform(Transform);
             return point;
         });
-
-        public BlockDefinition BlockDefinition { get; set; }
-        public Transform Transform { get; set;}
+        private Lazy<Mesh> _mesh => new Lazy<Mesh>(() => Functions.GeometryHelpers.GetBlockInstanceMesh(this));
+        private Lazy<BoundingBox> _boundingBox => new Lazy<BoundingBox>(() => Mesh.GetBoundingBox(true));
+        
+        public BlockDefinition BlockDefinition { get; private set; }
+        public Transform Transform { get; private set; }
         public Mesh CollisionMesh { get; private set; } = new Mesh();
         public string Id { get; private set; } = Guid.NewGuid().ToString();
         public Point3d Location => _location.Value;
         public IEnumerable<GeometryBase> Geometry => _geometry.Value;
+        public BoundingBox BoundingBox => _boundingBox.Value;
+        public Mesh Mesh => _mesh.Value;
 
         public BlockInstance(BlockDefinition blockDefinition, Transform transform)
         {
