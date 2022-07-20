@@ -43,7 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Generators\RecursiveGenerator.cs" />
-    <Compile Include="Generators\WFCGenerator.cs" />
+    <Compile Include="Generators\EntangledCollisionsGenerator.cs" />
     <Compile Include="Parameters\FromTransitionsGeneratorParameters.cs" />
     <Compile Include="Functions\CollisionCheck.cs" />
     <Compile Include="Functions\GeometryHelpers.cs" />
