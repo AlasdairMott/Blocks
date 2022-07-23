@@ -88,7 +88,6 @@ namespace Blocks.Viewer
             };
             previousButton.Click += (s, e) => { StepsStepper.Value--; Run(); };
 
-            layout.Items.Add(GeneratorList);
             layout.Items.Add(playButton);
             layout.Items.Add(randomizeButton);
             layout.Items.Add(zoomExtentsButton);
@@ -99,10 +98,11 @@ namespace Blocks.Viewer
             layout.Items.Add("  Steps:");
             layout.Items.Add(StepsStepper);
             
-            layout.Items.Add(nextButton);
             layout.Items.Add(previousButton);
+            layout.Items.Add(nextButton);
 
             layout.Items.Add(new forms.StackLayoutItem { Expand = true });
+            layout.Items.Add(GeneratorList);
             //layout.Items.Add(graphParameters);
 
             Content = layout;

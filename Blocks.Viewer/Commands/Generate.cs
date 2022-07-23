@@ -27,9 +27,16 @@ namespace Blocks.Viewer.Commands
                     generator = new FromTransitionsGenerator(transitions, groundPlane, seed, steps);
                     break;
                 case "EntangledCollisionsGenerator":
+                    if (steps > 4) { throw new Exception(); }
                     generator = new EntangledCollisionsGenerator(transitions, groundPlane, seed, steps);
                     break;
+                case "EntangledNeighbourGenerator":
+                    if (steps > 6) { throw new Exception(); }
+                    var parameters = Data.Preferences.BlockAssemblyReaderParameters.EdgeReaderParameters;
+                    generator = new EntangledNeighbourGenerator(transitions, groundPlane, seed, steps, parameters);
+                    break;
                 case "RecursiveGenerator":
+                    if (steps > 10) { throw new Exception(); }
                     generator = new RecursiveGenerator(transitions, groundPlane, seed, steps);
                     break;
                 default:

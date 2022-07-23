@@ -10,26 +10,14 @@ namespace Blocks.Common.Generators.ConstraintSolvers
     /// <summary>
     /// Generates a block assembly by considering all possible states and elliminating the ones that result in collisions.
     /// </summary>
-    public class EntangledCollisionsGenerator : IBlockAssemblyGenerator
+    public class EntangledCollisionsGenerator : EntangledNeighbourGeneratorBase, IBlockAssemblyGenerator
     {
-        private readonly Transitions _transitions;
-        private readonly Mesh _obstacles;
-        private readonly Random _random;
-        private readonly int _depth;
-        private BlockAssembly _assembly;
-
-        private Dictionary<int, State> _states;
         private RTree _rTree;
-        private EventHandler<RTreeEventArgs> _rTreeCallback;
-        private List<int> _rTreeCollisions;
-
-        public EntangledCollisionsGenerator(Transitions transitions, Mesh obstacles, int seed, int depth)
+        private readonly EventHandler<RTreeEventArgs> _rTreeCallback;
+        private readonly List<int> _rTreeCollisions;
+        
+        public EntangledCollisionsGenerator(Transitions transitions, Mesh obstacles, int seed, int depth) : base(transitions, obstacles, seed, depth)
         {
-            _transitions = transitions ?? throw new ArgumentNullException(nameof(transitions));
-            _obstacles = obstacles ?? throw new ArgumentNullException(nameof(obstacles));
-            _random = new Random(seed);
-            _depth = depth;
-
             _rTreeCollisions = new List<int>();
             _rTreeCallback = (sender, args) => _rTreeCollisions.Add(args.Id);
         }
@@ -60,11 +48,8 @@ namespace Blocks.Common.Generators.ConstraintSolvers
             // First recursiveley generate the states
             ProjectFutureStates(start, _depth);
 
-            int i = 0;
             while (_states.Values.Any(s => !s.Collapsed))
             {
-                i++;
-
                 // favour lower depth states
                 State state = ChooseStateToCollapse();
 
@@ -95,6 +80,7 @@ namespace Blocks.Common.Generators.ConstraintSolvers
                     // updates
                     state.Children.Add(next);
                     _states.Add(next.Key, next);
+
                     _rTree.Insert(next.BoundingBox, next.Key);
 
                     ProjectFutureStates(next, depth);
@@ -112,7 +98,6 @@ namespace Blocks.Common.Generators.ConstraintSolvers
         /// <returns>True if the state can be placed at the given location.</returns>
         public bool CanPlace(State existing, Transition transition, int depth, out State next)
         {
-            // each time we place a new state, check which states it will be entangled with
             var nextTransform = existing.Transform * transition.Transform;
 
             // Make sure not to add the transition that was just visited
@@ -121,15 +106,14 @@ namespace Blocks.Common.Generators.ConstraintSolvers
 
             next = new State(transition.To, nextTransform, newTransitions.ToTransitions(), _depth - depth);
 
-            if (_states.ContainsKey(next.Key))
-            {
-                return false;
-            }
+            // The key already exists
+            if (_states.ContainsKey(next.Key)) { return false; }
 
-            if (Functions.CollisionCheck.CheckCollision(_obstacles, next.CollisionMesh))
-            {
-                return false;
-            }
+            // The state collides with an obstacle
+            if (Functions.CollisionCheck.CheckCollision(_obstacles, next.CollisionMesh)) { return false; }
+
+            // the state collides with the existing assembly
+            if (Functions.CollisionCheck.CheckCollision(_assembly, next)) { return false; }
 
             // use the rTree to determine quickly if the blocks intersect
             _rTreeCollisions.Clear();
@@ -141,19 +125,12 @@ namespace Blocks.Common.Generators.ConstraintSolvers
 
             foreach (var other in _rTreeCollisions.Select(s => _states[s]))
             {
-                var overlapping = Functions.CollisionCheck.CheckCollision(other.CollisionMesh, next.CollisionMesh);
+                bool overlapping = Functions.CollisionCheck.CheckCollision(other.CollisionMesh, next.CollisionMesh);
                 if (!overlapping) { continue; }
 
-                // Can't place if it collides with a collapsed state
-                //if (other.Collapsed)
-                //{
-                // need to clean up references to this key in the entanglements up to this point
-                //    return false;
-                //}
-
                 // update the entangled states
-                other.Entangled.Add(next.Key);
-                next.Entangled.Add(other.Key);
+                other.EntangledCollisions.Add(next.Key);
+                next.EntangledCollisions.Add(other.Key);
             }
 
             return true;
@@ -183,16 +160,16 @@ namespace Blocks.Common.Generators.ConstraintSolvers
         /// Inform the entangled states that it has collapsed, thereby eliminating them.
         /// </summary>
         /// <param name="state">The state.</param>
-        public void Collapse(State state) => Propogate(state, state.Entangled);
+        public void Collapse(State state) => Propogate(state, state.EntangledCollisions);
 
         /// <summary>
         /// Propogate the removed states to entangled states.
         /// </summary>
         /// <param name="state">The state to propogate changes to.</param>
-        /// <param name="remove">A set of states to be removed.</param>
+        /// <param name="remove">A set of collision states to be removed.</param>
         private void Propogate(State state, HashSet<int> remove)
         {
-            if (remove.Contains(state.Key))
+            if (remove.Contains(state.Key) && !state.Collapsed)
             {
                 state.Collapsed = true;
                 state.Eliminated = true;
@@ -204,14 +181,14 @@ namespace Blocks.Common.Generators.ConstraintSolvers
             }
 
             // the states that will be removed
-            var toRemove = new HashSet<int>(state.Entangled);
+            var toRemove = new HashSet<int>(state.EntangledCollisions);
             toRemove.IntersectWith(remove);
 
             // remove the states
-            state.Entangled.ExceptWith(remove);
+            state.EntangledCollisions.ExceptWith(remove);
 
             // if there are 0 entangled states, we can mark the state as collapsed and add it to the assembly
-            if (state.Entangled.Count == 0 && !state.Eliminated)
+            if (state.EntangledCollisions.Count == 0 && !state.Eliminated)
             {
                 state.Collapsed = true;
                 _assembly.AddInstance(state);
@@ -219,7 +196,7 @@ namespace Blocks.Common.Generators.ConstraintSolvers
 
             foreach (int hash in toRemove)
             {
-                if (!_states[hash].Collapsed)
+                if (!_states[hash].Collapsed && !_states[hash].Collapsed)
                 {
                     Propogate(_states[hash], toRemove);
                 }
@@ -227,20 +204,5 @@ namespace Blocks.Common.Generators.ConstraintSolvers
         }
 
         private void Propogate(State state, int remove) => Propogate(state, new HashSet<int> { remove });
-
-        /// <summary>
-        /// Add edges to the assembly.
-        /// </summary>
-        /// <param name="state">State that is being added to the assembly.</param>
-        private void AddEdges(State state)
-        {
-            foreach (var child in state.Children.Where(c => !c.Eliminated))
-            {
-                var edge = new Edge(state, child);
-                _assembly.AddEdge(edge);
-
-                AddEdges(child);
-            }
-        }
     }
 }

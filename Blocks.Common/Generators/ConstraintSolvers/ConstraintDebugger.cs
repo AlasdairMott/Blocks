@@ -7,7 +7,7 @@ namespace Blocks.Common.Generators.ConstraintSolvers
     /// Used to track the assembly during its generation.
     /// </summary>
     /// <remarks>Each propogation step is a state. At each step there is a dictionary mapping states to their entanglements.</remarks>
-    public class WFCDebugger
+    public class ConstraintDebugger
     {
         public List<Dictionary<int, (bool collapsed, bool eliminated, List<int> entanglements)>> States;
 

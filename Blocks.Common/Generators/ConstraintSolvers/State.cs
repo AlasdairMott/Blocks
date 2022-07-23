@@ -11,7 +11,9 @@ namespace Blocks.Common.Generators.ConstraintSolvers
         public int Key => GetHashCode();
         public bool Collapsed { get; set; } = false;
         public bool Eliminated { get; set; } = false;
-        public HashSet<int> Entangled { get; set; } = new HashSet<int>();
+        public HashSet<int> EntangledCollisions { get; set; } = new HashSet<int>();
+        public HashSet<int> EntangledNeighbours { get; set; } = new HashSet<int>();
+        public HashSet<int> TransitionKeys { get; set; } = new HashSet<int>();
 
         public State(BlockDefinition blockDefinition, Transform transform, Transitions transitions, int depth) : base(blockDefinition, transform, transitions)
         {
