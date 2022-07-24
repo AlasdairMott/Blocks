@@ -62,9 +62,9 @@ namespace Blocks.GH.Components
             var seed = 0;
             DA.GetData(3, ref seed);
 
-            var generator = new FromTransitionsGenerator(seed);
             var transitions = new Transitions(inputAssembly);
-            var outputAssembly = generator.Generate(transitions, obstacles, steps);
+            var generator = new FromTransitionsGenerator(transitions, obstacles, seed, steps);
+            var outputAssembly = generator.Generate();
 
             DA.SetDataList(0, outputAssembly.BlockInstances);
             DA.SetDataList(1, outputAssembly.GetGeometry());
@@ -75,7 +75,7 @@ namespace Blocks.GH.Components
 		/// Provides an Icon for every component that will be visible in the User Interface.
 		/// Icons need to be 24x24 pixels.
 		/// </summary>
-		protected override System.Drawing.Bitmap Icon => Properties.Resources.Relationship;
+		protected override System.Drawing.Bitmap Icon => Properties.Resources.Transition;
 
         /// <summary>
         /// Each component must have a unique Guid to identify it. 

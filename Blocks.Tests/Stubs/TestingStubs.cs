@@ -11,7 +11,7 @@ namespace Blocks.Tests.Stubs
 		private static readonly Dictionary<string, BlockDefinition> _definitions = new Dictionary<string, BlockDefinition>();
 		private static readonly Dictionary<string, Transform> _transforms = new Dictionary<string, Transform>();
 		private static readonly Dictionary<string, BlockInstance> _instances = new Dictionary<string, BlockInstance>();
-		private static readonly Dictionary<string, Relationship> _relationships = new Dictionary<string, Relationship>();
+		private static readonly Dictionary<string, Transition> _transitions = new Dictionary<string, Transition>();
 
 		public static IReadOnlyDictionary<string, List<GeometryBase>> Geometries { 
 			get 
@@ -69,21 +69,21 @@ namespace Blocks.Tests.Stubs
             }
         }
 
-		public static IReadOnlyDictionary<string, Relationship> Relationships
+		public static IReadOnlyDictionary<string, Transition> Transitions
         {
 			get
             {
-				if (!_relationships.Any())
+				if (!_transitions.Any())
                 {
-					_relationships.Add("A1-A1", new Relationship(Instances["A1"], Instances["A1"]));
-					_relationships.Add("A1-A2", new Relationship(Instances["A1"], Instances["A2"]));
-					_relationships.Add("A1-B1", new Relationship(Instances["A1"], Instances["B1"]));
-					_relationships.Add("A2-A1", new Relationship(Instances["A2"], Instances["A1"]));
-					_relationships.Add("A2-A2", new Relationship(Instances["A2"], Instances["A2"]));
-					_relationships.Add("A2-B1", new Relationship(Instances["A2"], Instances["B1"]));
-					_relationships.Add("B1-A2", new Relationship(Instances["B1"], Instances["A2"]));
+					_transitions.Add("A1-A1", new Transition(Instances["A1"], Instances["A1"]));
+					_transitions.Add("A1-A2", new Transition(Instances["A1"], Instances["A2"]));
+					_transitions.Add("A1-B1", new Transition(Instances["A1"], Instances["B1"]));
+					_transitions.Add("A2-A1", new Transition(Instances["A2"], Instances["A1"]));
+					_transitions.Add("A2-A2", new Transition(Instances["A2"], Instances["A2"]));
+					_transitions.Add("A2-B1", new Transition(Instances["A2"], Instances["B1"]));
+					_transitions.Add("B1-A2", new Transition(Instances["B1"], Instances["A2"]));
 				}
-				return _relationships;
+				return _transitions;
             }
         }
 	}

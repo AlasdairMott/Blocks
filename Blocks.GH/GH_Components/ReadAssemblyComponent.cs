@@ -70,7 +70,7 @@ namespace Blocks.GH.Components
 		/// Provides an Icon for every component that will be visible in the User Interface.
 		/// Icons need to be 24x24 pixels.
 		/// </summary>
-		protected override System.Drawing.Bitmap Icon => Properties.Resources.Relationship;
+		protected override System.Drawing.Bitmap Icon => Properties.Resources.Transition;
 
 		/// <summary>
 		/// Each component must have a unique Guid to identify it. 

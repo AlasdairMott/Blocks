@@ -11,11 +11,11 @@ namespace Blocks.Common.Objects
     public class BlockAssembly
     {
         private readonly List<BlockInstance> _blockInstances = new List<BlockInstance>();
-        private readonly List<Edge> _edges = new List<Edge>();
+        private readonly List<TransitionInstance> _edges = new List<TransitionInstance>();
 
         public Mesh CollisionMesh { get; set; } = new Mesh();
         public IReadOnlyList<BlockInstance> BlockInstances => _blockInstances;
-        public IReadOnlyList<Edge> Edges => _edges;
+        public IReadOnlyList<TransitionInstance> Edges => _edges;
         public int Size => _blockInstances.Count();
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Blocks.Common.Objects
             CollisionMesh.Append(instance.CollisionMesh);
         }
 
-        internal void AddEdges(IEnumerable<Edge> edges)
+        internal void AddEdges(IEnumerable<TransitionInstance> edges)
         {
             if (!edges.Any()) { return; }
             if (!edges.Any(e => _blockInstances.Contains(e.FromInstance) && _blockInstances.Contains(e.ToInstance))){
@@ -45,12 +45,12 @@ namespace Blocks.Common.Objects
             _edges.AddRange(edges);
         }
 
-        public void AddEdge(Edge edge)
+        public void AddEdge(TransitionInstance edge)
         {
             _edges.Add(edge);
         }
 
-        public IEnumerable<Relationship> FindFromBlockDefinition(BlockDefinition definition)
+        public IEnumerable<Transition> FindFromBlockDefinition(BlockDefinition definition)
         {
             var matching = _edges.Where(t =>
                 t.From.Name == definition.Name ||

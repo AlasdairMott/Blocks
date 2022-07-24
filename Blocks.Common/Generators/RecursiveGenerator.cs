@@ -14,8 +14,8 @@ namespace Blocks.Common.Generators
     public class RecursiveGenerator : IBlockAssemblyGenerator
     {
         private readonly Transitions _transitions;
-        private readonly Random _random;
         private readonly Mesh _obstacles;
+        private readonly Random _random;
         private readonly int _depth;
         private BlockAssembly _assembly;
 
@@ -52,7 +52,7 @@ namespace Blocks.Common.Generators
                 if (CanPlace(instance, transition, out BlockInstanceState next))
                 {
                     _assembly.AddInstance(next);
-                    _assembly.AddEdge(new Edge(instance, next));
+                    _assembly.AddEdge(new TransitionInstance(instance, next));
 
                     foreach (var item in Step(next, depth)) { yield return item; }
                 }

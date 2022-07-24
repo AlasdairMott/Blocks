@@ -1,5 +1,4 @@
-﻿using Rhino.Geometry;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ namespace Blocks.Common.Objects
         private readonly Dictionary<Transition, int> _transitions;
         private Dictionary<Transition, double> _probabilities;
   
-        private RelationshipComparer _comparer = new RelationshipComparer();
+        private TransitionComparer _comparer = new TransitionComparer();
         public IReadOnlyDictionary<Transition, int> Counts => _transitions;
         public IReadOnlyDictionary<Transition, double> Probabilities
         {
@@ -96,26 +95,5 @@ namespace Blocks.Common.Objects
         public int Count() => _transitions.Count();
 
         public bool Any() => _transitions.Any();
-    }
-
-    public static class TransitionExtensions
-    {
-        public static Transitions ToTransitions(this IEnumerable<Transition> transitions) => new Transitions(transitions);
-    }
-
-    public class Transition : Relationship, ICloneable
-    {
-        public Transition(BlockInstance from, BlockInstance to) : base(from, to) { }
-        public Transition(BlockDefinition from, BlockDefinition to, Transform transform, Transform inverse) : base(from, to, transform, inverse) { }
-        public Transition(Relationship relationship) : this(relationship.From, relationship.To, relationship.Transform, relationship.Inverse) { }
-        public Transition(Transition transition) : this(transition as Relationship)
-        {
-        }
-
-        public new Transition Invert() => new Transition(To, From, Inverse, Transform);
-
-        public Transition Clone() => new Transition(this);
-
-        object ICloneable.Clone() => Clone();
     }
 }

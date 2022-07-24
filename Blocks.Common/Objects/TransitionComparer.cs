@@ -5,11 +5,11 @@ using System.Collections.Generic;
 namespace Blocks.Common.Objects
 {
     /// <summary>
-    /// Compare whether two relationships are the same.
+    /// Compare whether two transitions are the same.
     /// </summary>
-    public class RelationshipComparer : IEqualityComparer<Relationship>
+    public class TransitionComparer : IEqualityComparer<Transition>
 	{
-		public bool Equals(Relationship x, Relationship y)
+		public bool Equals(Transition x, Transition y)
 		{
 			if (GetHashCode(x) != GetHashCode(y)) { return false; }
 
@@ -24,13 +24,13 @@ namespace Blocks.Common.Objects
                    CompareTransform(x.Transform, y.Inverse, 0.1);
 		}
 
-		public int GetHashCode(Relationship relationship)
+		public int GetHashCode(Transition transition)
 		{
 			unchecked
 			{
 				var hash = 1;
-				hash += 13 * (int)Math.Round(TransformMass(relationship.Transform) + TransformMass(relationship.Inverse));
-				hash += 17 * (relationship.From.Name.GetHashCode() + relationship.To.Name.GetHashCode());
+				hash += 13 * (int)Math.Round(TransformMass(transition.Transform) + TransformMass(transition.Inverse));
+				hash += 17 * (transition.From.Name.GetHashCode() + transition.To.Name.GetHashCode());
 				return hash;
 			}
 		}

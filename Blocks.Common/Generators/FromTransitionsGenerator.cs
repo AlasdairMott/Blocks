@@ -4,11 +4,17 @@ using System;
 
 namespace Blocks.Common.Generators
 {
-    public class FromTransitionsGenerator
+    public class FromTransitionsGenerator : IBlockAssemblyGenerator
     {
         private readonly Random _random;
-        public FromTransitionsGenerator(int seed)
+        private readonly Transitions _transitions;
+        private readonly Mesh _obstacles;
+        private readonly int _steps;
+        public FromTransitionsGenerator(Transitions transitions, Mesh obstacles,int seed, int steps)
         {
+            _transitions = transitions ?? throw new ArgumentNullException(nameof(transitions));
+            _obstacles = obstacles ?? throw new ArgumentNullException(nameof(obstacles));
+            _steps = steps;
             _random = new Random(seed);
         }
 
@@ -19,18 +25,18 @@ namespace Blocks.Common.Generators
         /// <param name="obstacles">Obstacles to avoid.</param>
         /// <param name="steps">The number of steps. Each step the algorithm will attempt to place down a BlockInstance.</param>
         /// <returns>A new BlockAssembly.</returns>
-        public BlockAssembly Generate(Transitions transitions, Mesh obstacles, int steps)
+        public BlockAssembly Generate()
         {
             var assembly = new BlockAssembly();
 
-            var item = transitions.GetRandom(_random);
+            var item = _transitions.GetRandom(_random);
             assembly.AddInstance(new BlockInstance(item.From, Transform.Identity));
 
-            for (var i = 0; i < steps; i++)
+            for (var i = 0; i < _steps; i++)
             {
-                var nextEdge = ChooseBlock(assembly, transitions);
+                var nextEdge = ChooseBlock(assembly, _transitions);
 
-                if (CanPlace(nextEdge.ToInstance, assembly, obstacles))
+                if (CanPlace(nextEdge.ToInstance, assembly, _obstacles))
                 {
                     assembly.AddInstance(nextEdge.ToInstance);
                     assembly.AddEdge(nextEdge);
@@ -46,7 +52,7 @@ namespace Blocks.Common.Generators
         /// <param name="assembly">The BlockAssembly to add to.</param>
         /// <param name="transitions">Transitions to choose from.</param>
         /// <returns>The edge from an existing block to a new block instance.</returns>
-        private Edge ChooseBlock(BlockAssembly assembly, Transitions transitions)
+        private TransitionInstance ChooseBlock(BlockAssembly assembly, Transitions transitions)
         {
             var index = _random.Next(0, assembly.Size);
             var existing = assembly.BlockInstances[index];
@@ -57,7 +63,7 @@ namespace Blocks.Common.Generators
             var nextTransition = options.GetRandom(_random);
 
             var nextTransform = existing.Transform * nextTransition.Transform;
-            return new Edge(existing, new BlockInstance(nextTransition.To, nextTransform));
+            return new TransitionInstance(existing, new BlockInstance(nextTransition.To, nextTransform));
         }
 
         /// <summary>

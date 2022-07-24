@@ -63,9 +63,9 @@ namespace Blocks.GH.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Relationship {
+        internal static System.Drawing.Bitmap Transition {
             get {
-                object obj = ResourceManager.GetObject("Relationship", resourceCulture);
+                object obj = ResourceManager.GetObject("Transition", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

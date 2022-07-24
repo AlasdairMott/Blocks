@@ -18,10 +18,10 @@ namespace Blocks.Tests.Objects
             //Arrange
             var transitionsList = new List<Transition>()
             {
-                new Transition(Stubs.TestingStubs.Relationships["A1-B1"]),
-                new Transition(Stubs.TestingStubs.Relationships["A2-B1"]),
+                new Transition(Stubs.TestingStubs.Transitions["A1-B1"]),
+                new Transition(Stubs.TestingStubs.Transitions["A2-B1"]),
             };
-            var transitionToAdd = new Transition(Stubs.TestingStubs.Relationships["A1-A2"]);
+            var transitionToAdd = new Transition(Stubs.TestingStubs.Transitions["A1-A2"]);
 
             //Act
             for (var i = 0; i < count; i++) { transitionsList.Add(transitionToAdd); }
@@ -37,9 +37,9 @@ namespace Blocks.Tests.Objects
             //Arrange
             var definition = Stubs.TestingStubs.Definitions["A"];
             var transitions = new Transitions(new List<Transition> {
-                new Transition(Stubs.TestingStubs.Relationships["A1-A2"]),
-                new Transition(Stubs.TestingStubs.Relationships["A1-B1"]),
-                new Transition(Stubs.TestingStubs.Relationships["A2-B1"]),
+                new Transition(Stubs.TestingStubs.Transitions["A1-A2"]),
+                new Transition(Stubs.TestingStubs.Transitions["A1-B1"]),
+                new Transition(Stubs.TestingStubs.Transitions["A2-B1"]),
             });
 
             //Act
@@ -56,7 +56,7 @@ namespace Blocks.Tests.Objects
             var definition = Stubs.TestingStubs.Definitions["C"];
             var transitions = new Transitions(new List<Transition>
             {
-                new Transition(Stubs.TestingStubs.Relationships["A1-A2"]),
+                new Transition(Stubs.TestingStubs.Transitions["A1-A2"]),
             });
 
             //Act
@@ -71,7 +71,7 @@ namespace Blocks.Tests.Objects
         {
             //Arrange
             var definition = Stubs.TestingStubs.Definitions["A"];
-            var existingTransition = new Transition(Stubs.TestingStubs.Relationships["B1-A2"]);
+            var existingTransition = new Transition(Stubs.TestingStubs.Transitions["B1-A2"]);
             var transitions = new Transitions(new List<Transition> { existingTransition });
 
             //Act
@@ -81,12 +81,12 @@ namespace Blocks.Tests.Objects
             //Assert
             var tolerance = 0.01;
             Assert.Single(results);
-            Assert.True(RelationshipComparer.CompareTransform(transition.Transform, existingTransition.Inverse, tolerance));
+            Assert.True(TransitionComparer.CompareTransform(transition.Transform, existingTransition.Inverse, tolerance));
 
         }
 
         [Fact (Skip = "Not Implemented")]
-        public void NormalizeRelationships_IsSuccessful()
+        public void Normalizetransitions_IsSuccessful()
         {
 
         }

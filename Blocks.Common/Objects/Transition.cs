@@ -1,18 +1,19 @@
 ﻿using Rhino.Geometry;
+using System;
 
 namespace Blocks.Common.Objects
 {
     /// <summary>
     /// The transform between two BlockDefinitions.
     /// </summary>
-    public class Relationship
+    public class Transition: ICloneable
 	{
 		public BlockDefinition From { get; set; }
         public BlockDefinition To { get; set; }
 		public Transform Transform { get; set; }
         public Transform Inverse { get; set; }
 
-		public Relationship(BlockDefinition from, BlockDefinition to, Transform transform, Transform inverse)
+		public Transition(BlockDefinition from, BlockDefinition to, Transform transform, Transform inverse)
 		{
 			From = from;
             To = to;
@@ -20,7 +21,7 @@ namespace Blocks.Common.Objects
             Inverse = inverse;
         }
 
-        public Relationship(BlockInstance from, BlockInstance to)
+        public Transition(BlockInstance from, BlockInstance to)
         {
             var T = CalculateRelativeTransform(from.Transform, to.Transform);
             From = from.BlockDefinition;
@@ -39,6 +40,12 @@ namespace Blocks.Common.Objects
             return (transform, inverse);
         }
 
-        public Relationship Invert() => new Relationship(To, From, Inverse, Transform);
+        public Transition(Transition transition) : this(transition.From, transition.To, transition.Transform, transition.Inverse) { }
+
+        public Transition Invert() => new Transition(To, From, Inverse, Transform);
+
+        public Transition Clone() => new Transition(this);
+
+        object ICloneable.Clone() => Clone();
     }
 }
