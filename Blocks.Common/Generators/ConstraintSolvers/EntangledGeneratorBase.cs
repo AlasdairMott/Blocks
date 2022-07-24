@@ -31,7 +31,7 @@ namespace Blocks.Common.Generators.ConstraintSolvers
         {
             foreach (var child in state.Children.Where(c => !c.Eliminated))
             {
-                var edge = new Edge(state, child);
+                var edge = new TransitionInstance(state, child);
                 _assembly.AddEdge(edge);
 
                 AddEdges(child);

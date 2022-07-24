@@ -18,7 +18,7 @@ namespace Blocks.Tests.Generators
         {
             /*
             //Arrange
-            var transitions = TestingStubs.Relationships.Values.Select(r => new Transition(r)).ToTransitions();
+            var transitions = TestingStubs.transitions.Values.Select(r => new Transition(r)).ToTransitions();
             transitions.ComputeProbabilities();
             var assembly = new BlockAssembly();
             var obstacles = new Mesh();

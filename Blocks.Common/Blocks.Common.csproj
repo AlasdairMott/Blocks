@@ -58,10 +58,10 @@
     <Compile Include="Objects\BlockAssembly.cs" />
     <Compile Include="Objects\BlockDefinition.cs" />
     <Compile Include="Objects\BlockInstance.cs" />
-    <Compile Include="Objects\Edge.cs" />
+    <Compile Include="Objects\TransitionInstance.cs" />
     <Compile Include="Objects\Graph2d.cs" />
-    <Compile Include="Objects\Relationship.cs" />
-    <Compile Include="Objects\RelationshipComparer.cs" />
+    <Compile Include="Objects\Transition.cs" />
+    <Compile Include="Objects\TransitionComparer.cs" />
     <Compile Include="Objects\Transitions.cs" />
     <Compile Include="Parameters\GraphGeneratorParameters.cs" />
     <Compile Include="Parameters\BlockAssemblyEdgeReaderParameters.cs" />

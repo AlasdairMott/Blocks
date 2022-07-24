@@ -52,14 +52,14 @@ namespace Blocks.Common.Generators
                 if (CanPlace(instance, transition, out BlockInstanceState next))
                 {
                     _assembly.AddInstance(next);
-                    _assembly.AddEdge(new Edge(instance, next));
+                    _assembly.AddEdge(new TransitionInstance(instance, next));
 
                     foreach (var item in Step(next, depth)) { yield return item; }
                 }
             }
         }
         
-        private bool CanPlace(BlockInstanceState existing, Relationship transition, out BlockInstanceState next)
+        private bool CanPlace(BlockInstanceState existing, Transition transition, out BlockInstanceState next)
         {
             // find the transform for the new location
             var nextTransform = existing.Transform * transition.Transform;

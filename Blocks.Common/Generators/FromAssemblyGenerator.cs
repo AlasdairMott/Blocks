@@ -43,14 +43,14 @@ namespace Blocks.Common.Generators
             var index = _random.Next(0, assembly.Size);
             var existing = assembly.BlockInstances.ElementAt(index);
 
-            var sampledRelationships = example.FindFromBlockDefinition(existing.BlockDefinition);
+            var sampledTransitions = example.FindFromBlockDefinition(existing.BlockDefinition);
 
-            var nextRelationship = sampledRelationships.OrderBy(r => _random.NextDouble()).FirstOrDefault();
-            if (nextRelationship == null) { return false; }
+            var nextTransition = sampledTransitions.OrderBy(r => _random.NextDouble()).FirstOrDefault();
+            if (nextTransition == null) { return false; }
 
-            //var nextBlockDefinition = nextRelationship.To == existing.BlockDefinition ? nextRelationship.To : nextRelationship.From;
-            var nextBlockDefinition = nextRelationship.To;
-            var nextTransform = existing.Transform * nextRelationship.Transform;
+            //var nextBlockDefinition = nextTransition.To == existing.BlockDefinition ? nextTransition.To : nextTransition.From;
+            var nextBlockDefinition = nextTransition.To;
+            var nextTransform = existing.Transform * nextTransition.Transform;
 
             var instance = new BlockInstance(nextBlockDefinition, nextTransform);
             if (!Functions.CollisionCheck.CheckCollision(assembly, instance) &&

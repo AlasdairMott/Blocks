@@ -96,13 +96,13 @@ namespace Blocks.Common.Generators.ConstraintSolvers
         /// <param name="depth">The depth.</param>
         /// <param name="next">The next state.</param>
         /// <returns>True if the state can be placed at the given location.</returns>
-        public bool CanPlace(State existing, Relationship transition, int depth, out State next)
+        public bool CanPlace(State existing, Transition transition, int depth, out State next)
         {
             var nextTransform = existing.Transform * transition.Transform;
 
             // Make sure not to add the transition that was just visited
-            IEnumerable<Relationship> newTransitions = _transitions.FindFromBlockDefinition(transition.To);
-            newTransitions = newTransitions.Except(new List<Relationship> { transition });
+            IEnumerable<Transition> newTransitions = _transitions.FindFromBlockDefinition(transition.To);
+            newTransitions = newTransitions.Except(new List<Transition> { transition });
 
             next = new State(transition.To, nextTransform, newTransitions.ToTransitions(), _depth - depth);
 

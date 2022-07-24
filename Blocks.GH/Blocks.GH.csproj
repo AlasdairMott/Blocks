@@ -57,11 +57,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Relationship.png" />
+    <None Include="Resources\Transition.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Grasshopper">

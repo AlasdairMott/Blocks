@@ -8,42 +8,42 @@ namespace Blocks.Common.Objects
     /// <summary>
     /// A collection of BlockDefinitions that can be chosen from when generating a BlockAssembly.
     /// </summary>
-    public class Transitions : IEnumerable<Relationship>
+    public class Transitions : IEnumerable<Transition>
     {
-        private readonly Dictionary<Relationship, int> _transitions;
-        private Dictionary<Relationship, double> _probabilities;
+        private readonly Dictionary<Transition, int> _transitions;
+        private Dictionary<Transition, double> _probabilities;
   
-        private RelationshipComparer _comparer = new RelationshipComparer();
-        public IReadOnlyDictionary<Relationship, int> Counts => _transitions;
-        public IReadOnlyDictionary<Relationship, double> Probabilities
+        private TransitionComparer _comparer = new TransitionComparer();
+        public IReadOnlyDictionary<Transition, int> Counts => _transitions;
+        public IReadOnlyDictionary<Transition, double> Probabilities
         {
             get => _probabilities ?? (_probabilities = ComputeProbabilities());
         }
 
         public Transitions()
         {
-            _transitions = new Dictionary<Relationship, int>(_comparer);
+            _transitions = new Dictionary<Transition, int>(_comparer);
         }
 
-        public Transitions(IEnumerable<Relationship> transitions):this()
+        public Transitions(IEnumerable<Transition> transitions):this()
         {
             foreach (var transition in transitions) { Push(transition); }
         }
 
         public Transitions(BlockAssembly assembly) : 
-            this (assembly.Edges.Select(r => new Relationship(r)).ToList()){
+            this (assembly.Edges.Select(r => new Transition(r)).ToList()){
         }
 
-        public Relationship this[int index]
+        public Transition this[int index]
         {
             get => _transitions.Keys.ElementAt(index);
         }
 
-        public IEnumerator<Relationship> GetEnumerator() => _transitions.Keys.GetEnumerator();
+        public IEnumerator<Transition> GetEnumerator() => _transitions.Keys.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public Relationship GetRandom(Random random)
+        public Transition GetRandom(Random random)
         {
             if (!_transitions.Any()) { throw new IndexOutOfRangeException("No transitions to choose from"); }
 
@@ -66,7 +66,7 @@ namespace Blocks.Common.Objects
             return transitions.Select(t => t.Clone()).ToTransitions();
         }
 
-        public void Push(Relationship transition) {
+        public void Push(Transition transition) {
             _probabilities = null;
             if (!_transitions.ContainsKey(transition))
             {
@@ -78,7 +78,7 @@ namespace Blocks.Common.Objects
             }
         }
 
-        public Relationship Pop(Random random)
+        public Transition Pop(Random random)
         {
             var next = GetRandom(random);
             _transitions.Remove(next);
@@ -86,7 +86,7 @@ namespace Blocks.Common.Objects
             return next;
         }
         
-        private Dictionary<Relationship, double> ComputeProbabilities()
+        private Dictionary<Transition, double> ComputeProbabilities()
         {
             double count = _transitions.Sum(t => t.Value);
             return _transitions.ToDictionary(t => t.Key, t => t.Value / count);

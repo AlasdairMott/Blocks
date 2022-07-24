@@ -6,11 +6,11 @@ using Xunit.Abstractions;
 namespace Blocks.Tests.Objects
 {
     [Collection("RhinoTestingCollection")]
-    public class RelationshipTests
+    public class TransitionTests
     {
         private readonly ITestOutputHelper _output;
 
-        public RelationshipTests(ITestOutputHelper output)
+        public TransitionTests(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -29,7 +29,7 @@ namespace Blocks.Tests.Objects
             var point2 = plane2.Origin;
 
             //Act
-            var result = Relationship.CalculateRelativeTransform(transform1, transform2);
+            var result = Transition.CalculateRelativeTransform(transform1, transform2);
 
             point1.Transform(result.Inverse);
             point2.Transform(result.Transform);
@@ -41,10 +41,10 @@ namespace Blocks.Tests.Objects
         }
 
         [Fact]
-        public void InvertRelationship_ItInverts()
+        public void Inverttransition_ItInverts()
         {
             //Arrange
-            var transition = Stubs.TestingStubs.Relationships["A1-B1"];
+            var transition = Stubs.TestingStubs.Transitions["A1-B1"];
             var point1 = Point3d.Origin;
             var point2 = Point3d.Origin;
             var point3 = Point3d.Origin;

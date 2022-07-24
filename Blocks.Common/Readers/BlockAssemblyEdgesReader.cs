@@ -8,10 +8,10 @@ namespace Blocks.Common.Readers
     {
         public BlockAssemblyEdgeReader() { }
 
-        public List<Edge> Read(BlockAssembly blockAssembly, BlockAssemblyEdgeReaderParameters parameters)
+        public List<TransitionInstance> Read(BlockAssembly blockAssembly, BlockAssemblyEdgeReaderParameters parameters)
         {
             var instances = blockAssembly.BlockInstances;
-            var edges = new List<Edge>();
+            var edges = new List<TransitionInstance>();
 
             //Create connectivitiy graph
             for (var i = 0; i < instances.Count; i++)
@@ -25,8 +25,8 @@ namespace Blocks.Common.Readers
                         continue;
                     }
 
-                    //If touching, create an 'edge' (relationship).
-                    var edge = new Edge(instances[i], instances[j]);
+                    //If touching, create an 'edge' (transition).
+                    var edge = new TransitionInstance(instances[i], instances[j]);
                     edges.Add(edge);
                 }
             }

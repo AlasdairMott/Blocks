@@ -52,7 +52,7 @@ namespace Blocks.Common.Generators
         /// <param name="assembly">The BlockAssembly to add to.</param>
         /// <param name="transitions">Transitions to choose from.</param>
         /// <returns>The edge from an existing block to a new block instance.</returns>
-        private Edge ChooseBlock(BlockAssembly assembly, Transitions transitions)
+        private TransitionInstance ChooseBlock(BlockAssembly assembly, Transitions transitions)
         {
             var index = _random.Next(0, assembly.Size);
             var existing = assembly.BlockInstances[index];
@@ -63,7 +63,7 @@ namespace Blocks.Common.Generators
             var nextTransition = options.GetRandom(_random);
 
             var nextTransform = existing.Transform * nextTransition.Transform;
-            return new Edge(existing, new BlockInstance(nextTransition.To, nextTransform));
+            return new TransitionInstance(existing, new BlockInstance(nextTransition.To, nextTransform));
         }
 
         /// <summary>

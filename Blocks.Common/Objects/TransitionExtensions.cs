@@ -4,6 +4,6 @@ namespace Blocks.Common.Objects
 {
     public static class TransitionExtensions
     {
-        public static Transitions ToTransitions(this IEnumerable<Relationship> transitions) => new Transitions(transitions);
+        public static Transitions ToTransitions(this IEnumerable<Transition> transitions) => new Transitions(transitions);
     }
 }

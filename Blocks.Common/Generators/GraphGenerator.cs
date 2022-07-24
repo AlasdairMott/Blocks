@@ -61,7 +61,7 @@ namespace Blocks.Common.Generators
                 vertices.Select(v => v.BlockInstance.BlockDefinition.Name));
         }
 
-        public Vertex[] CreateStartingLayout(IEnumerable<Edge> edges)
+        public Vertex[] CreateStartingLayout(IEnumerable<TransitionInstance> edges)
         {
             var vertexDictionary = new Dictionary<string, Vertex>();
 
