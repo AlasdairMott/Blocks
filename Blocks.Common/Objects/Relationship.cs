@@ -1,11 +1,12 @@
 ﻿using Rhino.Geometry;
+using System;
 
 namespace Blocks.Common.Objects
 {
     /// <summary>
     /// The transform between two BlockDefinitions.
     /// </summary>
-    public class Relationship
+    public class Relationship: ICloneable
 	{
 		public BlockDefinition From { get; set; }
         public BlockDefinition To { get; set; }
@@ -39,6 +40,12 @@ namespace Blocks.Common.Objects
             return (transform, inverse);
         }
 
+        public Relationship(Relationship relationship) : this(relationship.From, relationship.To, relationship.Transform, relationship.Inverse) { }
+
         public Relationship Invert() => new Relationship(To, From, Inverse, Transform);
+
+        public Relationship Clone() => new Relationship(this);
+
+        object ICloneable.Clone() => Clone();
     }
 }

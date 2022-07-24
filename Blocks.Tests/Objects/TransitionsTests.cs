@@ -16,12 +16,12 @@ namespace Blocks.Tests.Objects
         public void It_Adds_Transition_With_Correct_Probabilities(int count, double expected)
         {
             //Arrange
-            var transitionsList = new List<Transition>()
+            var transitionsList = new List<Relationship>()
             {
-                new Transition(Stubs.TestingStubs.Relationships["A1-B1"]),
-                new Transition(Stubs.TestingStubs.Relationships["A2-B1"]),
+                new Relationship(Stubs.TestingStubs.Relationships["A1-B1"]),
+                new Relationship(Stubs.TestingStubs.Relationships["A2-B1"]),
             };
-            var transitionToAdd = new Transition(Stubs.TestingStubs.Relationships["A1-A2"]);
+            var transitionToAdd = new Relationship(Stubs.TestingStubs.Relationships["A1-A2"]);
 
             //Act
             for (var i = 0; i < count; i++) { transitionsList.Add(transitionToAdd); }
@@ -36,10 +36,10 @@ namespace Blocks.Tests.Objects
         {
             //Arrange
             var definition = Stubs.TestingStubs.Definitions["A"];
-            var transitions = new Transitions(new List<Transition> {
-                new Transition(Stubs.TestingStubs.Relationships["A1-A2"]),
-                new Transition(Stubs.TestingStubs.Relationships["A1-B1"]),
-                new Transition(Stubs.TestingStubs.Relationships["A2-B1"]),
+            var transitions = new Transitions(new List<Relationship> {
+                new Relationship(Stubs.TestingStubs.Relationships["A1-A2"]),
+                new Relationship(Stubs.TestingStubs.Relationships["A1-B1"]),
+                new Relationship(Stubs.TestingStubs.Relationships["A2-B1"]),
             });
 
             //Act
@@ -54,9 +54,9 @@ namespace Blocks.Tests.Objects
         {
             //Arrange
             var definition = Stubs.TestingStubs.Definitions["C"];
-            var transitions = new Transitions(new List<Transition>
+            var transitions = new Transitions(new List<Relationship>
             {
-                new Transition(Stubs.TestingStubs.Relationships["A1-A2"]),
+                new Relationship(Stubs.TestingStubs.Relationships["A1-A2"]),
             });
 
             //Act
@@ -71,8 +71,8 @@ namespace Blocks.Tests.Objects
         {
             //Arrange
             var definition = Stubs.TestingStubs.Definitions["A"];
-            var existingTransition = new Transition(Stubs.TestingStubs.Relationships["B1-A2"]);
-            var transitions = new Transitions(new List<Transition> { existingTransition });
+            var existingTransition = new Relationship(Stubs.TestingStubs.Relationships["B1-A2"]);
+            var transitions = new Transitions(new List<Relationship> { existingTransition });
 
             //Act
             var results = transitions.FindFromBlockDefinition(definition);

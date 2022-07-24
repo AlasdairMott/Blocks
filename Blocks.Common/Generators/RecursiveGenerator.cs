@@ -59,7 +59,7 @@ namespace Blocks.Common.Generators
             }
         }
         
-        private bool CanPlace(BlockInstanceState existing, Transition transition, out BlockInstanceState next)
+        private bool CanPlace(BlockInstanceState existing, Relationship transition, out BlockInstanceState next)
         {
             // find the transform for the new location
             var nextTransform = existing.Transform * transition.Transform;

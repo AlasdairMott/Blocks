@@ -48,6 +48,7 @@
     <Compile Include="Generators\ConstraintSolvers\ConstraintDebugger.cs" />
     <Compile Include="Generators\RecursiveGenerator.cs" />
     <Compile Include="Generators\ConstraintSolvers\EntangledCollisionsGenerator.cs" />
+    <Compile Include="Objects\TransitionExtensions.cs" />
     <Compile Include="Parameters\FromTransitionsGeneratorParameters.cs" />
     <Compile Include="Functions\CollisionCheck.cs" />
     <Compile Include="Functions\GeometryHelpers.cs" />
